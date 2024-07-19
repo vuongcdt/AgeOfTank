@@ -18,7 +18,7 @@ namespace Controllers.Game
 
             _character = GetComponentInParent<Character>();
             _obstacle = other.gameObject.GetComponentInParent<Character>();
-            if (_character.ID <= _obstacle.ID)
+            if (_character.ID > _obstacle.ID)
             {
                 return;
             }
@@ -27,13 +27,13 @@ namespace Controllers.Game
             _newPointTarget = _obstacle.transform.position + offset;
 
             _character.transform
-                .DOMove(new Vector3(_newPointTarget.x + 0.2f, _newPointTarget.y), 0.5f)
+                .DOMove(_newPointTarget, 0.5f)
                 .SetEase(Ease.Linear);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.gameObject.CompareTag(tag) || _character.ID <= _obstacle.ID)
+            if (!other.gameObject.CompareTag(tag) )
             {
                 return;
             }
