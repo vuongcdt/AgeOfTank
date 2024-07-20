@@ -1,5 +1,4 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using Systems;
 using UnityEngine;
 
@@ -33,13 +32,22 @@ namespace Controllers.Game
             }
 
             transform.DOKill();
-
-            var offset = (_characterRun.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
-            _newPointTarget = _characterAttract.transform.position + offset;
-
+            
             _characterRun.transform
-                .DOMove(_newPointTarget, gamePlayData.durationMove * 0.1f)
+                .DOMove(GetNewPointTarget(), gamePlayData.durationMove * 0.1f)
                 .SetEase(Ease.Linear);
+        }
+
+        private Vector3 GetNewPointTarget()
+        {
+            var offset = (_characterRun.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
+            var offsetCharacter = _characterRun.transform.position.x < _characterRun.Target.x - 0.5f
+                ? (_characterRun.IsPlayer ? Vector3.right : Vector3.left) * 0.5f
+                : Vector3.zero;
+
+            _newPointTarget = _characterAttract.transform.position + offset + offsetCharacter;
+
+            return _newPointTarget;
         }
 
         private void OnTriggerStay2D(Collider2D other)
@@ -67,8 +75,15 @@ namespace Controllers.Game
             transform.DOKill();
 
             _characterRun.transform
-                .DOMove(new Vector3(_characterRun.Target.x, _newPointTarget.y), gamePlayData.durationMove)
+                .DOMove(new Vector3(_characterRun.Target.x, _newPointTarget.y),
+                    GetDurationMoveToTarget())
                 .SetEase(Ease.Linear);
+        }
+
+        private float GetDurationMoveToTarget()
+        {
+            return (_characterRun.transform.position.x - _characterRun.Target.x) /
+                (_characterRun.Source.x - _characterRun.Target.x) * gamePlayData.durationMove;
         }
     }
 }

@@ -26,27 +26,10 @@ namespace Controllers.Game
         private Character _characterTarget;
 
         public int ID => _id;
-
         public Vector3 Target => _target;
+        public Vector3 Source => _source;
+        public bool IsPlayer => _isPlayer;
 
-        public GameObject HealthBar
-        {
-            get => healthBar;
-            set => healthBar = value;
-        }
-
-        // public Vector3 Source => _source;
-        // public float Health
-        // {
-        //     get => _health;
-        //     set => _health = value;
-        // }
-        //
-        // public float Damage
-        // {
-        //     get => _damage;
-        //     set => _damage = value;
-        // }
 
         protected override void AwaitCustom()
         {
@@ -179,6 +162,15 @@ namespace Controllers.Game
             var hits = new RaycastHit2D[10];
             _collider.Cast(Vector2.right, hits, gamePlayData.distanceHit, true);
 
+            if (CheckHasTarget(hits)) return;
+
+            transform
+                .DOMove(new Vector3(_target.x, transform.position.y), gamePlayData.durationMove)
+                .SetEase(Ease.Linear);
+        }
+
+        private bool CheckHasTarget(RaycastHit2D[] hits)
+        {
             foreach (var r in hits)
             {
                 if (!r.collider)
@@ -203,16 +195,14 @@ namespace Controllers.Game
 
                 if (_characterTarget._health > 0)
                 {
-                    return;
+                    return true;
                 }
 
                 StartCoroutine(AttackIE(r.collider.GetComponent<Character>()));
-                return;
+                return true;
             }
 
-            transform
-                .DOMove(new Vector3(_target.x, transform.position.y), gamePlayData.durationMove)
-                .SetEase(Ease.Linear);
+            return false;
         }
     }
 }
