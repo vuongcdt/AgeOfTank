@@ -154,6 +154,8 @@ MonoBehaviour:
   avatar: {fileID: 1461441956428462645}
   gameUIData: {fileID: 11400000, guid: c60d4f36b30d5f443b48104b056590e0, type: 2}
   gamePlayData: {fileID: 11400000, guid: 87a19dc867fb1a04d998290ef82444b8, type: 2}
+  healthSlider: {fileID: 684498704856485495}
+  healthBar: {fileID: 284708132954042884}
 --- !u!61 &6014705064325995704
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -452,6 +454,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3431460136094274423}
     m_Modifications:
+    - target: {fileID: 685086619492715984, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 685086619492715986, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -468,13 +474,21 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 685086619732521162, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 685086619732521163, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.008178711
       objectReference: {fileID: 0}
+    - target: {fileID: 685086620388820572, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 685086620388820573, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.484
+      value: 0.441
       objectReference: {fileID: 0}
     - target: {fileID: 685086620388820573, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchorMax.y
@@ -499,6 +513,14 @@ PrefabInstance:
     - target: {fileID: 685086621193454756, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_Name
       value: Slider_Basic01_Green
+      objectReference: {fileID: 0}
+    - target: {fileID: 685086621193454756, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 685086621193454756, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_Pivot.x
@@ -586,11 +608,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454758, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_Value
-      value: 0.484
+      value: 0.441
+      objectReference: {fileID: 0}
+    - target: {fileID: 685086621281948506, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 685086621281948507, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.14996338
+      objectReference: {fileID: 0}
+    - target: {fileID: 8056321651670721448, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+      propertyPath: m_Layer
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -603,3 +633,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
   m_PrefabInstance: {fileID: 71557681062890193}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &684498704856485495 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 685086621193454758, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
+  m_PrefabInstance: {fileID: 71557681062890193}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

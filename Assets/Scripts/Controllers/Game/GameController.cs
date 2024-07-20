@@ -2,18 +2,19 @@
 using QFramework;
 using Systems;
 using UnityEngine;
+using UnityEngine.Serialization;
 using uPools;
 
 namespace Controllers.Game
 {
     public class GameController : BaseGameController
     {
-        [SerializeField] private Character character;
+        [SerializeField] private GameObject characterPrefab;
         [SerializeField] private GamePlayData gamePlayData;
         
         private void Start()
         {
-            SharedGameObjectPool.Prewarm(character.gameObject, 30);
+            SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
             this.RegisterEvent<Events.Events.InitCharacter>(InitPlayer);
 
@@ -28,16 +29,16 @@ namespace Controllers.Game
         private void InitEnemy(CONSTANTS.CardCharacterType type)
         {
             this.SendCommand<SetIdEnemy>();
-            var newEnemy = SharedGameObjectPool.Rent(character, gamePlayData.pointTarget, Quaternion.identity, transform);
-            newEnemy.InitCharacter(type, GamePlayModel.IdEnemy.Value);
+            var newEnemy = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointTarget, Quaternion.identity, transform);
+            newEnemy.GetComponent<Character>().InitCharacter(type, GamePlayModel.IdEnemy.Value);
             newEnemy.transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
         }
 
         private void InitPlayer(Events.Events.InitCharacter e)
         {
             this.SendCommand<SetIdPlayer>();
-            var newPlayer = SharedGameObjectPool.Rent(character, gamePlayData.pointSource, Quaternion.identity, transform);
-            newPlayer.InitCharacter(e.Type, GamePlayModel.IdPlayer.Value);
+            var newPlayer = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointSource, Quaternion.identity, transform);
+            newPlayer.GetComponent<Character>().InitCharacter(e.Type, GamePlayModel.IdPlayer.Value);
         }
     }
 }
