@@ -2,6 +2,7 @@
 using QFramework;
 using Systems;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using uPools;
 
@@ -21,9 +22,9 @@ namespace Controllers.Game
             InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
             InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
             InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-
-            Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
-            Camera.main.transparencySortAxis = Vector3.up;
+            
+            GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
+            GraphicsSettings.transparencySortAxis = Vector3.up;
         }
 
         private void InitEnemy(CONSTANTS.CardCharacterType type)

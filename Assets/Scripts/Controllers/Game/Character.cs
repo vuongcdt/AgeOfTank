@@ -29,6 +29,12 @@ namespace Controllers.Game
 
         public Vector3 Target => _target;
 
+        public GameObject HealthBar
+        {
+            get => healthBar;
+            set => healthBar = value;
+        }
+
         // public Vector3 Source => _source;
         // public float Health
         // {
@@ -63,7 +69,6 @@ namespace Controllers.Game
             _damage = 2;
 
             healthBar.SetActive(false);
-
             transform.position = _source;
             transform.DOKill();
 
@@ -99,6 +104,9 @@ namespace Controllers.Game
             }
 
             characterTarget.healthBar.SetActive(true);
+
+            SetSortingOrderHeathBar(characterTarget);
+
             characterTarget._health -= _damage;
             characterTarget.healthSlider.value = characterTarget._health / 10;
             if (characterTarget._health < 0)
@@ -108,6 +116,12 @@ namespace Controllers.Game
             }
 
             StartCoroutine(AttackIE(characterTarget));
+        }
+
+        private void SetSortingOrderHeathBar(Character characterTarget)
+        {
+            healthBar.GetComponent<Canvas>().sortingOrder =
+                Mathf.CeilToInt(10 - characterTarget.transform.position.y * 10);
         }
 
         private void SetCharacterDeath(Character character)
