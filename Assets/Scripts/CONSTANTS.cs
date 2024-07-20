@@ -10,9 +10,12 @@
         WarriorEnemy,
     }
 
-    public enum CharacterType
+    public class Tag
     {
-        Player,
-        Enemy
+        public const string Player = nameof(Player);
+        public const string Enemy = nameof(Enemy);
+        public const string CircleCollider = nameof(CircleCollider);
     }
+
+    
 }

@@ -982,9 +982,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d2c56f4b24d4c2bab18e35d4f4f7c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointSource: {fileID: 336551396}
-  pointTarget: {fileID: 436124491}
   character: {fileID: 2311964938386430782, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
+  gamePlayData: {fileID: 11400000, guid: 87a19dc867fb1a04d998290ef82444b8, type: 2}
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1193,7 +1192,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3

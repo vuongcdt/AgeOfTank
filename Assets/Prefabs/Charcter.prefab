@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 7103144258239967456}
   m_Layer: 0
   m_Name: Charcter
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,7 +130,7 @@ Transform:
   m_GameObject: {fileID: 4939331758896391020}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.94811124, y: -0.033109996, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avatar: {fileID: 1461441956428462645}
   gameUIData: {fileID: 11400000, guid: c60d4f36b30d5f443b48104b056590e0, type: 2}
-  durationMove: 20
+  gamePlayData: {fileID: 11400000, guid: 87a19dc867fb1a04d998290ef82444b8, type: 2}
 --- !u!61 &6014705064325995704
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -236,11 +236,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8266184583064144596}
   - component: {fileID: 694998965345924870}
-  - component: {fileID: 880607459659389656}
   - component: {fileID: 3983360490538550998}
+  - component: {fileID: 880607459659389656}
   m_Layer: 0
   m_Name: Circle
-  m_TagString: Cricle
+  m_TagString: CircleCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -312,6 +312,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3983360490538550998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5046528065037672108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4673a3ef03b425c8532db98006d56cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gamePlayData: {fileID: 11400000, guid: 87a19dc867fb1a04d998290ef82444b8, type: 2}
 --- !u!70 &880607459659389656
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -347,18 +360,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0.00000001109893, y: 0}
   m_Size: {x: 1, y: 3}
   m_Direction: 1
---- !u!114 &3983360490538550998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5046528065037672108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4673a3ef03b425c8532db98006d56cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5543668761102423917
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +433,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2dcd28bb7cfb949149c8918430385677, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 03279c5ce65ec43e7bdda52b7cb4c49d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
