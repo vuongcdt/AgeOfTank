@@ -18,6 +18,8 @@ namespace Controllers.Game
         public int ID => _id;
         public Vector3 PointTarget => _pointTarget;
 
+        public int DurationMove => durationMove;
+
         public void InitCharacter(CONSTANTS.CardCharacterType type, int id)
         {
             _type = type;
@@ -41,8 +43,9 @@ namespace Controllers.Game
 
             if (other.CompareTag(tagOpposition))
             {
-                transform.DOPause();
+                transform.DOKill();
             }
         }
+
     }
 }

@@ -5,41 +5,48 @@ namespace Controllers.Game
 {
     public class MoveOvercomeObstacles : BaseGameController
     {
-        private Character _character;
-        private Character _obstacle;
+        private Character _characterRun;
+        private Character _characterAttract;
         private Vector3 _newPointTarget;
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.gameObject.CompareTag(tag))
+            if (!other.CompareTag(tag))
             {
                 return;
             }
 
-            _character = GetComponentInParent<Character>();
-            _obstacle = other.gameObject.GetComponentInParent<Character>();
-            if (_character.ID > _obstacle.ID)
+            _characterRun = GetComponentInParent<Character>();
+            _characterAttract = other.GetComponentInParent<Character>();
+            
+            if (_characterRun.ID <= _characterAttract.ID)
             {
                 return;
             }
+            transform.DOKill();
+            
+            var offset = (_characterRun.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
+            _newPointTarget = _characterAttract.transform.position + offset;
 
-            var offset = (_character.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
-            _newPointTarget = _obstacle.transform.position + offset;
-
-            _character.transform
-                .DOMove(_newPointTarget, 0.5f)
+            _characterRun.transform
+                .DOMove(_newPointTarget, _characterRun.DurationMove * 0.1f)
                 .SetEase(Ease.Linear);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.gameObject.CompareTag(tag) )
+            if (!other.CompareTag(tag))
             {
                 return;
             }
-
-            _character.transform
-                .DOMove(new Vector3(_character.PointTarget.x, _newPointTarget.y), 9)
+            if (_characterRun.ID <= _characterAttract.ID)
+            {
+                return;
+            }
+            transform.DOKill();
+            Debug.Log(_characterRun.name);
+            _characterRun.transform
+                .DOMove(new Vector3(_characterRun.PointTarget.x, _newPointTarget.y), _characterRun.DurationMove)
                 .SetEase(Ease.Linear);
         }
     }

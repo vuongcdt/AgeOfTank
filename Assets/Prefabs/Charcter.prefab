@@ -153,7 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avatar: {fileID: 1461441956428462645}
   gameUIData: {fileID: 11400000, guid: c60d4f36b30d5f443b48104b056590e0, type: 2}
-  durationMove: 10
+  durationMove: 20
 --- !u!61 &6014705064325995704
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -186,7 +186,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.015787482, y: 0}
+  m_Offset: {x: 0.0075802207, y: 0.009859562}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -197,7 +197,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.59517264, y: 3.0006065}
+  m_Size: {x: 0.9070498, y: 6.0192995}
   m_EdgeRadius: 0
 --- !u!50 &7103144258239967456
 Rigidbody2D:

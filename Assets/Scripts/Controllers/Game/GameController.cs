@@ -19,8 +19,8 @@ namespace Controllers.GamePlay
             this.RegisterEvent<Events.Events.InitCharacter>(InitPlayer);
 
             InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
+            // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
+            // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
 
             Camera.main.transparencySortMode = TransparencySortMode.CustomAxis;
             Camera.main.transparencySortAxis = Vector3.up;
