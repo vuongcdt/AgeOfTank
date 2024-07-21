@@ -1,5 +1,8 @@
 ﻿using System.Collections;
+using Commands.Game;
 using DG.Tweening;
+using Interfaces;
+using QFramework;
 using Systems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,21 +18,11 @@ namespace Controllers.Game
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
 
-        private Vector3 _source;
-        private Vector3 _target;
-        private CONSTANTS.CardCharacterType _type;
-        private int _id;
-        private bool _isPlayer;
         private Collider2D _collider;
-        private float _health;
-        private float _damage;
         private Character _characterTarget;
+        private IEnumerator _attackIE;
 
-        public int ID => _id;
-        public Vector3 Target => _target;
-        public Vector3 Source => _source;
-        public bool IsPlayer => _isPlayer;
-
+        public CharacterModel Model;
 
         protected override void AwaitCustom()
         {
@@ -38,22 +31,28 @@ namespace Controllers.Game
 
         public void InitCharacter(CONSTANTS.CardCharacterType type, int id)
         {
-            _isPlayer = (int)type < 3;
+            var isPlayer = (int)type < 3;
+            var source = isPlayer ? gamePlayData.pointSource : gamePlayData.pointTarget;
+            var target = !isPlayer ? gamePlayData.pointSource : gamePlayData.pointTarget;
+            var health = gamePlayData.healths[(int)type];
+            var damage = gamePlayData.damages[(int)type];
 
-            _type = type;
-            _id = id;
-            _source = _isPlayer ? gamePlayData.pointSource : gamePlayData.pointTarget;
-            _target = !_isPlayer ? gamePlayData.pointSource : gamePlayData.pointTarget;
             avatar.sprite = gameUIData.imgAvatar[(int)type];
-            tag = _isPlayer ? CONSTANTS.Tag.Player : CONSTANTS.Tag.Enemy;
+            tag = isPlayer ? CONSTANTS.Tag.Player : CONSTANTS.Tag.Enemy;
             name = $"{tag} {id}";
 
-            _health = gamePlayData.healths[(int)_type];
-            _damage = gamePlayData.damages[(int)_type];
-
             healthBar.SetActive(false);
-            transform.position = _source;
+            transform.position = source;
             transform.DOKill();
+
+
+            GamePlayModel.Characters.Add(name, new CharacterModel(health, id, damage, target, source, type));
+
+            Model = GamePlayModel.Characters[name];
+            Model.Health.RegisterWithInitValue(newValue =>
+            {
+                healthSlider.value = newValue / gamePlayData.healths[(int)type];
+            });
 
             MoveCharacter();
         }
@@ -61,7 +60,7 @@ namespace Controllers.Game
         private void MoveCharacter()
         {
             transform
-                .DOMove(_target, gamePlayData.durationMove)
+                .DOMove(Model.Target, gamePlayData.durationMove)
                 .SetEase(Ease.Linear);
         }
 
@@ -78,14 +77,21 @@ namespace Controllers.Game
                 return;
             }
 
+            if (_attackIE != null)
+            {
+                StopCoroutine(_attackIE);
+            }
+
+            _attackIE = null;
             transform.DOKill();
-            SharedGameObjectPool.Return(character.gameObject);
+            GamePlayModel.Characters.Remove(name);
             _characterTarget = null;
+            SharedGameObjectPool.Return(character.gameObject);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            var tagOpposition = _isPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
+            var tagOpposition = Model.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
 
             if (!other.CompareTag(tagOpposition))
             {
@@ -96,7 +102,18 @@ namespace Controllers.Game
 
             var characterTarget = other.GetComponent<Character>();
 
-            StartCoroutine(AttackIE(characterTarget));
+            AttackTarget(characterTarget);
+        }
+
+        private void AttackTarget(Character characterTarget)
+        {
+            if (_attackIE != null)
+            {
+                StopCoroutine(_attackIE);
+            }
+
+            _attackIE = AttackIE(characterTarget);
+            StartCoroutine(_attackIE);
         }
 
         private IEnumerator AttackIE(Character characterTarget)
@@ -109,7 +126,7 @@ namespace Controllers.Game
                 yield break;
             }
 
-            if (_health < 0)
+            if (Model.IsDeath)
             {
                 yield break;
             }
@@ -123,21 +140,21 @@ namespace Controllers.Game
 
             SetSortingOrderHeathBar(characterTarget);
 
-            characterTarget._health -= _damage;
-            characterTarget.healthSlider.value = characterTarget._health / gamePlayData.healths[(int)_type];
-            
-            if (characterTarget._health < 0)
+            characterTarget.Model.Health.Value -= Model.Damage; // attack
+            // this.SendCommand(new AttackCommand(characterTarget,this));
+
+            if (characterTarget.Model.IsDeath)
             {
                 SetCharacterDeath(characterTarget);
                 yield break;
             }
 
-            StartCoroutine(AttackIE(characterTarget));
+            AttackTarget(characterTarget);
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (_health < 0)
+            if (Model.IsDeath)
             {
                 SetCharacterDeath(this);
                 return;
@@ -148,7 +165,8 @@ namespace Controllers.Game
                 return;
             }
 
-            if (other.CompareTag(tag) || other.tag.Contains(CONSTANTS.Tag.CircleCollider) ||
+            if (other.CompareTag(tag) || 
+                other.tag.Contains(CONSTANTS.Tag.CircleCollider) ||
                 tag.Contains(CONSTANTS.Tag.CircleCollider))
             {
                 return;
@@ -167,23 +185,24 @@ namespace Controllers.Game
             if (!colliderTarget)
             {
                 var durationMoveToTarget = Utils.GetDurationMoveToTarget(
-                    transform.position.x, 
-                    Source.x, 
-                    Target.x,
+                    transform.position.x,
+                    Model.Source.x,
+                    Model.Target.x,
                     gamePlayData.durationMove);
-                
+
                 transform
-                    .DOMove(new Vector3(_target.x, transform.position.y), durationMoveToTarget)
+                    .DOMove(new Vector3(Model.Target.x, transform.position.y), durationMoveToTarget)
                     .SetEase(Ease.Linear);
                 return;
             }
 
-            if (_characterTarget._health > 0)
+            if (!_characterTarget.Model.IsDeath)
             {
                 return;
             }
 
-            StartCoroutine(AttackIE(colliderTarget.GetComponent<Character>()));
+            var characterTarget = colliderTarget.GetComponent<Character>();
+            AttackTarget(characterTarget);
         }
 
         private Collider2D GetTarget(RaycastHit2D[] hits)

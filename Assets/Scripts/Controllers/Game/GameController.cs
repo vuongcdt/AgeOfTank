@@ -11,7 +11,7 @@ namespace Controllers.Game
     {
         [SerializeField] private GameObject characterPrefab;
         [SerializeField] private GamePlayData gamePlayData;
-        
+
         private void Start()
         {
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
@@ -24,7 +24,7 @@ namespace Controllers.Game
             // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
             // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
             // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            
+
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;
         }
@@ -32,16 +32,22 @@ namespace Controllers.Game
         private void InitEnemy(CONSTANTS.CardCharacterType type)
         {
             this.SendCommand<SetIdEnemy>();
-            var newEnemy = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointTarget, Quaternion.identity, transform);
-            newEnemy.GetComponent<Character>().InitCharacter(type, GamePlayModel.IdEnemy.Value);
+            var newEnemy = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointTarget, Quaternion.identity,
+                transform);
+            var character = newEnemy.GetComponent<Character>();
+
+            character.InitCharacter(type, GamePlayModel.IdEnemy.Value);
             newEnemy.transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
         }
 
         private void InitPlayer(Events.Events.InitCharacter e)
         {
             this.SendCommand<SetIdPlayer>();
-            var newPlayer = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointSource, Quaternion.identity, transform);
-            newPlayer.GetComponent<Character>().InitCharacter(e.Type, GamePlayModel.IdPlayer.Value);
+            var newPlayer = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointSource, Quaternion.identity,
+                transform);
+            var character = newPlayer.GetComponent<Character>();
+
+            character.InitCharacter(e.Type, GamePlayModel.IdPlayer.Value);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Controllers.Game
 
             _characterAttract = other.GetComponentInParent<Character>();
 
-            if (_characterRun.ID <= _characterAttract.ID)
+            if (_characterRun.Model.ID <= _characterAttract.Model.ID)
             {
                 return;
             }
@@ -40,9 +40,9 @@ namespace Controllers.Game
 
         private Vector3 GetNewPointTarget()
         {
-            var offset = (_characterRun.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
-            var offsetCharacter = _characterRun.transform.position.x < _characterRun.Target.x - 0.5f
-                ? (_characterRun.IsPlayer ? Vector3.right : Vector3.left) * 0.5f
+            var offset = (_characterRun.Model.ID % 2 == 0 ? Vector3.up : Vector3.down) * 0.5f;
+            var offsetCharacter = _characterRun.transform.position.x < _characterRun.Model.Target.x - 0.5f
+                ? (_characterRun.Model.IsPlayer ? Vector3.right : Vector3.left) * 0.5f
                 : Vector3.zero;
 
             _newPointTarget = _characterAttract.transform.position + offset + offsetCharacter;
@@ -67,7 +67,7 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterRun.ID <= _characterAttract.ID)
+            if (_characterRun.Model.ID <= _characterAttract.Model.ID)
             {
                 return;
             }
@@ -76,12 +76,12 @@ namespace Controllers.Game
 
             var durationMoveToTarget = Utils.GetDurationMoveToTarget(
                 _characterRun.transform.position.x,
-                _characterRun.Source.x,
-                _characterRun.Target.x,
+                _characterRun.Model.Source.x,
+                _characterRun.Model.Target.x,
                 gamePlayData.durationMove);
 
             _characterRun.transform
-                .DOMove(new Vector3(_characterRun.Target.x, _newPointTarget.y), durationMoveToTarget)
+                .DOMove(new Vector3(_characterRun.Model.Target.x, _newPointTarget.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
     }
