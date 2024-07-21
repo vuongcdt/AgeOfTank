@@ -32,7 +32,7 @@ namespace Controllers.Game
             }
 
             transform.DOKill();
-            
+
             _characterRun.transform
                 .DOMove(GetNewPointTarget(), gamePlayData.durationMove * 0.1f)
                 .SetEase(Ease.Linear);
@@ -74,16 +74,15 @@ namespace Controllers.Game
 
             transform.DOKill();
 
-            _characterRun.transform
-                .DOMove(new Vector3(_characterRun.Target.x, _newPointTarget.y),
-                    GetDurationMoveToTarget())
-                .SetEase(Ease.Linear);
-        }
+            var durationMoveToTarget = Utils.GetDurationMoveToTarget(
+                _characterRun.transform.position.x,
+                _characterRun.Source.x,
+                _characterRun.Target.x,
+                gamePlayData.durationMove);
 
-        private float GetDurationMoveToTarget()
-        {
-            return (_characterRun.transform.position.x - _characterRun.Target.x) /
-                (_characterRun.Source.x - _characterRun.Target.x) * gamePlayData.durationMove;
+            _characterRun.transform
+                .DOMove(new Vector3(_characterRun.Target.x, _newPointTarget.y), durationMoveToTarget)
+                .SetEase(Ease.Linear);
         }
     }
 }

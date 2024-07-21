@@ -48,8 +48,8 @@ namespace Controllers.Game
             tag = _isPlayer ? CONSTANTS.Tag.Player : CONSTANTS.Tag.Enemy;
             name = $"{tag} {id}";
 
-            _health = 11;
-            _damage = 2;
+            _health = gamePlayData.healths[(int)_type];
+            _damage = gamePlayData.damages[(int)_type];
 
             healthBar.SetActive(false);
             transform.position = _source;
@@ -63,42 +63,6 @@ namespace Controllers.Game
             transform
                 .DOMove(_target, gamePlayData.durationMove)
                 .SetEase(Ease.Linear);
-        }
-
-        private IEnumerator AttackIE(Character characterTarget)
-        {
-            _characterTarget = characterTarget;
-            yield return new WaitForSeconds(1f);
-
-            if (!characterTarget)
-            {
-                yield break;
-            }
-
-            // Debug.Log($"{name} ATTACK {characterTarget.name}");
-            if (_health < 0)
-            {
-                yield break;
-            }
-
-            if (!characterTarget.gameObject.activeSelf)
-            {
-                yield break;
-            }
-
-            characterTarget.healthBar.SetActive(true);
-
-            SetSortingOrderHeathBar(characterTarget);
-
-            characterTarget._health -= _damage;
-            characterTarget.healthSlider.value = characterTarget._health / 10;
-            if (characterTarget._health < 0)
-            {
-                SetCharacterDeath(characterTarget);
-                yield break;
-            }
-
-            StartCoroutine(AttackIE(characterTarget));
         }
 
         private void SetSortingOrderHeathBar(Character characterTarget)
@@ -135,6 +99,42 @@ namespace Controllers.Game
             StartCoroutine(AttackIE(characterTarget));
         }
 
+        private IEnumerator AttackIE(Character characterTarget)
+        {
+            _characterTarget = characterTarget;
+            yield return new WaitForSeconds(gamePlayData.attackTime);
+
+            if (!characterTarget)
+            {
+                yield break;
+            }
+
+            if (_health < 0)
+            {
+                yield break;
+            }
+
+            if (!characterTarget.gameObject.activeSelf)
+            {
+                yield break;
+            }
+
+            characterTarget.healthBar.SetActive(true);
+
+            SetSortingOrderHeathBar(characterTarget);
+
+            characterTarget._health -= _damage;
+            characterTarget.healthSlider.value = characterTarget._health / gamePlayData.healths[(int)_type];
+            
+            if (characterTarget._health < 0)
+            {
+                SetCharacterDeath(characterTarget);
+                yield break;
+            }
+
+            StartCoroutine(AttackIE(characterTarget));
+        }
+
         private void OnTriggerExit2D(Collider2D other)
         {
             if (_health < 0)
@@ -162,14 +162,31 @@ namespace Controllers.Game
             var hits = new RaycastHit2D[10];
             _collider.Cast(Vector2.right, hits, gamePlayData.distanceHit, true);
 
-            if (CheckHasTarget(hits)) return;
+            var colliderTarget = GetTarget(hits);
 
-            transform
-                .DOMove(new Vector3(_target.x, transform.position.y), gamePlayData.durationMove)
-                .SetEase(Ease.Linear);
+            if (!colliderTarget)
+            {
+                var durationMoveToTarget = Utils.GetDurationMoveToTarget(
+                    transform.position.x, 
+                    Source.x, 
+                    Target.x,
+                    gamePlayData.durationMove);
+                
+                transform
+                    .DOMove(new Vector3(_target.x, transform.position.y), durationMoveToTarget)
+                    .SetEase(Ease.Linear);
+                return;
+            }
+
+            if (_characterTarget._health > 0)
+            {
+                return;
+            }
+
+            StartCoroutine(AttackIE(colliderTarget.GetComponent<Character>()));
         }
 
-        private bool CheckHasTarget(RaycastHit2D[] hits)
+        private Collider2D GetTarget(RaycastHit2D[] hits)
         {
             foreach (var r in hits)
             {
@@ -193,16 +210,10 @@ namespace Controllers.Game
                     continue;
                 }
 
-                if (_characterTarget._health > 0)
-                {
-                    return true;
-                }
-
-                StartCoroutine(AttackIE(r.collider.GetComponent<Character>()));
-                return true;
+                return r.collider;
             }
 
-            return false;
+            return null;
         }
     }
 }

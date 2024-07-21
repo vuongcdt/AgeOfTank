@@ -1,4 +1,6 @@
-﻿using QFramework;
+﻿using System.Collections.Generic;
+using Controllers.Game;
+using QFramework;
 
 namespace Interfaces
 {
@@ -7,5 +9,6 @@ namespace Interfaces
         public BindableProperty<int> Count { get; }
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
+        public Dictionary<Character,BindableProperty<Character>> Characters { get; }
     }
 }
