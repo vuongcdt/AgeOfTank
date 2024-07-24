@@ -1,7 +1,6 @@
 ﻿using Commands.Game;
 using QFramework;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Rendering;
 using uPools;
 
@@ -10,8 +9,8 @@ namespace Controllers.Game
     public class GameController : BaseGameController
     {
         [SerializeField] private GameObject characterPrefab;
-
-        [SerializeField] private AssetReference refResource = new();
+        [SerializeField] private int playerTotal = 3;
+        [SerializeField] private int enemyTotal = 3;
 
         private void Start()
         {
@@ -24,11 +23,15 @@ namespace Controllers.Game
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
 
-            this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
-            this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
-            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
-            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
-            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            foreach (var i in new int[enemyTotal])
+            {
+                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            }
+
+            foreach (var i in new int[playerTotal])
+            {
+                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.Fighter));
+            }
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;

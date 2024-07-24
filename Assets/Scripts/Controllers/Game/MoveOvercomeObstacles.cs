@@ -11,6 +11,7 @@ namespace Controllers.Game
         private Character _characterRun;
         private Character _characterObstacle;
         private Transform _transformRun;
+        private bool _isMoveTarget;
 
         protected override async void AwaitCustom()
         {
@@ -27,19 +28,29 @@ namespace Controllers.Game
                 return;
             }
 
-            _characterObstacle = other.GetComponentInParent<Character>();
+            var characterObstacle = other.GetComponentInParent<Character>();
 
-            if (_characterRun.Stats.ID <= _characterObstacle.Stats.ID)
+            if (_characterRun.Stats.ID <= characterObstacle.Stats.ID)
             {
                 return;
             }
 
+            _characterObstacle = characterObstacle;
             MoveNewPoint();
         }
 
         private void MoveNewPoint()
         {
-            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
+            if (_isMoveTarget)
+            {
+                // _characterRun.transform.DOKill();
+                return;
+            }
+
+            Debug.Log("MoveNewPoints");
+            _isMoveTarget = true;
+            
+            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
             var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posObstacle = _characterObstacle.transform.position;
 

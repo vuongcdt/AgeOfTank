@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Commands.Game;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Interfaces;
 using QFramework;
@@ -20,14 +21,13 @@ namespace Controllers.Game
         [SerializeField] private LayerMask layerEnemy;
 
         private CharacterConfig _characterConfig;
-        private Collider2D _collider;
         private Character _characterTarget;
+        private Character _characterStay;
 
         public CharacterStats Stats;
 
         protected override async void AwaitCustom()
         {
-            _collider = GetComponent<Collider2D>();
             _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
         }
 
@@ -41,6 +41,10 @@ namespace Controllers.Game
             healthBar.SetActive(false);
             transform.position = Stats.Source;
             transform.DOKill();
+            if (!Stats.IsPlayer)
+            {
+                avatar.flipX = true;
+            }
 
             Stats.Health.Register(newValue =>
             {
@@ -82,14 +86,14 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterTarget && !_characterTarget.Stats.IsDeath)
+            if (_characterTarget)
             {
                 return;
             }
 
-            transform.DOKill();
-
             _characterTarget = other.GetComponent<Character>();
+
+            transform.DOKill();
 
             this.SendCommand(new AttackCommand(_characterTarget, this));
         }
@@ -102,6 +106,7 @@ namespace Controllers.Game
             }
 
             transform.DOKill();
+            // transform.position = new Vector3(5, 0);
             GamePlayModel.Characters.Remove(name);
             _characterTarget = null;
             SharedGameObjectPool.Return(gameObject);
@@ -113,7 +118,7 @@ namespace Controllers.Game
                 Mathf.CeilToInt(10 - transform.position.y * 10);
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private async void OnTriggerExit2D(Collider2D other)
         {
             if (!other)
             {
@@ -127,35 +132,70 @@ namespace Controllers.Game
                 return;
             }
 
-            NextAction();
+            // if (!_characterTarget)
+            // {
+            //     return;
+            // }
+            //
+            // var characterExit = other.GetComponent<Character>();
+            // if (_characterTarget.Stats.ID != characterExit.Stats.ID)
+            // {
+            //     return;
+            // }
+
+            if (!_characterStay)
+            {
+                MoveToTarget();
+                return;
+            }
+
+            if (!_characterStay.Stats.IsDeath)
+            {
+                this.SendCommand(new AttackCommand(_characterStay, this));
+                return;
+            }
+
+            await NextAction();
         }
 
-        private void Update()
+        // private void Update()
+        // {
+        //     var position = transform.position;
+        //     var newPos = new Vector3(Stats.IsPlayer ? position.x + 0.5f : position.x - 0.5f, position.y - 3);
+        //     Debug.DrawLine(newPos, newPos + Vector3.up * 6, Color.green);
+        // }
+
+        private void OnTriggerStay2D(Collider2D other)
         {
-            var position = transform.position;
-            Debug.DrawLine(position, position + (Stats.IsPlayer ? Vector3.right : Vector3.left), Color.green);
+            if (!other)
+            {
+                return;
+            }
+
+            var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
+
+            if (!other.CompareTag(tagOpposition))
+            {
+                return;
+            }
+
+            _characterStay = other.transform.GetComponent<Character>();
         }
 
-        private void NextAction()
+        private async UniTask NextAction()
         {
             if (Stats.IsDeath)
             {
                 return;
             }
 
-            // var hits = new RaycastHit2D[10];
-            // _collider.Cast(Vector2.right, hits, _characterConfig.distanceHit, true);
-            //
-            // var colliderTarget = GetTarget(hits);
+            // await UniTask.WaitForSeconds(0.05f);
+            await UniTask.WaitForEndOfFrame(this);
+
             var layerOpposition = Stats.IsPlayer ? layerEnemy : layerPlayer;
             var position = transform.position;
-            var hit2D = Physics2D.Raycast(position, Stats.IsPlayer ? Vector3.right : Vector3.left,
-                1,
-                layerOpposition);
-            // Debug.Log($"{name} {hit2D.collider.name}");
-            
-            // var collider2Ds = new Collider2D[5];
-            // var size = Physics2D.OverlapCircleNonAlloc(position, 3, collider2Ds, layerOpposition);
+            var newPos = new Vector3(Stats.IsPlayer ? position.x + 0.5f : position.x - 0.5f, position.y - 3);
+            var hit2D = Physics2D.Raycast(newPos, Vector3.up, 6, layerOpposition);
 
             if (!hit2D)
             {
@@ -163,43 +203,17 @@ namespace Controllers.Game
                 return;
             }
 
-            if (!_characterTarget.Stats.IsDeath)
-            {
-                return;
-            }
-
-            var characterTarget = hit2D.collider.gameObject.GetComponent<Character>();
-            this.SendCommand(new AttackCommand(characterTarget, this));
+            transform.DOKill();
+            // MoveToTarget();
+            
+            transform
+                .DOMove(hit2D.collider.transform.position, _characterConfig.durationMove * 0.1f)
+                .SetEase(Ease.Linear);
         }
 
-        private Collider2D GetTarget(RaycastHit2D[] hits)
+        private async void MoveToOpposition()
         {
-            foreach (var hit in hits)
-            {
-                if (!hit.collider)
-                {
-                    continue;
-                }
-
-                if (hit.collider.gameObject.CompareTag(tag))
-                {
-                    continue;
-                }
-
-                if (!_characterTarget)
-                {
-                    continue;
-                }
-
-                if (hit.collider.tag.Contains(CONSTANTS.Tag.CircleCollider))
-                {
-                    continue;
-                }
-
-                return hit.collider;
-            }
-
-            return null;
+            await NextAction();
         }
 
 #if UNITY_EDITOR

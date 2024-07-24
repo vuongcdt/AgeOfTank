@@ -18,13 +18,23 @@ namespace Commands.Game
         {
             base.OnExecute();
             _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
-            InitPlayer();
+            InitCharacter();
         }
 
-        private void InitPlayer()
+        private void InitCharacter()
         {
             var isPlayer = (int)_type < 3;
-            var id = isPlayer ? GamePlayModel.IdPlayer.Value++ : GamePlayModel.IdEnemy.Value++;
+            int id;
+            if (isPlayer)
+            {
+                GamePlayModel.IdPlayer.Value++;
+                id = GamePlayModel.IdPlayer.Value;
+            }
+            else
+            {
+                GamePlayModel.IdEnemy.Value++;
+                id = GamePlayModel.IdEnemy.Value;
+            }
 
             var health = _characterConfig.unitConfigs[(int)_type].health;
             var damage = _characterConfig.unitConfigs[(int)_type].damage;
