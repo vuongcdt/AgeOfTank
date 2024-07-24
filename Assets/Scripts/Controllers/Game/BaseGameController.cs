@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Controllers.Game
 {
-    public class BaseGameController : MonoBehaviour, IController
+    public class BaseGameController : MonoBehaviour, IController,ICanSendEvent
     {
         protected IGamePlayModel GamePlayModel;
         private void Awake()

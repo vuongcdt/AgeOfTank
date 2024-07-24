@@ -1,4 +1,4 @@
-﻿namespace Commands.GamePlayUICommands
+﻿namespace Commands.GamePlayUI
 {
     public class ConsumeFoodNumCommand : BaseCommand
     {
@@ -12,7 +12,7 @@
         protected override void OnExecute()
         {
             base.OnExecute();
-            GamePlayUIModel.FoodNum.Value -= _value;
+            GamePlayModel.FoodNum.Value -= _value;
         }
     }
 }

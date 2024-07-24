@@ -1,18 +1,18 @@
-﻿using Commands.GamePlayUICommands;
+﻿using Commands.GamePlayUI;
+using Controllers.Game;
 using QFramework;
 using Systems;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Controllers.GamePlayUI
+namespace UI
 {
-    public class CardCharacterUIController : BaseGamePlayUiController
+    public class CardCharacterUIController : BaseGameController
     {
         [SerializeField] private Image avatar;
         [SerializeField] private TMP_Text foodNumText;
         [SerializeField] private Image bgCard;
-        [SerializeField] private GameUIData gameUIData;
 
         private CONSTANTS.CardCharacterType _type;
         private int _foodNum;
@@ -20,22 +20,10 @@ namespace Controllers.GamePlayUI
         private readonly Color _colorDisable = new(0.12f, 0.13f, 0.22f, 0.96f);
         private readonly Color _colorActive = new(0.08f, 0.39f, 0.9f, 1);
 
-        public CONSTANTS.CardCharacterType Type
-        {
-            get => _type;
-            set => SetData(value);
-        }
-
         private void Start()
         {
             _button = GetComponent<Button>();
-            GamePlayUIModel.FoodNum.RegisterWithInitValue(CheckFoodNum);
-        }
-
-        private void OnClickCard()
-        {
-            this.SendCommand(new ConsumeFoodNumCommand(_foodNum));
-            this.SendEvent(new Events.Events.InitCharacter(_type));
+            GamePlayModel.FoodNum.RegisterWithInitValue(CheckFoodNum);
         }
 
         private void CheckFoodNum(int newValue)
@@ -44,6 +32,7 @@ namespace Controllers.GamePlayUI
             {
                 foodNumText.color = Color.red;
                 bgCard.color = _colorDisable;
+
                 _button.onClick.RemoveAllListeners();
             }
             else
@@ -56,14 +45,22 @@ namespace Controllers.GamePlayUI
             }
         }
 
-        private void SetData(CONSTANTS.CardCharacterType type)
+        private void OnClickCard()
         {
+            this.SendCommand(new ConsumeFoodNumCommand(_foodNum));
+            this.SendEvent(new Events.Events.InitCharacter(_type));
+        }
+
+        public async void InitCard(CONSTANTS.CardCharacterType type)
+        {
+            var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
+
             _type = type;
             foodNumText.color = Color.red;
             bgCard.color = _colorDisable;
 
-            avatar.sprite = gameUIData.imgAvatar[(int)type];
-            _foodNum = gameUIData.foodNumCards[(int)type];
+            avatar.sprite = characterConfig.unitConfigs[(int)type].imgAvatar;
+            _foodNum = characterConfig.unitConfigs[(int)type].foodNum;
             foodNumText.text = _foodNum.ToString();
         }
     }

@@ -17,5 +17,9 @@
         public const string CircleCollider = nameof(CircleCollider);
     }
 
-    
+    public enum Layer
+    {
+        Player = 6,
+        Enemy,
+    }
 }

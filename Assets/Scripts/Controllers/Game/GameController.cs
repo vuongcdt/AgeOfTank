@@ -1,7 +1,7 @@
 ﻿using Commands.Game;
 using QFramework;
-using Systems;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Rendering;
 using uPools;
 
@@ -10,44 +10,38 @@ namespace Controllers.Game
     public class GameController : BaseGameController
     {
         [SerializeField] private GameObject characterPrefab;
-        [SerializeField] private GamePlayData gamePlayData;
+
+        [SerializeField] private AssetReference refResource = new();
 
         private void Start()
         {
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
-            this.RegisterEvent<Events.Events.InitCharacter>(InitPlayer);
+            this.RegisterEvent<Events.Events.InitCharacter>(e =>
+            {
+                this.SendCommand(new InitCharacterCommand(e.Type));
+            });
 
-            InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
-            // InitEnemy(CONSTANTS.CardCharacterType.FighterEnemy);
+            GamePlayModel.InitCharacterKey.Register(RenderCharacter);
+
+            this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+            // this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;
         }
 
-        private void InitEnemy(CONSTANTS.CardCharacterType type)
+        private void RenderCharacter(string newKey)
         {
-            this.SendCommand<SetIdEnemy>();
-            var newEnemy = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointTarget, Quaternion.identity,
-                transform);
-            var character = newEnemy.GetComponent<Character>();
+            var parent = transform;
+            var newCharacter =
+                SharedGameObjectPool.Rent(characterPrefab, parent.position, Quaternion.identity, parent);
+            var character = newCharacter.GetComponent<Character>();
 
-            character.InitCharacter(type, GamePlayModel.IdEnemy.Value);
-            newEnemy.transform.rotation = Quaternion.AngleAxis(180, Vector3.up);
-        }
-
-        private void InitPlayer(Events.Events.InitCharacter e)
-        {
-            this.SendCommand<SetIdPlayer>();
-            var newPlayer = SharedGameObjectPool.Rent(characterPrefab, gamePlayData.pointSource, Quaternion.identity,
-                transform);
-            var character = newPlayer.GetComponent<Character>();
-
-            character.InitCharacter(e.Type, GamePlayModel.IdPlayer.Value);
+            character.InitCharacter(newKey);
         }
     }
 }

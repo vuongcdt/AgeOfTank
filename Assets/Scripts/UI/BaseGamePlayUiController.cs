@@ -2,15 +2,15 @@
 using QFramework;
 using UnityEngine;
 
-namespace Controllers.GamePlayUI
+namespace UI
 {
     public class BaseGamePlayUiController : MonoBehaviour, IController, ICanSendEvent
     {
-        protected IGamePlayUIModel GamePlayUIModel;
+        protected IGamePlayModel GamePlayModel;
 
         private void Awake()
         {
-            GamePlayUIModel = this.GetModel<IGamePlayUIModel>();
+            GamePlayModel = this.GetModel<IGamePlayModel>();
         }
 
         public IArchitecture GetArchitecture()
@@ -20,7 +20,7 @@ namespace Controllers.GamePlayUI
 
         private void OnDestroy()
         {
-            GamePlayUIModel = null;
+            GamePlayModel = null;
         }
     }
 }

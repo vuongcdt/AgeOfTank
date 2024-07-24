@@ -1,20 +1,28 @@
 ﻿using System.Collections.Generic;
-using Controllers.Game;
 using Interfaces;
 using QFramework;
 
 namespace Models
 {
-    public class GamePlayModel:AbstractModel,IGamePlayModel
+    public class GamePlayModel : AbstractModel, IGamePlayModel
     {
         public BindableProperty<int> Count { get; }
         public BindableProperty<int> IdPlayer { get; } = new(0);
         public BindableProperty<int> IdEnemy { get; } = new(0);
+        public BindableProperty<int> FoodNum { get; } = new(500);
+        public Dictionary<string, CharacterStats> Characters { get; } = new();
+        public BindableProperty<string> InitCharacterKey { get; } = new();
+        public BindableProperty<float> ProductFoodProgress { get; } = new();
 
-        public Dictionary<string, CharacterModel> Characters { get; } = new();
 
         protected override void OnInit()
         {
+        }
+
+        private void SpawnUnit()
+        {
+            // Characters.Add();
+            // event
         }
     }
 }

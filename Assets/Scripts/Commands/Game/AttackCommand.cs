@@ -1,4 +1,5 @@
 ﻿using Controllers.Game;
+using Cysharp.Threading.Tasks;
 
 namespace Commands.Game
 {
@@ -13,10 +14,34 @@ namespace Commands.Game
             _characterAttack = characterAttack;
         }
 
-        protected override void OnExecute()
+        protected override async void OnExecute()
         {
             base.OnExecute();
-            _characterTarget.Model.Health.Value -= _characterAttack.Model.Damage;
+            await AttackTarget();
+        }
+
+        private async UniTask AttackTarget()
+        {
+            await AttackAsync();
+        }
+
+        private async UniTask AttackAsync()
+        {
+            await UniTask.WaitForSeconds(CharacterConfig.attackTime);
+
+            if (!_characterTarget)
+            {
+                return;
+            }
+
+            if (_characterTarget.Stats.IsDeath || _characterAttack.Stats.IsDeath)
+            {
+                return;
+            }
+
+            _characterTarget.Stats.Health.Value -= _characterAttack.Stats.Damage;
+
+            await AttackTarget();
         }
     }
 }

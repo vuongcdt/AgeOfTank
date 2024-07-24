@@ -11,5 +11,8 @@
                 Type = type;
             }
         }
+        public struct InitConfigSystemEvent
+        {
+        }
     }
 }

@@ -8,10 +8,12 @@ public class App : Architecture<App>
 {
     protected override void Init()
     {
-        this.RegisterModel<IGamePlayUIModel>(new GamePlayUIModel());
-        this.RegisterModel<IGamePlayModel>(new GamePlayModel());
+        RegisterModel<IGamePlayModel>(new GamePlayModel());
         
-        this.RegisterSystem<IGameSystem>(new GameSystem());
-        this.RegisterUtility<IGameStorage>(new GameStorage());
+        RegisterSystem<IGameSystem>(new GameSystem());
+        RegisterSystem(new ConfigSystem());
+        RegisterSystem(new FoodFactorySystem());
+        
+        RegisterUtility<IGameStorage>(new GameStorage());
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Controllers.Game;
 using QFramework;
 using UnityEngine;
 
@@ -10,10 +9,13 @@ namespace Interfaces
         public BindableProperty<int> Count { get; }
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
-        public Dictionary<string, CharacterModel> Characters { get; }
+        public Dictionary<string, CharacterStats> Characters { get; }
+        public BindableProperty<string> InitCharacterKey { get; }
+        public BindableProperty<float> ProductFoodProgress { get; }
+        public BindableProperty<int> FoodNum { get; }
     }
 
-    public class CharacterModel
+    public class CharacterStats
     {
         public BindableProperty<float> Health;
         public int ID;
@@ -21,19 +23,24 @@ namespace Interfaces
         public Vector3 Target;
         public Vector3 Source;
         public bool IsPlayer;
+        public string Tag;
+        public string Name;
+        
         public bool IsDeath => Health.Value < 0;
         public CONSTANTS.CardCharacterType Type;
 
-        public CharacterModel(float health, int id, float damage, Vector3 target, Vector3 source,
-            CONSTANTS.CardCharacterType type)
+        public CharacterStats(float health, int id, float damage, Vector3 target, Vector3 source,
+             string tag, string name, CONSTANTS.CardCharacterType type)
         {
             Health = new BindableProperty<float>(health);
             ID = id;
             Damage = damage;
             Target = target;
             Source = source;
-            Type = type;
             IsPlayer = (int)type < 3;
+            Tag = tag;
+            Name = name;
+            Type = type;
         }
     }
 }

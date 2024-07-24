@@ -1,17 +1,18 @@
 ﻿using Interfaces;
 using QFramework;
+using Systems;
 
 namespace Commands
 {
     public class BaseCommand : AbstractCommand
     {
-        protected IGamePlayUIModel GamePlayUIModel;
         protected IGamePlayModel GamePlayModel;
+        protected CharacterConfig CharacterConfig;
 
-        protected override void OnExecute()
+        protected override async void OnExecute()
         {
-            GamePlayUIModel = this.GetModel<IGamePlayUIModel>();
             GamePlayModel = this.GetModel<IGamePlayModel>();
+            CharacterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
         }
     }
 }
