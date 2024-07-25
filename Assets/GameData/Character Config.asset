@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointSource: {x: -2.2, y: 0, z: 0}
   pointTarget: {x: 2.2, y: 0, z: 0}
-  durationMove: 20
+  durationMove: 10
   distanceHit: 0.2
-  attackTime: 1
+  attackTime: 2
   unitConfigs:
   - health: 21
     damage: 2
@@ -26,8 +26,8 @@ MonoBehaviour:
     damage: 2
     imgAvatar: {fileID: 21300000, guid: d744e19ab4cb14b8892c6e354cbebfbc, type: 3}
     foodNum: 5
-  - health: 21
-    damage: 2
+  - health: 41
+    damage: 4
     imgAvatar: {fileID: 21300000, guid: 2f032c47475ba4f179838a564bfdc5ce, type: 3}
     foodNum: 7
   - health: 21
@@ -38,7 +38,7 @@ MonoBehaviour:
     damage: 2
     imgAvatar: {fileID: 21300000, guid: 2dcd28bb7cfb949149c8918430385677, type: 3}
     foodNum: 0
-  - health: 21
-    damage: 2
+  - health: 41
+    damage: 4
     imgAvatar: {fileID: 21300000, guid: 103501f2587024027bc7212ff181c60f, type: 3}
     foodNum: 0

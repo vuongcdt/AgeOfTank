@@ -1,5 +1,6 @@
 ﻿using Controllers.Game;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Commands.Game
@@ -28,8 +29,8 @@ namespace Commands.Game
 
         private async UniTask AttackAsync()
         {
+            // _characterAttack.transform.DOKill();
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
-
             if (!_characterTarget)
             {
                 return;
