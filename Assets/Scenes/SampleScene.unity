@@ -988,6 +988,8 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  playerTotal: 5
+  enemyTotal: 5
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0
