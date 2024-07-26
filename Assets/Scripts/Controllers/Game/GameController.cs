@@ -30,7 +30,7 @@ namespace Controllers.Game
 
             foreach (var i in new int[playerTotal])
             {
-                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.Warrior));
+                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.Fighter));
             }
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;

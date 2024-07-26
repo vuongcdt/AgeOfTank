@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Commands.Game;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Interfaces;
 using QFramework;
@@ -20,7 +18,7 @@ namespace Controllers.Game
         [SerializeField] private GameObject healthBar;
         [SerializeField] private LayerMask layerPlayer;
         [SerializeField] private LayerMask layerEnemy;
-        [SerializeField] private bool isLogLine;
+        [SerializeField] private bool isGreenLine;
         [SerializeField] private bool isMoveTarget;
 
         private CharacterConfig _characterConfig;
@@ -39,18 +37,18 @@ namespace Controllers.Game
 
         public void InitCharacter(string key)
         {
+            var idText = GetComponentInChildren<TextMesh>();
             Stats = GamePlayModel.Characters[key];
             avatar.sprite = _characterConfig.unitConfigs[(int)Stats.Type].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
+            idText.text = Stats.ID.ToString();
+
             gameObject.layer = Stats.IsPlayer ? (int)CONSTANTS.Layer.Player : (int)CONSTANTS.Layer.Enemy;
             healthBar.SetActive(false);
             transform.position = Stats.Source;
             transform.DOKill();
-            if (!Stats.IsPlayer)
-            {
-                avatar.flipX = true;
-            }
+            avatar.flipX = !Stats.IsPlayer;
 
             Stats.Health.Register(newValue =>
             {
@@ -76,7 +74,6 @@ namespace Controllers.Game
                 return;
             }
 
-            // transform.DOKill();
             isMoveTarget = true;
             var position = transform.position;
             var durationMoveToTarget = Utils.GetDurationMoveToTarget(
@@ -130,23 +127,6 @@ namespace Controllers.Game
             this.SendCommand(new AttackCommand(characterEnter, this));
         }
 
-        // private void OnTriggerStay2D(Collider2D other)
-        // {
-        //     if (!other)
-        //     {
-        //         return;
-        //     }
-        //
-        //     var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
-        //
-        //     if (!other.CompareTag(tagOpposition))
-        //     {
-        //         return;
-        //     }
-        //
-        //     _characterStay = other.transform.GetComponent<Character>();
-        // }
-
         private void OnTriggerExit2D(Collider2D other)
         {
             var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
@@ -179,7 +159,6 @@ namespace Controllers.Game
                 }
             }
 
-            // _characterTarget = null;
             NextAction();
         }
 
@@ -200,7 +179,6 @@ namespace Controllers.Game
             Vector3 pointMinDistance = new Vector3();
             float minDistance = 10;
 
-            Debug.Log($"{name} {collider2Ds.Length}");
             foreach (var col2D in collider2Ds)
             {
                 if (!col2D)
@@ -218,15 +196,13 @@ namespace Controllers.Game
 
             if (collider2Ds.Length == 0)
             {
-                Debug.Log($"MoveToTarget {name}");
                 MoveToTarget();
                 return;
             }
 
-            var durationMove = minDistance * (_characterConfig.durationMove * 0.1f);
+            var durationMove = 0.5f / minDistance * (_characterConfig.durationMove * 0.1f);
             var newPoint = new Vector3(Stats.IsPlayer ? pointMinDistance.x - 0.6f : pointMinDistance.x + 0.6f,
                 pointMinDistance.y);
-            Debug.Log($"MoveNewPoint {name} position {transform.position} newPoint {newPoint} pointMinDistance {pointMinDistance} durationMove {durationMove}");
             MoveNewPoint(newPoint, durationMove);
         }
 
@@ -256,7 +232,7 @@ namespace Controllers.Game
             var circleCollider = GetComponent<CircleCollider2D>();
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, circleCollider.radius);
-            if (!isLogLine)
+            if (!isGreenLine)
             {
                 return;
             }

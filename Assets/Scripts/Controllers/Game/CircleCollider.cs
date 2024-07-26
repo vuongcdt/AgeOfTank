@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using QFramework;
+using Systems;
+using UnityEngine;
 
 namespace Controllers.Game
 {
@@ -14,16 +16,7 @@ namespace Controllers.Game
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            // if (!other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
-            //     !other.tag.Contains(CONSTANTS.Tag.CircleCollider))
-            // {
-            //     return;
-            // }
-
-            if (!other.CompareTag(tag))
-            {
-                return;
-            }
+            if (IsCircleColliderTag(other)) return;
 
             var characterObstacle = other.GetComponentInParent<Character>();
 
@@ -41,27 +34,37 @@ namespace Controllers.Game
             MoveOvercomeObstacles();
         }
 
-        private void MoveOvercomeObstacles()
+        // private async void MoveOvercomeObstacles()
+        // {
+        //     var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.25f;
+        //     var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.7f;
+        //     var posObstacle = _characterObstacle.transform.position;
+        //     var offsetNearTarget =
+        //         Mathf.Abs(_characterRun.Stats.Target.x - _characterRun.transform.position.x) < 0.5f
+        //             ? Vector3.zero
+        //             : offsetCharacter;
+        //     var newPoint = posObstacle + offset + offsetNearTarget;
+        //     var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
+        //
+        //     _characterRun.MoveNewPoint(newPoint, characterConfig.durationMove * 0.15f);
+        // }
+
+        private async void MoveOvercomeObstacles()
         {
-            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
+        
+            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.5f;
+            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.75f;
             var posObstacle = _characterObstacle.transform.position;
-            var offsetNearTarget =
-                Mathf.Abs(_characterRun.Stats.Target.x) - Mathf.Abs(_characterRun.transform.position.x) < 0.5f
-                    ? offsetCharacter
-                    : Vector3.zero;
-            var newPoint = posObstacle + offset + offsetNearTarget;
-
-            _characterRun.MoveNewPoint(newPoint);
+        
+            var newPointTarget = posObstacle + offset + offsetCharacter;
+          
+            _characterRun.MoveNewPoint(newPointTarget, characterConfig.durationMove * 0.15f);
         }
-
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!other.CompareTag(tag))
-            {
-                return;
-            }
+            if (IsCircleColliderTag(other)) return;
 
             var characterStay = other.GetComponentInParent<Character>();
             if (characterStay.Stats.ID > _characterRun.Stats.ID)
@@ -74,11 +77,7 @@ namespace Controllers.Game
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
-                !other.tag.Contains(CONSTANTS.Tag.CircleCollider))
-            {
-                return;
-            }
+            if (IsCircleColliderTag(other)) return;
 
             if (!_characterObstacle)
             {
@@ -103,6 +102,12 @@ namespace Controllers.Game
             }
 
             _characterRun.MoveToTarget();
+        }
+
+        private bool IsCircleColliderTag(Collider2D other)
+        {
+            return !other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
+                   !other.tag.Contains(CONSTANTS.Tag.CircleCollider);
         }
     }
 }
