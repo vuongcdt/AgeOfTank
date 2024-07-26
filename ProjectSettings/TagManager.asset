@@ -7,6 +7,13 @@ TagManager:
   - Enemy
   - CircleCollider
   - ColliderHunter
+  - WarriorColliderEnemy
+  - HunterColliderEnemy
+  - HunterColliderPlayer
+  - WarriorColliderPlayer
+  - SameTypeCollider
+  - HunterCollider
+  - WarriorCollider
   layers:
   - Default
   - TransparentFX

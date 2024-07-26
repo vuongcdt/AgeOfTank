@@ -954,7 +954,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &993833378
 Transform:
   m_ObjectHideFlags: 0
@@ -983,8 +983,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
-  playerTotal: 11
-  enemyTotal: 11
+  playerTotal: 7
+  enemyTotal: 7
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1406,6 +1406,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1705819377
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1705819379}
+  - component: {fileID: 1705819378}
+  m_Layer: 0
+  m_Name: GameTest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1705819378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705819377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d91eb45976bc7cd498dffbfb9c7b257a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objPrefab: {fileID: 5477925782892730006, guid: 1a352e5e5d9e2b142970690c14fa7d0a, type: 3}
+--- !u!4 &1705819379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705819377}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.19524719, y: -0.106498465, z: -0.008545195}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1418,3 +1463,4 @@ SceneRoots:
   - {fileID: 993833378}
   - {fileID: 1271383143}
   - {fileID: 341997607}
+  - {fileID: 1705819379}
