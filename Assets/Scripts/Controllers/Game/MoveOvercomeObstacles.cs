@@ -33,10 +33,12 @@ namespace Controllers.Game
             {
                 return;
             }
+
             if (!_characterRun.IsMoveTarget)
             {
                 return;
             }
+
             MoveNewPoint();
         }
 
@@ -94,10 +96,12 @@ namespace Controllers.Game
             {
                 return;
             }
+
             if (!_characterRun.IsMoveTarget)
             {
                 return;
             }
+
             _transformRun.DOKill();
             MoveToTarget();
         }

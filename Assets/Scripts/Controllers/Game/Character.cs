@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using Commands.Game;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using Interfaces;
 using QFramework;
 using Systems;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
 
@@ -37,12 +37,12 @@ namespace Controllers.Game
 
         public void InitCharacter(string key)
         {
-            var idText = GetComponentInChildren<TextMesh>();
+            // var idText = GetComponent<TextMesh>();
             Stats = GamePlayModel.Characters[key];
             avatar.sprite = _characterConfig.unitConfigs[(int)Stats.Type].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
-            idText.text = Stats.ID.ToString();
+            // idText.text = Stats.ID.ToString();
 
             gameObject.layer = Stats.IsPlayer ? (int)CONSTANTS.Layer.Player : (int)CONSTANTS.Layer.Enemy;
             healthBar.SetActive(false);
@@ -63,7 +63,6 @@ namespace Controllers.Game
 
                 healthSlider.value = newValue / _characterConfig.unitConfigs[(int)Stats.Type].health;
             });
-
             MoveToTarget();
         }
 
@@ -73,8 +72,8 @@ namespace Controllers.Game
             {
                 return;
             }
-
             isMoveTarget = true;
+
             var position = transform.position;
             var durationMoveToTarget = Utils.GetDurationMoveToTarget(
                 position.x,
@@ -162,7 +161,7 @@ namespace Controllers.Game
             NextAction();
         }
 
-        private void NextAction()
+        private async void NextAction()
         {
             if (Stats.IsDeath)
             {
@@ -196,6 +195,10 @@ namespace Controllers.Game
 
             if (collider2Ds.Length == 0)
             {
+                isMoveTarget = true;
+                enabled = false;
+                await UniTask.WaitForEndOfFrame(this);
+                enabled = true;
                 MoveToTarget();
                 return;
             }
