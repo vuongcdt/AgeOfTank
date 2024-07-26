@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointSource: {x: -2.2, y: 0, z: 0}
   pointTarget: {x: 2.2, y: 0, z: 0}
-  durationMove: 10
+  durationMove: 20
   distanceHit: 0.2
   attackTime: 2
   unitConfigs:
