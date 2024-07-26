@@ -39,21 +39,22 @@ namespace Controllers.Game
 
         private void MoveNewPoint()
         {
-            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.25f;
+            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.7f;
             var posObstacle = _characterObstacle.transform.position;
 
             var newPointTarget = posObstacle + offset + offsetCharacter;
 
             _transformRun
-                .DOMove(newPointTarget, _characterConfig.durationMove * 0.1f)
+                .DOMove(newPointTarget, _characterConfig.durationMove * 0.15f)
                 .SetEase(Ease.Linear);
         }
 
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!other.CompareTag(tag))
+            if (!other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
+                !other.tag.Contains(CONSTANTS.Tag.CircleCollider))
             {
                 return;
             }

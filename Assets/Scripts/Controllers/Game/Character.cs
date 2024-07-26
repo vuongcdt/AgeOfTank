@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Commands.Game;
+﻿using Commands.Game;
 using DG.Tweening;
 using Interfaces;
 using QFramework;
@@ -18,6 +16,7 @@ namespace Controllers.Game
         [SerializeField] private GameObject healthBar;
         [SerializeField] private LayerMask layerPlayer;
         [SerializeField] private LayerMask layerEnemy;
+        [SerializeField] private TextMesh idText;
 
         private CharacterConfig _characterConfig;
         private Collider2D _collider;
@@ -37,6 +36,8 @@ namespace Controllers.Game
             avatar.sprite = _characterConfig.unitConfigs[(int)Stats.Type].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
+            // var idText = GetComponentInChildren<Text>();
+            idText.text = Stats.ID.ToString();
             gameObject.layer = Stats.IsPlayer ? (int)CONSTANTS.Layer.Player : (int)CONSTANTS.Layer.Enemy;
             healthBar.SetActive(false);
             transform.position = Stats.Source;
@@ -75,6 +76,7 @@ namespace Controllers.Game
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            
             var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
 
             if (!other.CompareTag(tagOpposition))
@@ -128,12 +130,6 @@ namespace Controllers.Game
             }
 
             NextAction();
-        }
-
-        private void Update()
-        {
-            var position = transform.position;
-            Debug.DrawLine(position, position + (Stats.IsPlayer ? Vector3.right : Vector3.left), Color.green);
         }
 
         private void NextAction()

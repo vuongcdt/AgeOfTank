@@ -983,13 +983,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
-  refResource:
-    m_AssetGUID: e7d1942658a41b64296fc560f0531306
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
-  playerTotal: 5
-  enemyTotal: 5
+  playerTotal: 11
+  enemyTotal: 11
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0

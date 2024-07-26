@@ -1,4 +1,6 @@
-﻿using Commands.Game;
+﻿using System.Collections;
+using Commands.Game;
+using Cysharp.Threading.Tasks;
 using QFramework;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -30,13 +32,18 @@ namespace Controllers.Game
                 this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
             }
 
+            StartCoroutine(TestPlayer());
+            GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
+            GraphicsSettings.transparencySortAxis = Vector3.up;
+        }
+
+        private IEnumerator TestPlayer()
+        {
+            yield return new WaitForSeconds(0.1f);
             foreach (var i in new int[playerTotal])
             {
                 this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.Warrior));
             }
-
-            GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
-            GraphicsSettings.transparencySortAxis = Vector3.up;
         }
 
         private void RenderCharacter(string newKey)
