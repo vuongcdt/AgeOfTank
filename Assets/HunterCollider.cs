@@ -2,7 +2,7 @@ using DG.Tweening;
 using UnityEngine;
 using Utilities;
 
-public class WarriorCollider : MonoBehaviour
+public class HunterCollider : MonoBehaviour
 {
     private Actor _actor;
 
@@ -14,16 +14,22 @@ public class WarriorCollider : MonoBehaviour
     private void Init()
     {
         _actor = GetComponentInParent<Actor>();
+
+        var isHunterClass = (int)_actor.typeClass % 3 == 1;
+        gameObject.SetActive(isHunterClass);
+
         tag = _actor.type == ENUMS.CharacterType.Player
-            ? CONSTANS.Tag.WarriorColliderPlayer
-            : CONSTANS.Tag.WarriorColliderEnemy;
+            ? CONSTANS.Tag.HunterColliderPlayer
+            : CONSTANS.Tag.HunterColliderEnemy;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(_actor.type == ENUMS.CharacterType.Player
-                ? CONSTANS.Tag.WarriorColliderEnemy
-                : CONSTANS.Tag.WarriorColliderPlayer))
+        var opposingTag = _actor.type == ENUMS.CharacterType.Player
+            ? CONSTANS.Tag.WarriorColliderEnemy
+            : CONSTANS.Tag.WarriorColliderPlayer;
+
+        if (other.CompareTag(opposingTag))
         {
             _actor.Attack();
         }

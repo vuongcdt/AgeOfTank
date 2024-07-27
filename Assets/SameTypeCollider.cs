@@ -1,47 +1,66 @@
-using System;
-using DG.Tweening;
 using UnityEngine;
+using Utilities;
 
 public class SameTypeCollider : MonoBehaviour
 {
+    private Actor _actor;
+
+    private void Awake()
+    {
+        _actor = GetComponentInParent<Actor>();
+        tag = CONSTANS.Tag.SameTypeCollider;
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var actor = GetComponentInParent<Actor>();
-        if (GetInstanceID() > other.GetInstanceID())
+        var actorCollider = other.GetComponentInParent<Actor>();
+        if (_actor.id > actorCollider.id)
+        {
+            return;
+        }
+
+        if (actorCollider.isAttack)
         {
             return;
         }
 
         if (other.CompareTag(tag) &&
-            tag.Contains(CONSTANTS.Tag.SameTypeCollider))
+            tag.Contains(CONSTANS.Tag.SameTypeCollider))
         {
             var pos = transform.position;
-            actor.transform.DOKill();
-            actor.transform.DOMove(new Vector3(pos.x - 0.5f, -1.5f), 2f);
+            _actor.StopMove();
+            _actor.MoveToPoint(new Vector3(pos.x, -1f), 2f);
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        var actor = GetComponentInParent<Actor>();
-        if (GetInstanceID() > other.GetInstanceID())
+        var actorCollider = other.GetComponentInParent<Actor>();
+        if (!actorCollider)
+        {
+            return;
+        }
+
+        if (_actor.id > actorCollider.id)
         {
             return;
         }
 
         if (other.CompareTag(tag) &&
-            tag.Contains(CONSTANTS.Tag.SameTypeCollider))
+            tag.Contains(CONSTANS.Tag.SameTypeCollider))
         {
-            Debug.Log($"EXIT {actor.tag} {tag} {other.tag}");
-            actor.transform.DOMove(Vector3.left * 2, 10f);
+            _actor.StopMove();
+            _actor.MoveToPoint((_actor.type == ENUMS.CharacterType.Player ? Vector3.right : Vector3.left) * 2, 15f);
         }
     }
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        var col = GetComponent<CircleCollider2D>();
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, col.radius);
+        var position = transform.position;
+        Gizmos.DrawWireSphere(new Vector3(position.x + 0.125f, position.y), 0.125f);
+        Gizmos.DrawWireSphere(new Vector3(position.x - 0.125f, position.y), 0.125f);
     }
 #endif
 }

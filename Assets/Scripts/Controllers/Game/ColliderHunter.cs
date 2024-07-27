@@ -2,7 +2,7 @@
 
 namespace Controllers.Game
 {
-    public class HunterCollider:BaseGameController
+    public class ColliderHunter:BaseGameController
     {
         private void OnTriggerEnter2D(Collider2D other)
         {

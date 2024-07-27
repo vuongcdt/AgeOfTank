@@ -14,7 +14,7 @@ namespace UI
         [SerializeField] private TMP_Text foodNumText;
         [SerializeField] private Image bgCard;
 
-        private CONSTANTS.CardCharacterType _type;
+        private ENUMS.CharacterTypeClass _typeClass;
         private int _foodNum;
         private Button _button;
         private readonly Color _colorDisable = new(0.12f, 0.13f, 0.22f, 0.96f);
@@ -48,19 +48,19 @@ namespace UI
         private void OnClickCard()
         {
             this.SendCommand(new ConsumeFoodNumCommand(_foodNum));
-            this.SendEvent(new Events.Events.InitCharacter(_type));
+            this.SendEvent(new Events.Events.InitCharacter(_typeClass));
         }
 
-        public async void InitCard(CONSTANTS.CardCharacterType type)
+        public async void InitCard(ENUMS.CharacterTypeClass typeClass)
         {
             var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
 
-            _type = type;
+            _typeClass = typeClass;
             foodNumText.color = Color.red;
             bgCard.color = _colorDisable;
 
-            avatar.sprite = characterConfig.unitConfigs[(int)type].imgAvatar;
-            _foodNum = characterConfig.unitConfigs[(int)type].foodNum;
+            avatar.sprite = characterConfig.unitConfigs[(int)typeClass].imgAvatar;
+            _foodNum = characterConfig.unitConfigs[(int)typeClass].foodNum;
             foodNumText.text = _foodNum.ToString();
         }
     }

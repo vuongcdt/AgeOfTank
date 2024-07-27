@@ -1,6 +1,7 @@
 ﻿using QFramework;
 using Systems;
 using UnityEngine;
+using Utilities;
 
 namespace Controllers.Game
 {
@@ -106,8 +107,8 @@ namespace Controllers.Game
 
         private bool IsCircleColliderTag(Collider2D other)
         {
-            return !other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
-                   !other.tag.Contains(CONSTANTS.Tag.CircleCollider);
+            return !other.CompareTag(tag) || !tag.Contains(CONSTANS.Tag.CircleCollider) ||
+                   !other.tag.Contains(CONSTANS.Tag.CircleCollider);
         }
     }
 }

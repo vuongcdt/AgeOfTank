@@ -4,11 +4,11 @@
     {
         public struct InitCharacter
         {
-            public CONSTANTS.CardCharacterType Type;
+            public ENUMS.CharacterTypeClass TypeClass;
 
-            public InitCharacter(CONSTANTS.CardCharacterType type)
+            public InitCharacter(ENUMS.CharacterTypeClass typeClass)
             {
-                Type = type;
+                TypeClass = typeClass;
             }
         }
         public struct InitConfigSystemEvent

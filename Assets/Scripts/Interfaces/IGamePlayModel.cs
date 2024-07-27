@@ -27,20 +27,20 @@ namespace Interfaces
         public string Name;
         
         public bool IsDeath => Health.Value < 0;
-        public CONSTANTS.CardCharacterType Type;
+        public ENUMS.CharacterTypeClass TypeClass;
 
         public CharacterStats(float health, int id, float damage, Vector3 target, Vector3 source,
-             string tag, string name, CONSTANTS.CardCharacterType type)
+             string tag, string name, ENUMS.CharacterTypeClass typeClass)
         {
             Health = new BindableProperty<float>(health);
             ID = id;
             Damage = damage;
             Target = target;
             Source = source;
-            IsPlayer = (int)type < 3;
+            IsPlayer = (int)typeClass < 3;
             Tag = tag;
             Name = name;
-            Type = type;
+            TypeClass = typeClass;
         }
     }
 }

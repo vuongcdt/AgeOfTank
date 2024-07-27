@@ -2,6 +2,7 @@
 using QFramework;
 using Systems;
 using UnityEngine;
+using Utilities;
 
 namespace Controllers.Game
 {
@@ -21,8 +22,8 @@ namespace Controllers.Game
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
-                !other.tag.Contains(CONSTANTS.Tag.CircleCollider))
+            if (!other.CompareTag(tag) || !tag.Contains(CONSTANS.Tag.CircleCollider) ||
+                !other.tag.Contains(CONSTANS.Tag.CircleCollider))
             {
                 return;
             }
@@ -58,8 +59,8 @@ namespace Controllers.Game
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!other.CompareTag(tag) || !tag.Contains(CONSTANTS.Tag.CircleCollider) ||
-                !other.tag.Contains(CONSTANTS.Tag.CircleCollider))
+            if (!other.CompareTag(tag) || !tag.Contains(CONSTANS.Tag.CircleCollider) ||
+                !other.tag.Contains(CONSTANS.Tag.CircleCollider))
             {
                 return;
             }

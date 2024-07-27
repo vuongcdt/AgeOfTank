@@ -29,7 +29,7 @@ namespace UI
         {
             for (var index = 0; index < cards.Length; index++)
             {
-                cards[index].InitCard((CONSTANTS.CardCharacterType)index);
+                cards[index].InitCard((ENUMS.CharacterTypeClass)index);
             }
         }
 

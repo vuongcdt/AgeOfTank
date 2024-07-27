@@ -33,9 +33,9 @@ namespace Systems
             return _characterConfig;
         }
 
-        public float GetCharacterHealConfig(CONSTANTS.CardCharacterType type)
+        public float GetCharacterHealConfig(ENUMS.CharacterTypeClass typeClass)
         {
-            return _characterConfig.unitConfigs[(int)type].health;
+            return _characterConfig.unitConfigs[(int)typeClass].health;
         }
     }
 }

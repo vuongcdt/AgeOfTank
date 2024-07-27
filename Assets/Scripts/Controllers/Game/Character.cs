@@ -8,6 +8,7 @@ using Systems;
 using UnityEngine;
 using UnityEngine.UI;
 using uPools;
+using Utilities;
 
 namespace Controllers.Game
 {
@@ -39,12 +40,12 @@ namespace Controllers.Game
         {
             // var idText = GetComponent<TextMesh>();
             Stats = GamePlayModel.Characters[key];
-            avatar.sprite = _characterConfig.unitConfigs[(int)Stats.Type].imgAvatar;
+            avatar.sprite = _characterConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
             // idText.text = Stats.ID.ToString();
 
-            gameObject.layer = Stats.IsPlayer ? (int)CONSTANTS.Layer.Player : (int)CONSTANTS.Layer.Enemy;
+            gameObject.layer = Stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
             transform.position = Stats.Source;
             transform.DOKill();
@@ -61,7 +62,7 @@ namespace Controllers.Game
                 healthBar.SetActive(true);
                 SetSortingOrderHeathBar();
 
-                healthSlider.value = newValue / _characterConfig.unitConfigs[(int)Stats.Type].health;
+                healthSlider.value = newValue / _characterConfig.unitConfigs[(int)Stats.TypeClass].health;
             });
             MoveToTarget();
         }
@@ -101,7 +102,7 @@ namespace Controllers.Game
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
+            var tagOpposition = Stats.IsPlayer ? CONSTANS.Tag.Enemy : CONSTANS.Tag.Player;
 
             if (!other.CompareTag(tagOpposition))
             {
@@ -128,7 +129,7 @@ namespace Controllers.Game
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            var tagOpposition = Stats.IsPlayer ? CONSTANTS.Tag.Enemy : CONSTANTS.Tag.Player;
+            var tagOpposition = Stats.IsPlayer ? CONSTANS.Tag.Enemy : CONSTANS.Tag.Player;
 
             if (!other.CompareTag(tagOpposition) || Stats.IsDeath)
             {

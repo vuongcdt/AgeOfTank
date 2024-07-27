@@ -18,19 +18,19 @@ namespace Controllers.Game
 
             this.RegisterEvent<Events.Events.InitCharacter>(e =>
             {
-                this.SendCommand(new InitCharacterCommand(e.Type));
+                this.SendCommand(new InitCharacterCommand(e.TypeClass));
             });
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
 
             foreach (var i in new int[enemyTotal])
             {
-                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.FighterEnemy));
+                this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
             }
 
             foreach (var i in new int[playerTotal])
             {
-                this.SendCommand(new InitCharacterCommand(CONSTANTS.CardCharacterType.Fighter));
+                this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.Fighter));
             }
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
