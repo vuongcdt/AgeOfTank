@@ -14,6 +14,8 @@ TagManager:
   - SameTypeCollider
   - HunterCollider
   - WarriorCollider
+  - SameTypeHunterCollider
+  - SameTypeColliderHunter
   layers:
   - Default
   - TransparentFX

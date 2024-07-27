@@ -1,4 +1,6 @@
-﻿namespace Events
+﻿using Utilities;
+
+namespace Events
 {
     public class Events
     {
