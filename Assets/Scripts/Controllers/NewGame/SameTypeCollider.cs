@@ -7,142 +7,6 @@ using Utilities;
 
 namespace Controllers.NewGame
 {
-//     public class SameTypeCollider : BaseGameController
-//     {
-//         private Actor _actor;
-//         private CharacterConfig _characterConfig;
-//         private Actor _actorObstacle;
-//
-//         private async void Awake()
-//         {
-//             _actor = GetComponentInParent<Actor>();
-//             tag = CONSTANS.Tag.SameTypeCollider;
-//         }
-//
-//         private void OnTriggerEnter2D(Collider2D other)
-//         {
-//             var actorEnter = other.GetComponentInParent<Actor>();
-//             if (_actor.id <= actorEnter.id)
-//             {
-//                 return;
-//             }
-//
-//             if (actorEnter.isAttack)
-//             {
-//                 return;
-//             }
-//
-//             if (other.CompareTag(tag) &&
-//                 tag.Contains(CONSTANS.Tag.SameTypeCollider))
-//             {
-//                 _actorObstacle = actorEnter;
-//                 MoveOvercomeObstacles();
-//             }
-//         }
-//
-//         private async void MoveOvercomeObstacles()
-//         {
-//             _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
-//             _actor.StopMove();
-//             // _actor.MoveToPoint(new Vector3(pos.x, -1f), 2f);
-//
-//             var offset = (_actor.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-//             var offsetCharacter = (_actor.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-//             var pos = _actor.transform.position;
-//
-//             var newPointTarget = pos + offset + offsetCharacter;
-//
-//             _actor.MoveToPoint(newPointTarget, _characterConfig.durationMove * 0.1f);
-//         }
-//
-//         private void OnTriggerStay2D(Collider2D other)
-//         {
-//             if (other.CompareTag(tag) &&
-//                 tag.Contains(CONSTANS.Tag.SameTypeCollider))
-//             {
-//                 return;
-//             }
-//
-//             var actorStay = other.GetComponentInParent<Actor>();
-//             if (!actorStay)
-//             {
-//                 return;
-//             }
-//
-//             if (_actor.id <= actorStay.id)
-//             {
-//                 return;
-//             }
-//
-//             if (_actor.isPlayer)
-//             {
-//                 Debug.Log($"actorStay {_actor.name} {actorStay.name}");
-//             }
-//
-//             _actorObstacle = actorStay;
-//         }
-//
-//         private void OnTriggerExit2D(Collider2D other)
-//         {
-//             var actorExit = other.GetComponentInParent<Actor>();
-//             if (!actorExit)
-//             {
-//                 return;
-//             }
-//
-//             // if (actorExit.id != _actorObstacle.id)
-//             // {
-//             //     return;
-//             // }
-//
-//             if (_actor.id <= actorExit.id)
-//             {
-//                 return;
-//             }
-//
-//             if (other.CompareTag(tag) &&
-//                 tag.Contains(CONSTANS.Tag.SameTypeCollider))
-//             {
-//                 if (_actor.isPlayer)
-//                 {
-//                     Debug.Log($"VAR {_actor.name} {actorExit.name} {_actorObstacle.name}");
-//                     Time.timeScale = 0;
-//                 }
-//
-//                 _actor.StopMove();
-//                 // _actor.MoveToPoint((_actor.type == ENUMS.CharacterType.Player ? Vector3.right : Vector3.left) * 2, 15f);
-//                 MoveToTarget();
-//             }
-//         }
-//
-//         private async void MoveToTarget()
-//         {
-//             _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
-//
-//             var pos = _actor.transform.position;
-//             var durationMoveToTarget = Utils.GetDurationMoveToTarget(
-//                 pos.x,
-//                 _actor.start.x,
-//                 _actor.end.x,
-//                 _characterConfig.durationMove);
-//             _actor.MoveToPoint(new Vector3(_actor.end.x, pos.y), durationMoveToTarget);
-//
-//             // _transformRun
-//             //     .DOMove(new Vector3(_characterRun.Stats.Target.x, pos.y), durationMoveToTarget)
-//             //     .SetEase(Ease.Linear);
-//         }
-//
-// #if UNITY_EDITOR
-//         private void OnDrawGizmos()
-//         {
-//             Gizmos.color = Color.green;
-//             var position = transform.position;
-//             Gizmos.DrawWireSphere(new Vector3(position.x + 0.125f, position.y), 0.125f);
-//             Gizmos.DrawWireSphere(new Vector3(position.x - 0.125f, position.y), 0.125f);
-//         }
-// #endif
-//     }
-
     public class SameTypeCollider : BaseGameController
     {
         private CharacterConfig _actorConfig;
@@ -157,6 +21,16 @@ namespace Controllers.NewGame
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (other.CompareTag(CONSTANS.Tag.TopBar))
+            {
+                Debug.Log("TOP BAR");
+            }
+
+            if (other.CompareTag(CONSTANS.Tag.BotBar))
+            {
+                Debug.Log("BOT BAR");
+            }
+
             if (!IsSameTag(other))
             {
                 return;
@@ -173,7 +47,7 @@ namespace Controllers.NewGame
             // {
             //     return;
             // }
-            
+
             if (_actorRun.isAttack)
             {
                 return;
@@ -243,6 +117,7 @@ namespace Controllers.NewGame
             // {
             //     return;
             // }
+
             if (_actorRun.isAttack)
             {
                 return;

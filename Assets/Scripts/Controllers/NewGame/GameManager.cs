@@ -34,25 +34,26 @@ namespace Controllers.NewGame
 
             yield return new WaitForSeconds(1.5f);
 
-            foreach (var i in new int[playerCount])
-            {
-                SpawnPlayer();
-            }
-
             foreach (var i in new int[playerHuterCount])
             {
                 SpawnPlayer(ENUMS.CharacterTypeClass.Hunter);
             }
 
 
-            foreach (var i in new int[enemyCount])
+            foreach (var i in new int[playerCount])
             {
-                SpawnEnemy();
+                SpawnPlayer();
             }
+
 
             foreach (var i in new int[enemyHuterCount])
             {
                 SpawnEnemy(ENUMS.CharacterTypeClass.Hunter);
+            }
+
+            foreach (var i in new int[enemyCount])
+            {
+                SpawnEnemy();
             }
         }
 
