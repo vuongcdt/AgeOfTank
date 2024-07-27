@@ -16,6 +16,8 @@ TagManager:
   - WarriorCollider
   - SameTypeHunterCollider
   - SameTypeColliderHunter
+  - TopBar
+  - BotBar
   layers:
   - Default
   - TransparentFX

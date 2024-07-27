@@ -147,9 +147,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 8
+  id: 10
   type: 1
-  typeClass: 1
+  typeClass: 3
   isAttack: 0
   isPlayer: 0
   start: {x: 2.5, y: 0, z: 0}
@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 1716649591367447934}
   m_Layer: 0
   m_Name: SameTypeCollider
-  m_TagString: SameTypeColliderHunter
+  m_TagString: SameTypeCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
