@@ -22,7 +22,6 @@ namespace Controllers.Game
         [SerializeField] private bool isGreenLine;
         [SerializeField] private bool isMoveTarget;
 
-        private CharacterConfig _characterConfig;
         private Character _characterTarget;
         private Character _characterStay;
         private Dictionary<string, Character> _charEnterDictionary = new();
@@ -31,16 +30,11 @@ namespace Controllers.Game
 
         public CharacterStats Stats;
 
-        protected override async void AwaitCustom()
-        {
-            _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
-        }
-
         public void InitCharacter(string key)
         {
             // var idText = GetComponent<TextMesh>();
             Stats = GamePlayModel.Characters[key];
-            avatar.sprite = _characterConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
+            avatar.sprite = ActorConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
             // idText.text = Stats.ID.ToString();
@@ -62,7 +56,7 @@ namespace Controllers.Game
                 healthBar.SetActive(true);
                 SetSortingOrderHeathBar();
 
-                healthSlider.value = newValue / _characterConfig.unitConfigs[(int)Stats.TypeClass].health;
+                healthSlider.value = newValue / ActorConfig.unitConfigs[(int)Stats.TypeClass].health;
             });
             MoveToTarget();
         }
@@ -73,6 +67,7 @@ namespace Controllers.Game
             {
                 return;
             }
+
             isMoveTarget = true;
 
             var position = transform.position;
@@ -80,7 +75,7 @@ namespace Controllers.Game
                 position.x,
                 Stats.Source.x,
                 Stats.Target.x,
-                _characterConfig.durationMove);
+                ActorConfig.durationMove);
 
             transform
                 .DOMove(new Vector3(Stats.Target.x, position.y), durationMoveToTarget)
@@ -91,7 +86,7 @@ namespace Controllers.Game
         {
             if (time == 0)
             {
-                time = _characterConfig.durationMove * 0.1f;
+                time = ActorConfig.durationMove * 0.1f;
             }
 
             transform.DOKill();
@@ -204,7 +199,7 @@ namespace Controllers.Game
                 return;
             }
 
-            var durationMove = 0.5f / minDistance * (_characterConfig.durationMove * 0.1f);
+            var durationMove = 0.5f / minDistance * (ActorConfig.durationMove * 0.1f);
             var newPoint = new Vector3(Stats.IsPlayer ? pointMinDistance.x - 0.6f : pointMinDistance.x + 0.6f,
                 pointMinDistance.y);
             MoveNewPoint(newPoint, durationMove);

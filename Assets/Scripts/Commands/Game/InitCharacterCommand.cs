@@ -1,13 +1,10 @@
 ﻿using Interfaces;
-using QFramework;
-using Systems;
 using Utilities;
 
 namespace Commands.Game
 {
     public class InitCharacterCommand : BaseCommand
     {
-        private CharacterConfig _characterConfig;
         private ENUMS.CharacterTypeClass _typeClass;
 
         public InitCharacterCommand(ENUMS.CharacterTypeClass typeClass)
@@ -15,10 +12,9 @@ namespace Commands.Game
             _typeClass = typeClass;
         }
 
-        protected override async void OnExecute()
+        protected override  void OnExecute()
         {
             base.OnExecute();
-            _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
             InitCharacter();
         }
 
@@ -37,12 +33,12 @@ namespace Commands.Game
                 id = GamePlayModel.IdEnemy.Value;
             }
 
-            var health = _characterConfig.unitConfigs[(int)_typeClass].health;
-            var damage = _characterConfig.unitConfigs[(int)_typeClass].damage;
+            var health = ActorConfig.unitConfigs[(int)_typeClass].health;
+            var damage = ActorConfig.unitConfigs[(int)_typeClass].damage;
             var tag = isPlayer ? CONSTANS.Tag.Player : CONSTANS.Tag.Enemy;
             var name = $"{tag} {id}";
-            var source = isPlayer ? _characterConfig.pointSource : _characterConfig.pointTarget;
-            var target = !isPlayer ? _characterConfig.pointSource : _characterConfig.pointTarget;
+            var source = isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
+            var target = !isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
 
             GamePlayModel.Characters.Add(name,
                 new CharacterStats(health, id, damage, target, source, tag, name, _typeClass));

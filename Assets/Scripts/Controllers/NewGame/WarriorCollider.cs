@@ -1,11 +1,17 @@
+using Controllers.Game;
+using DG.Tweening;
+using Interfaces;
+using QFramework;
 using UnityEngine;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Controllers.NewGame
 {
-    public class WarriorCollider : MonoBehaviour
+    public class WarriorCollider : BaseGameController
     {
         private Actor _actor;
+        private Actor _actorBeaten;
 
         private void Awake()
         {
@@ -26,8 +32,79 @@ namespace Controllers.NewGame
                     ? CONSTANS.Tag.WarriorColliderEnemy
                     : CONSTANS.Tag.WarriorColliderPlayer))
             {
+                _actorBeaten = other.GetComponentInParent<Actor>();
                 _actor.Attack();
             }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            var isPassTag = other.CompareTag(_actor.type == ENUMS.CharacterType.Player
+                ? CONSTANS.Tag.WarriorColliderEnemy
+                : CONSTANS.Tag.WarriorColliderPlayer);
+            if (!isPassTag)
+            {
+                return;
+            }
+
+            var actorExit = other.GetComponentInParent<Actor>();
+            if (!_actorBeaten && !actorExit && _actorBeaten.id != actorExit.id)
+            {
+                return;
+            }
+
+            MoveToPoint();
+        }
+
+        private void MoveToPoint()
+        {
+            float minDistance = 10;
+            Vector3 point = new();
+            Actor actorAttackMin = null;
+
+            var col = GetComponent<CircleCollider2D>();
+            var posActor = _actor.transform.position;
+            var actorsAttacking = this.GetModel<IGamePlayModel>().ActorsAttacking;
+
+            if (!_actor.gameObject.activeSelf)
+            {
+                return;
+            }
+
+            foreach (var pair in actorsAttacking)
+            {
+                var actorAttack = pair.Value;
+                var posActorAttack = actorAttack.transform.position;
+                var distance = Vector3.Distance(posActor, posActorAttack);
+                if (!actorAttack.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (distance < minDistance && actorAttack.type != _actor.type)
+                {
+                    minDistance = distance;
+                    point = posActorAttack;
+                    actorAttackMin = actorAttack;
+                }
+            }
+
+            if (!actorAttackMin)
+            {
+                _actor.MoveToTarget();
+                return;
+                
+            }
+
+            var random = Random.value * 0.1f;
+            var durationMove = 6f;
+            var posActorX = point.x + (_actor.type == ENUMS.CharacterType.Player
+                ? -col.radius * 2 + random
+                : col.radius * 2 - random);
+
+            _actor.transform
+                .DOMove(new Vector3(posActorX, point.y), durationMove)
+                .OnComplete(MoveToPoint);
         }
 
 #if UNITY_EDITOR
@@ -38,5 +115,6 @@ namespace Controllers.NewGame
             Gizmos.DrawWireSphere(transform.position, col.radius);
         }
 #endif
+        
     }
 }

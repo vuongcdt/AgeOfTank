@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,16 +19,15 @@ namespace UI
             slider.value = 0;
             sliderText.text = "0";
 
-            GamePlayModel.ProductFoodProgress.RegisterWithInitValue(progress =>
-            {
-                slider.value = progress;
-            });
+            GamePlayModel.ProductFoodProgress.RegisterWithInitValue(progress => { slider.value = progress; });
 
             GamePlayModel.FoodNum.RegisterWithInitValue(UpdateSliderText);
         }
 
-        private void SetTypeCard()
+        private async void SetTypeCard()
         {
+            await UniTask.WaitForEndOfFrame(this);
+
             for (var index = 0; index < cards.Length; index++)
             {
                 cards[index].InitCard((ENUMS.CharacterTypeClass)index);

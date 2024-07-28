@@ -8,16 +8,14 @@ namespace Controllers.Game
 {
     public class MoveOvercomeObstacles : BaseGameController
     {
-        private CharacterConfig _characterConfig;
         private Character _characterRun;
         private Character _characterObstacle;
         private Transform _transformRun;
 
-        protected override async void AwaitCustom()
+        protected override  void AwaitCustom()
         {
             _characterRun = GetComponentInParent<Character>();
             _transformRun = _characterRun.transform;
-            _characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -52,7 +50,7 @@ namespace Controllers.Game
             var newPointTarget = posObstacle + offset + offsetCharacter;
 
             _transformRun
-                .DOMove(newPointTarget, _characterConfig.durationMove * 0.1f)
+                .DOMove(newPointTarget, ActorConfig.durationMove * 0.1f)
                 .SetEase(Ease.Linear);
         }
 
@@ -114,7 +112,7 @@ namespace Controllers.Game
                 posRun.x,
                 _characterRun.Stats.Source.x,
                 _characterRun.Stats.Target.x,
-                _characterConfig.durationMove);
+                ActorConfig.durationMove);
 
             _transformRun
                 .DOMove(new Vector3(_characterRun.Stats.Target.x, posRun.y), durationMoveToTarget)

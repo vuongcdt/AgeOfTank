@@ -1,8 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using QFramework;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using Utilities;
 
 namespace Systems
 {
@@ -17,11 +15,8 @@ namespace Systems
 
         private async UniTask LoadConfig()
         {
-            // AsyncOperationHandle<CharacterConfig> configAsyncOperationHandle =
-            //     Addressables.LoadAssetAsync<CharacterConfig>("character_config");
-            // _characterConfig = await configAsyncOperationHandle;
-
-            _characterConfig = await Addressables.LoadAssetAsync<CharacterConfig>("character_config");
+            var operationHandle = Addressables.LoadAssetAsync<CharacterConfig>("character_config");
+            _characterConfig = await operationHandle;
         }
 
         public async UniTask<CharacterConfig> GetCharacterConfig()
@@ -32,11 +27,6 @@ namespace Systems
             }
 
             return _characterConfig;
-        }
-
-        public float GetCharacterHealConfig(ENUMS.CharacterTypeClass typeClass)
-        {
-            return _characterConfig.unitConfigs[(int)typeClass].health;
         }
     }
 }

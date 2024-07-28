@@ -147,13 +147,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 10
-  type: 1
-  typeClass: 3
+  id: 3
+  type: 0
+  typeClass: 0
   isAttack: 0
   isPlayer: 0
-  start: {x: 2.5, y: 0, z: 0}
-  end: {x: -2.5, y: 0, z: 0}
+  start: {x: -2.5, y: 0, z: 0}
+  end: {x: 2.5, y: 0, z: 0}
 --- !u!1 &2626945058477316506
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,7 +260,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.3, y: 0.25}
+  m_Size: {x: 0.5, y: 0.4}
   m_Direction: 1
 --- !u!1 &3434616107866641899
 GameObject:

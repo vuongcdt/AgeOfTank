@@ -493,7 +493,7 @@ Transform:
   m_GameObject: {fileID: 424909360}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.19524719, y: 0.6064985, z: 0.008545195}
+  m_LocalPosition: {x: 0.19524719, y: 1, z: 0.008545195}
   m_LocalScale: {x: 6, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -859,7 +859,7 @@ Transform:
   m_GameObject: {fileID: 456040815}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.19524719, y: -0.39350152, z: 0.008545195}
+  m_LocalPosition: {x: 0.19524719, y: -1, z: 0.008545195}
   m_LocalScale: {x: 6, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1592,10 +1592,10 @@ MonoBehaviour:
   actor: {fileID: 5477925782892730006, guid: 1a352e5e5d9e2b142970690c14fa7d0a, type: 3}
   start: {x: 0, y: 0, z: 0}
   end: {x: 0, y: 0, z: 0}
-  playerCount: 7
-  enemyCount: 7
-  playerHuterCount: 3
-  enemyHuterCount: 3
+  playerCount: 2
+  enemyCount: 2
+  playerHuterCount: 0
+  enemyHuterCount: 0
 --- !u!4 &1705819379
 Transform:
   m_ObjectHideFlags: 0
@@ -1605,7 +1605,7 @@ Transform:
   m_GameObject: {fileID: 1705819377}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.19524719, y: -0.106498465, z: -0.008545195}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

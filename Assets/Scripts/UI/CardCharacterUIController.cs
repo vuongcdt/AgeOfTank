@@ -1,7 +1,6 @@
 ﻿using Commands.GamePlayUI;
 using Controllers.Game;
 using QFramework;
-using Systems;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,19 +48,17 @@ namespace UI
         private void OnClickCard()
         {
             this.SendCommand(new ConsumeFoodNumCommand(_foodNum));
-            this.SendEvent(new Events.Events.InitCharacter(_typeClass));
+            this.SendEvent(new Events.InitCharacter(_typeClass));
         }
 
-        public async void InitCard(ENUMS.CharacterTypeClass typeClass)
+        public void InitCard(ENUMS.CharacterTypeClass typeClass)
         {
-            var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
-
             _typeClass = typeClass;
             foodNumText.color = Color.red;
             bgCard.color = _colorDisable;
 
-            avatar.sprite = characterConfig.unitConfigs[(int)typeClass].imgAvatar;
-            _foodNum = characterConfig.unitConfigs[(int)typeClass].foodNum;
+            avatar.sprite = ActorConfig.unitConfigs[(int)typeClass].imgAvatar;
+            _foodNum = ActorConfig.unitConfigs[(int)typeClass].foodNum;
             foodNumText.text = _foodNum.ToString();
         }
     }

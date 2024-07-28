@@ -50,9 +50,8 @@ namespace Controllers.Game
         //     _characterRun.MoveNewPoint(newPoint, characterConfig.durationMove * 0.15f);
         // }
 
-        private async void MoveOvercomeObstacles()
+        private  void MoveOvercomeObstacles()
         {
-            var characterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
         
             var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.5f;
             var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.75f;
@@ -60,7 +59,7 @@ namespace Controllers.Game
         
             var newPointTarget = posObstacle + offset + offsetCharacter;
           
-            _characterRun.MoveNewPoint(newPointTarget, characterConfig.durationMove * 0.15f);
+            _characterRun.MoveNewPoint(newPointTarget, ActorConfig.durationMove * 0.15f);
         }
 
         private void OnTriggerStay2D(Collider2D other)

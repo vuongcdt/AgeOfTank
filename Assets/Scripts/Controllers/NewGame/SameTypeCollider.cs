@@ -1,5 +1,8 @@
+using System;
+using Commands.Game;
 using Controllers.Game;
 using DG.Tweening;
+using Interfaces;
 using QFramework;
 using Systems;
 using UnityEngine;
@@ -9,46 +12,23 @@ namespace Controllers.NewGame
 {
     public class SameTypeCollider : BaseGameController
     {
-        private CharacterConfig _actorConfig;
         private Actor _actorRun;
         private Actor _actorObstacle;
+        private bool _isFullRow;
 
-        protected override async void AwaitCustom()
+        protected override void AwaitCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
-            _actorConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag(CONSTANS.Tag.TopBar))
+            if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
             {
-                Debug.Log("TOP BAR");
+                CheckFullRow();
             }
 
-            if (other.CompareTag(CONSTANS.Tag.BotBar))
-            {
-                Debug.Log("BOT BAR");
-            }
-
-            if (!IsSameTag(other))
-            {
-                return;
-            }
-
-            _actorObstacle = other.GetComponentInParent<Actor>();
-
-            if (_actorRun.id <= _actorObstacle.id)
-            {
-                return;
-            }
-
-            // if (!_actorRun.IsMoveTarget)
-            // {
-            //     return;
-            // }
-
-            if (_actorRun.isAttack)
+            if (IsEnterObstacle(other))
             {
                 return;
             }
@@ -56,23 +36,19 @@ namespace Controllers.NewGame
             MoveNewPoint();
         }
 
-        private void MoveNewPoint()
+        private void CheckFullRow()
         {
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
-            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-            var posObstacle = _actorObstacle.transform.position;
-
-            var newPointTarget = posObstacle + offset + offsetCharacter;
-
-            _actorRun.transform
-                .DOMove(newPointTarget, _actorConfig.durationMove * 0.1f)
-                .SetEase(Ease.Linear);
+            _actorRun.transform.DOKill();
+            _isFullRow = true;
+            MoveFullRow();
         }
-
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!IsSameTag(other)) return;
+            if (!IsSameTag(other))
+            {
+                return;
+            }
 
             var actorStay = other.GetComponentInParent<Actor>();
             if (actorStay.id > _actorRun.id)
@@ -83,34 +59,31 @@ namespace Controllers.NewGame
             _actorObstacle = actorStay;
         }
 
-        private bool IsSameTag(Collider2D other)
-        {
-            return other.CompareTag(tag)
-                   && tag.Contains(CONSTANS.Tag.SameTypeCollider);
-        }
-
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!other.CompareTag(tag))
+            if (IsExitObstacle(other))
             {
                 return;
             }
 
-            if (!_actorObstacle)
+            // _actorObstacle = null;
+            _actorRun.transform.DOKill();
+            MoveToTarget();
+            // _isFullRow = false;
+        }
+
+        private bool IsEnterObstacle(Collider2D other)
+        {
+            if (!IsSameTag(other))
             {
-                return;
+                return true;
             }
 
-            var actorExit = other.GetComponentInParent<Actor>();
+            _actorObstacle = other.GetComponentInParent<Actor>();
 
-            if (!actorExit)
+            if (_actorRun.id <= _actorObstacle.id)
             {
-                return;
-            }
-
-            if (_actorObstacle.id != actorExit.id)
-            {
-                return;
+                return true;
             }
 
             // if (!_actorRun.IsMoveTarget)
@@ -120,11 +93,84 @@ namespace Controllers.NewGame
 
             if (_actorRun.isAttack)
             {
-                return;
+                return true;
             }
 
-            _actorRun.transform.DOKill();
-            MoveToTarget();
+            return false;
+        }
+
+        private void MoveNewPoint()
+        {
+            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
+            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            var posObstacle = _actorObstacle.transform.position;
+
+            var newPointTarget = posObstacle + offset + offsetCharacter;
+
+            var durationMove = ActorConfig.durationMove * 0.1f;
+            
+            _actorRun.transform
+                .DOMove(newPointTarget, durationMove)
+                .SetEase(Ease.Linear);
+        }
+        private void MoveFullRow()
+        {
+            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
+            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            var posObstacle = _actorObstacle.transform.position;
+
+            var newPointTarget = posObstacle + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter );
+
+            var durationMove = _isFullRow
+                ? ActorConfig.durationMove * 0.2f
+                : ActorConfig.durationMove * 0.1f;
+            
+            _actorRun.transform
+                .DOMove(newPointTarget, durationMove)
+                .SetEase(Ease.Linear);
+        }
+
+        private bool IsSameTag(Collider2D other)
+        {
+            return other.CompareTag(tag)
+                   && tag.Contains(CONSTANS.Tag.SameTypeCollider);
+        }
+
+        private bool IsExitObstacle(Collider2D other)
+        {
+            if (!other.CompareTag(tag))
+            {
+                return true;
+            }
+
+            if (!_actorObstacle)
+            {
+                return true;
+            }
+
+            var actorExit = other.GetComponentInParent<Actor>();
+
+            if (!actorExit)
+            {
+                return true;
+            }
+
+            if (_actorObstacle.id != actorExit.id)
+            {
+                return true;
+            }
+
+            // if (!_actorRun.IsMoveTarget)
+            // {
+            //     return;
+            // }
+
+            if (_actorRun.isAttack)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void MoveToTarget()
@@ -134,7 +180,7 @@ namespace Controllers.NewGame
                 posRun.x,
                 _actorRun.start.x,
                 _actorRun.end.x,
-                _actorConfig.durationMove);
+                ActorConfig.durationMove);
 
             _actorRun.transform
                 .DOMove(new Vector3(_actorRun.end.x, posRun.y), durationMoveToTarget)

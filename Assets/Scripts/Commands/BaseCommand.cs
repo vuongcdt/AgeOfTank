@@ -7,12 +7,12 @@ namespace Commands
     public class BaseCommand : AbstractCommand
     {
         protected IGamePlayModel GamePlayModel;
-        protected CharacterConfig CharacterConfig;
+        protected CharacterConfig ActorConfig;
 
         protected override async void OnExecute()
         {
             GamePlayModel = this.GetModel<IGamePlayModel>();
-            CharacterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
+            ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
         }
     }
 }

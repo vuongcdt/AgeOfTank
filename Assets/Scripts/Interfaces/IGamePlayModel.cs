@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Controllers.NewGame;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -11,9 +12,11 @@ namespace Interfaces
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
         public Dictionary<string, CharacterStats> Characters { get; }
+        public Dictionary<string, Actor> ActorsAttacking{ get; }
         public BindableProperty<string> InitCharacterKey { get; }
         public BindableProperty<float> ProductFoodProgress { get; }
         public BindableProperty<int> FoodNum { get; }
+        public BindableProperty<bool> IsFullRow { get; }
     }
 
     public class CharacterStats

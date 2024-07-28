@@ -30,7 +30,7 @@ namespace Commands.Game
         private async UniTask AttackAsync()
         {
             // _characterAttack.transform.DOKill();
-            await UniTask.WaitForSeconds(CharacterConfig.attackTime);
+            await UniTask.WaitForSeconds(ActorConfig.attackTime);
             if (!_characterTarget)
             {
                 return;

@@ -22,7 +22,7 @@ namespace Controllers.NewGame
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;
 
-            this.RegisterEvent<Events.Events.InitCharacter>(e => { SpawnPlayer(e.TypeClass); });
+            this.RegisterEvent<Events.InitCharacter>(e => { SpawnPlayer(e.TypeClass); });
 
             StartCoroutine(SpawnPrefab());
         }
