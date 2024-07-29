@@ -120,5 +120,6 @@ namespace Controllers.NewGame
             Gizmos.DrawWireSphere(transform.position, col.radius);
         }
 #endif
+        
     }
 }

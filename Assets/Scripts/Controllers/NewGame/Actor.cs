@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Controllers.Game;
 using DG.Tweening;
 using Events;
@@ -13,18 +14,21 @@ namespace Controllers.NewGame
         [SerializeField] private TextMesh idText;
         [SerializeField] private SpriteRenderer avatar;
 
+        private readonly Dictionary<string, Actor> _actorsHead = new();
+
         public int id;
         public ENUMS.CharacterType type;
         public ENUMS.CharacterTypeClass typeClass;
         public bool isAttack;
         public bool isPlayer;
         public Vector3 start, end;
+        public Dictionary<string, Actor> ActorsHead => _actorsHead;
 
         protected override void AwaitCustom()
         {
             Init();
             this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttack);
-            this.RegisterEvent<MoveToTargetEvent>(e=>MoveToTarget());
+            this.RegisterEvent<MoveToTargetEvent>(e => MoveToTarget());
         }
 
         private void Init()
@@ -40,20 +44,21 @@ namespace Controllers.NewGame
             avatar.flipX = !isPlayer;
         }
 
-        private void OnDisable()
-        {
-            Debug.Log($"OnDisable {name}");
-        }
-
         private void MoveToActorAttack(ActorAttackPointEvent e)
         {
-            if (isAttack || e.Type == type)
+            if (isAttack)
             {
                 return;
             }
 
             var circleCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
             var posX = e.Pos.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
+
+            if (e.Type == type)
+            {
+                // MoveToPoint(transform.position.x, posX);
+                return;
+            }
 
             MoveToPoint(transform.position.x, posX);
         }
@@ -67,7 +72,7 @@ namespace Controllers.NewGame
             this.SendEvent(new ActorAttackPointEvent(transform.position, type));
         }
 
-        public void MoveToTarget()
+        private void MoveToTarget()
         {
             MoveToPoint(transform.position.x, end.x);
         }
@@ -75,6 +80,15 @@ namespace Controllers.NewGame
         public void MoveToPoint(float currentX, float newX)
         {
             transform.DOKill();
+            if (!gameObject.activeSelf)
+            {
+                return;
+            }
+
+            if (ActorsHead.Count > 2)
+            {
+                return;
+            }
 
             var durationMoveToTarget = Utils.GetDurationMoveToPoint(
                 currentX,

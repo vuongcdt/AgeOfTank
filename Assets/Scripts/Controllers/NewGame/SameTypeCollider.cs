@@ -1,10 +1,5 @@
-using System;
-using Commands.Game;
 using Controllers.Game;
 using DG.Tweening;
-using Interfaces;
-using QFramework;
-using Systems;
 using UnityEngine;
 using Utilities;
 
@@ -15,10 +10,12 @@ namespace Controllers.NewGame
         private Actor _actorRun;
         private Actor _actorObstacle;
         private bool _isFullRow;
+        private BoxCollider2D _boxCollider2D;
 
         protected override void AwaitCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
+            _boxCollider2D = GetComponent<BoxCollider2D>();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -33,12 +30,22 @@ namespace Controllers.NewGame
                 return;
             }
 
+            var actorsHeadCount = _actorRun.ActorsHead.Count;
+            if (actorsHeadCount > 2)
+            {
+                _actorRun.transform.DOKill();
+                return;
+            }
+
             MoveNewPoint();
         }
 
         private void CheckFullRow()
         {
             _isFullRow = true;
+            _actorRun.transform.position += _actorRun.isPlayer
+                ? -new Vector3(_boxCollider2D.size.x / 2, 0)
+                : new Vector3(_boxCollider2D.size.x / 2, 0);
             MoveNewPoint();
         }
 
@@ -125,7 +132,7 @@ namespace Controllers.NewGame
 
         private Vector3 GetPointMoveOvercomeObstacle(Vector3 posActor, Vector3 offset, Vector3 offsetCharacter)
         {
-            return posActor + offset + offsetCharacter;
+            return posActor + offset;
         }
 
         private void MoveNewPointHead()
@@ -218,12 +225,12 @@ namespace Controllers.NewGame
                 .DOMove(new Vector3(_actorRun.end.x, posRun.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
-        
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             var col = GetComponent<BoxCollider2D>();
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(transform.position, col.size);
         }
 #endif

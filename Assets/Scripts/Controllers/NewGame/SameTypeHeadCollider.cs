@@ -1,11 +1,13 @@
 ﻿using Controllers.Game;
 using DG.Tweening;
+using Events;
+using QFramework;
 using UnityEngine;
 using Utilities;
 
 namespace Controllers.NewGame
 {
-    public class SameTypeHead : BaseGameController
+    public class SameTypeHeadCollider : BaseGameController
     {
         private Actor _actorRun;
         private Actor _actorObstacle;
@@ -18,17 +20,29 @@ namespace Controllers.NewGame
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
-            {
-                CheckFullRow();
-            }
-
-            if (IsEnterObstacle(other))
+            if (!other.CompareTag(CONSTANS.Tag.SameTypeCollider))
             {
                 return;
             }
 
-            MoveNewPoint();
+            var actorHead = other.GetComponentInParent<Actor>();
+            if (actorHead.id == _actorRun.id)
+            {
+                return;
+            }
+
+            _actorRun.ActorsHead.TryAdd(actorHead.name, actorHead);
+            // if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
+            // {
+            //     CheckFullRow();
+            // }
+            //
+            // if (IsEnterObstacle(other))
+            // {
+            //     return;
+            // }
+            //
+            // MoveNewPoint();
         }
 
         private void CheckFullRow()
@@ -40,31 +54,59 @@ namespace Controllers.NewGame
 
         private void OnTriggerStay2D(Collider2D other)
         {
-            if (!IsSameTag(other))
-            {
-                return;
-            }
-
-            var actorStay = other.GetComponentInParent<Actor>();
-            if (actorStay.id > _actorRun.id)
-            {
-                return;
-            }
-
-            _actorObstacle = actorStay;
+            // if (!IsSameTag(other))
+            // {
+            //     return;
+            // }
+            //
+            // var actorStay = other.GetComponentInParent<Actor>();
+            // if (actorStay.id > _actorRun.id)
+            // {
+            //     return;
+            // }
+            //
+            // _actorObstacle = actorStay;
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (IsExitObstacle(other))
+            if (!gameObject.activeSelf)
+            {
+                // this.SendEvent<ActorAttackPointEvent>();
+                this.SendEvent(new ActorAttackPointEvent(transform.position, _actorRun.type));
+                return;
+            }
+
+            if (!other.CompareTag(CONSTANS.Tag.SameTypeCollider))
             {
                 return;
             }
 
-            // _actorObstacle = null;
-            _actorRun.transform.DOKill();
-            MoveToTarget();
-            // _isFullRow = false;
+            // Debug.Log($"/////////// {_actorRun.name}");
+            // foreach (var pair in _actorRun.ActorsHead)
+            // {
+            //     Debug.Log($"pair {pair.Key} {pair.Value}");
+            // }
+            //
+            // Debug.Log($"///////////{_actorRun.name}");
+
+            var actorHead = other.GetComponentInParent<Actor>();
+            if (!actorHead)
+            {
+                return;
+            }
+
+            _actorRun.ActorsHead.Remove(actorHead.name);
+
+            // if (IsExitObstacle(other))
+            // {
+            //     return;
+            // }
+            //
+            // // _actorObstacle = null;
+            // _actorRun.transform.DOKill();
+            // MoveToTarget();
+            // // _isFullRow = false;
         }
 
         private bool IsEnterObstacle(Collider2D other)
@@ -103,24 +145,24 @@ namespace Controllers.NewGame
             var newPointTarget = posObstacle + offset + offsetCharacter;
 
             var durationMove = ActorConfig.durationMove * 0.1f;
-            
+
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
                 .SetEase(Ease.Linear);
         }
-        
+
         private void MoveFullRow()
         {
             var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
             var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posObstacle = _actorObstacle.transform.position;
 
-            var newPointTarget = posObstacle + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter );
+            var newPointTarget = posObstacle + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter);
 
             var durationMove = _isFullRow
                 ? ActorConfig.durationMove * 0.2f
                 : ActorConfig.durationMove * 0.1f;
-            
+
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
                 .SetEase(Ease.Linear);
@@ -182,5 +224,13 @@ namespace Controllers.NewGame
                 .DOMove(new Vector3(_actorRun.end.x, posRun.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            var col = GetComponent<CircleCollider2D>();
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, col.radius);
+        }
+#endif
     }
 }
