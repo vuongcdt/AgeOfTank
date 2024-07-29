@@ -1,16 +1,11 @@
-using System;
-using Commands.Game;
-using Controllers.Game;
+﻿using Controllers.Game;
 using DG.Tweening;
-using Interfaces;
-using QFramework;
-using Systems;
 using UnityEngine;
 using Utilities;
 
 namespace Controllers.NewGame
 {
-    public class SameTypeCollider : BaseGameController
+    public class SameTypeHead : BaseGameController
     {
         private Actor _actorRun;
         private Actor _actorObstacle;
@@ -38,8 +33,9 @@ namespace Controllers.NewGame
 
         private void CheckFullRow()
         {
+            _actorRun.transform.DOKill();
             _isFullRow = true;
-            MoveNewPoint();
+            MoveFullRow();
         }
 
         private void OnTriggerStay2D(Collider2D other)
@@ -68,7 +64,7 @@ namespace Controllers.NewGame
             // _actorObstacle = null;
             _actorRun.transform.DOKill();
             MoveToTarget();
-            _isFullRow = false;
+            // _isFullRow = false;
         }
 
         private bool IsEnterObstacle(Collider2D other)
@@ -100,63 +96,31 @@ namespace Controllers.NewGame
 
         private void MoveNewPoint()
         {
-            _actorRun.transform.DOKill();
-
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
+            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
             var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posObstacle = _actorObstacle.transform.position;
-            var posActor = _actorRun.transform.position;
-            var durationMove = ActorConfig.durationMove * 0.2f;
 
-            var newPointTarget = _isFullRow
-                ? GetPointMoveFullRow(posActor, offset, offsetCharacter)
-                : GetPointMoveOvercomeObstacle(posActor, offset, offsetCharacter);
+            var newPointTarget = posObstacle + offset + offsetCharacter;
 
-
+            var durationMove = ActorConfig.durationMove * 0.1f;
+            
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
                 .SetEase(Ease.Linear);
         }
-
-        private Vector3 GetPointMoveFullRow(Vector3 posActor, Vector3 offset, Vector3 offsetCharacter)
+        
+        private void MoveFullRow()
         {
-            return posActor + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter);
-        }
-
-        private Vector3 GetPointMoveOvercomeObstacle(Vector3 posActor, Vector3 offset, Vector3 offsetCharacter)
-        {
-            return posActor + offset + offsetCharacter;
-        }
-
-        private void MoveNewPointHead()
-        {
-            _actorRun.transform.DOKill();
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
+            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 2f;
             var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posObstacle = _actorObstacle.transform.position;
 
-            var actorPos = _actorRun.transform.position;
-            var newPointTarget = actorPos + offset - offsetCharacter;
+            var newPointTarget = posObstacle + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter );
 
-            var durationMove = ActorConfig.durationMove * 0.2f;
-
-            _actorRun.transform
-                .DOMove(newPointTarget, durationMove)
-                .SetEase(Ease.Linear);
-        }
-
-        private void MoveFullRowHead()
-        {
-            _actorRun.transform.DOKill();
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-            var posObstacle = _actorObstacle.transform.position;
-
-            var actorPos = _actorRun.transform.position;
-            var newPointTarget = actorPos + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter);
-
-            var durationMove = ActorConfig.durationMove * 0.2f;
-
+            var durationMove = _isFullRow
+                ? ActorConfig.durationMove * 0.2f
+                : ActorConfig.durationMove * 0.1f;
+            
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
                 .SetEase(Ease.Linear);
@@ -218,14 +182,5 @@ namespace Controllers.NewGame
                 .DOMove(new Vector3(_actorRun.end.x, posRun.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
-        
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            var col = GetComponent<BoxCollider2D>();
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position, col.size);
-        }
-#endif
     }
 }

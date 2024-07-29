@@ -1,5 +1,4 @@
 using System.Collections;
-using Commands.Game;
 using Controllers.Game;
 using QFramework;
 using UnityEngine;
@@ -12,8 +11,9 @@ namespace Controllers.NewGame
     {
         [SerializeField] private Actor actor;
         [SerializeField] private Vector3 start, end;
-        [SerializeField] private int playerCount, enemyCount, playerHuterCount, enemyHuterCount;
-        private float _time = 40;
+        [SerializeField] private int playerCount, enemyCount;
+        [SerializeField] private int playerHunterCount;
+        [SerializeField] private int enemyHunterCount;
         private int _count;
         private int _idPlayer, _idEnemy;
 
@@ -34,7 +34,7 @@ namespace Controllers.NewGame
 
             yield return new WaitForSeconds(1.5f);
 
-            foreach (var i in new int[playerHuterCount])
+            foreach (var i in new int[playerHunterCount])
             {
                 SpawnPlayer(ENUMS.CharacterTypeClass.Hunter);
             }
@@ -46,7 +46,7 @@ namespace Controllers.NewGame
             }
 
 
-            foreach (var i in new int[enemyHuterCount])
+            foreach (var i in new int[enemyHunterCount])
             {
                 SpawnEnemy(ENUMS.CharacterTypeClass.Hunter);
             }
@@ -71,12 +71,13 @@ namespace Controllers.NewGame
             sameTypeCollider.tag = (int)characterTypeClass % 3 == 1
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
+            
             var random = (1 - Random.value) * 0.2f;
 
             var player = Instantiate(actor, new Vector3(start.x + random * 0.5f, start.y + random), Quaternion.identity,
                 transform);
 
-            player.MoveToPoint(end, _time);
+            player.MoveToPoint(start.x, end.x);
         }
 
         private void SpawnEnemy(ENUMS.CharacterTypeClass characterTypeClass = ENUMS.CharacterTypeClass.FighterEnemy)
@@ -99,7 +100,7 @@ namespace Controllers.NewGame
             var enemy = Instantiate(actor, new Vector3(end.x + random * 0.5f, end.y + random), Quaternion.identity,
                 transform);
 
-            enemy.MoveToPoint(start, _time);
+            enemy.MoveToPoint(end.x, start.x);
         }
     }
 }

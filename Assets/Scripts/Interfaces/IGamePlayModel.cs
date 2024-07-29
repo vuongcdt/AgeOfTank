@@ -12,11 +12,12 @@ namespace Interfaces
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
         public Dictionary<string, CharacterStats> Characters { get; }
-        public Dictionary<string, Actor> ActorsAttacking{ get; }
+        public Dictionary<string, Actor> ActorsAttacking { get; }
+        public Dictionary<string, Actor> PlayerAttack { get; }
+        public Dictionary<string, Actor> EnemyAttack { get; }
         public BindableProperty<string> InitCharacterKey { get; }
         public BindableProperty<float> ProductFoodProgress { get; }
         public BindableProperty<int> FoodNum { get; }
-        public BindableProperty<bool> IsFullRow { get; }
     }
 
     public class CharacterStats
@@ -29,12 +30,12 @@ namespace Interfaces
         public bool IsPlayer;
         public string Tag;
         public string Name;
-        
+
         public bool IsDeath => Health.Value < 0;
         public ENUMS.CharacterTypeClass TypeClass;
 
         public CharacterStats(float health, int id, float damage, Vector3 target, Vector3 source,
-             string tag, string name, ENUMS.CharacterTypeClass typeClass)
+            string tag, string name, ENUMS.CharacterTypeClass typeClass)
         {
             Health = new BindableProperty<float>(health);
             ID = id;

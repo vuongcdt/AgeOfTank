@@ -1,10 +1,18 @@
-﻿namespace Utilities
+﻿using UnityEngine;
+
+namespace Utilities
 {
     public static class Utils
     {
-        public static float GetDurationMoveToTarget(float currentPos,float start,float end,float durationMove)
+        public static float GetDurationMoveToTarget(float currentX, float startX, float endX, float durationMove)
         {
-            return (currentPos - end) / (start - end) * durationMove;
+            return (currentX - endX) / (startX - endX) * durationMove;
+        }
+
+        public static float GetDurationMoveToPoint(float currentX, float targetX, float startX, float endX,
+            float durationMove)
+        {
+            return Mathf.Abs((currentX - targetX) / (startX - endX) * durationMove);
         }
     }
 }

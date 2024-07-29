@@ -1,5 +1,6 @@
 using Controllers.Game;
 using DG.Tweening;
+using Events;
 using Interfaces;
 using QFramework;
 using UnityEngine;
@@ -12,14 +13,18 @@ namespace Controllers.NewGame
     {
         private Actor _actor;
         private Actor _actorBeaten;
+        private CircleCollider2D _circleCollider;
 
-        private void Awake()
+        public CircleCollider2D CircleCollider => _circleCollider;
+
+        protected override void AwaitCustom()
         {
             Init();
         }
 
         private void Init()
         {
+            _circleCollider = GetComponent<CircleCollider2D>();
             _actor = GetComponentInParent<Actor>();
             tag = _actor.type == ENUMS.CharacterType.Player
                 ? CONSTANS.Tag.WarriorColliderPlayer
@@ -42,12 +47,14 @@ namespace Controllers.NewGame
             var isPassTag = other.CompareTag(_actor.type == ENUMS.CharacterType.Player
                 ? CONSTANS.Tag.WarriorColliderEnemy
                 : CONSTANS.Tag.WarriorColliderPlayer);
+
             if (!isPassTag)
             {
                 return;
             }
 
             var actorExit = other.GetComponentInParent<Actor>();
+
             if (!_actorBeaten && !actorExit && _actorBeaten.id != actorExit.id)
             {
                 return;
@@ -61,17 +68,14 @@ namespace Controllers.NewGame
             float minDistance = 10;
             Vector3 point = new();
             Actor actorAttackMin = null;
-
-            var col = GetComponent<CircleCollider2D>();
             var posActor = _actor.transform.position;
-            var actorsAttacking = this.GetModel<IGamePlayModel>().ActorsAttacking;
 
             if (!_actor.gameObject.activeSelf)
             {
                 return;
             }
 
-            foreach (var pair in actorsAttacking)
+            foreach (var pair in GamePlayModel.ActorsAttacking)
             {
                 var actorAttack = pair.Value;
                 var posActorAttack = actorAttack.transform.position;
@@ -91,16 +95,17 @@ namespace Controllers.NewGame
 
             if (!actorAttackMin)
             {
-                _actor.MoveToTarget();
+                // _actor.MoveToTarget();
+                this.SendEvent<MoveToTargetEvent>();
                 return;
-                
             }
 
             var random = Random.value * 0.1f;
             var durationMove = 6f;
+
             var posActorX = point.x + (_actor.type == ENUMS.CharacterType.Player
-                ? -col.radius * 2 + random
-                : col.radius * 2 - random);
+                ? -_circleCollider.radius * 2 + random
+                : _circleCollider.radius * 2 - random);
 
             _actor.transform
                 .DOMove(new Vector3(posActorX, point.y), durationMove)
@@ -115,6 +120,5 @@ namespace Controllers.NewGame
             Gizmos.DrawWireSphere(transform.position, col.radius);
         }
 #endif
-        
     }
 }

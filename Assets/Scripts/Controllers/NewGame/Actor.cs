@@ -1,6 +1,7 @@
+using System;
 using Controllers.Game;
 using DG.Tweening;
-using Interfaces;
+using Events;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -11,7 +12,7 @@ namespace Controllers.NewGame
     {
         [SerializeField] private TextMesh idText;
         [SerializeField] private SpriteRenderer avatar;
-        
+
         public int id;
         public ENUMS.CharacterType type;
         public ENUMS.CharacterTypeClass typeClass;
@@ -21,43 +22,69 @@ namespace Controllers.NewGame
 
         protected override void AwaitCustom()
         {
+            Init();
+            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttack);
+            this.RegisterEvent<MoveToTargetEvent>(e=>MoveToTarget());
+        }
+
+        private void Init()
+        {
             tag = type == ENUMS.CharacterType.Enemy
                 ? CONSTANS.Tag.Enemy
                 : CONSTANS.Tag.Player;
+
             name = $"{type.ToString()}{id}";
             isPlayer = type == ENUMS.CharacterType.Player;
             idText.text = id.ToString();
+            idText.transform.position = isPlayer ? new Vector3(-3, 0.5f) : new Vector3(3, 0.5f);
             avatar.flipX = !isPlayer;
+        }
+
+        private void OnDisable()
+        {
+            Debug.Log($"OnDisable {name}");
+        }
+
+        private void MoveToActorAttack(ActorAttackPointEvent e)
+        {
+            if (isAttack || e.Type == type)
+            {
+                return;
+            }
+
+            var circleCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
+            var posX = e.Pos.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
+
+            MoveToPoint(transform.position.x, posX);
         }
 
         public void Attack()
         {
             transform.DOKill();
             isAttack = true;
-            var actorsAttacking = this.GetModel<IGamePlayModel>().ActorsAttacking;
-            actorsAttacking.TryAdd(name,this);
-            // if (!actorsAttacking.TryAdd())
-            // {
-            //     actorsAttacking.TryAdd(name,this);
-            // }
-        }
 
-        public void MoveToPoint(Vector3 pos, float time)
-        {
-            transform.DOMove(pos, time);
+            GamePlayModel.ActorsAttacking.TryAdd(name, this);
+            this.SendEvent(new ActorAttackPointEvent(transform.position, type));
         }
 
         public void MoveToTarget()
         {
-            var posRun = transform.position;
-            var durationMoveToTarget = Utils.GetDurationMoveToTarget(
-                posRun.x,
+            MoveToPoint(transform.position.x, end.x);
+        }
+
+        public void MoveToPoint(float currentX, float newX)
+        {
+            transform.DOKill();
+
+            var durationMoveToTarget = Utils.GetDurationMoveToPoint(
+                currentX,
+                newX,
                 start.x,
                 end.x,
                 ActorConfig.durationMove);
 
             transform
-                .DOMove(new Vector3(end.x, posRun.y), durationMoveToTarget)
+                .DOMove(new Vector3(newX, transform.position.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
     }
