@@ -15,6 +15,7 @@ namespace Controllers.NewGame
         [SerializeField] private SpriteRenderer avatar;
 
         private readonly Dictionary<string, Actor> _actorsHead = new();
+        private bool _isBehind;
 
         public int id;
         public ENUMS.CharacterType type;
@@ -23,6 +24,12 @@ namespace Controllers.NewGame
         public bool isPlayer;
         public Vector3 start, end;
         public Dictionary<string, Actor> ActorsHead => _actorsHead;
+
+        public bool IsBehind
+        {
+            get => _isBehind;
+            set => _isBehind = value;
+        }
 
         protected override void AwaitCustom()
         {
@@ -54,12 +61,29 @@ namespace Controllers.NewGame
             var circleCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
             var posX = e.Pos.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
 
-            if (e.Type == type)
+            
+            foreach (var (key, value) in ActorsHead)
             {
-                // MoveToPoint(transform.position.x, posX);
+                // Debug.Log($"{name} {key} {value}");
+            }
+            
+            if (ActorsHead.Count >= 3 || isAttack || !_isBehind)
+            {
                 return;
             }
+            
+            // if (e.Type != type && ActorsHead.Count < 3)
+            // {
+            //     MoveToPoint(transform.position.x, posX);
+            //     return;
+            // }
+            //
+            // if (ActorsHead.Count >= 3 || isAttack || !_isBehind)
+            // {
+            //     return;
+            // }
 
+            _isBehind = false;
             MoveToPoint(transform.position.x, posX);
         }
 
@@ -81,11 +105,6 @@ namespace Controllers.NewGame
         {
             transform.DOKill();
             if (!gameObject.activeSelf)
-            {
-                return;
-            }
-
-            if (ActorsHead.Count > 2)
             {
                 return;
             }

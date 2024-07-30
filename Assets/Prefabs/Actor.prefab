@@ -148,13 +148,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 11
-  type: 1
-  typeClass: 3
+  id: 5
+  type: 0
+  typeClass: 0
   isAttack: 0
   isPlayer: 0
-  start: {x: 2.5, y: 0, z: 0}
-  end: {x: -2.5, y: 0, z: 0}
+  start: {x: -2.5, y: 0, z: 0}
+  end: {x: 2.5, y: 0, z: 0}
 --- !u!1 &2626945058477316506
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5217720195820111651}
   - component: {fileID: 2683546047072968152}
-  - component: {fileID: 6420100183438801263}
+  - component: {fileID: 2634813397647897876}
   m_Layer: 0
   m_Name: SameTypeHead
   m_TagString: Untagged
@@ -511,8 +511,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cad19c7a89d84f758f885977fea9b149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!58 &6420100183438801263
-CircleCollider2D:
+--- !u!61 &2634813397647897876
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -543,9 +543,19 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.3, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Size: {x: 0.1, y: 0.35}
+  m_EdgeRadius: 0
 --- !u!1 &8790034693091094223
 GameObject:
   m_ObjectHideFlags: 0

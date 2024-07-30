@@ -11,11 +11,15 @@ namespace Controllers.NewGame
         private Actor _actorObstacle;
         private bool _isFullRow;
         private BoxCollider2D _boxCollider2D;
+        private string _actorName;
+
+        public string ActorName => _actorName;
 
         protected override void AwaitCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
             _boxCollider2D = GetComponent<BoxCollider2D>();
+            _actorName = _actorRun.name;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -34,6 +38,7 @@ namespace Controllers.NewGame
             if (actorsHeadCount > 2)
             {
                 _actorRun.transform.DOKill();
+                _actorRun.IsBehind = true;
                 return;
             }
 
@@ -111,7 +116,6 @@ namespace Controllers.NewGame
 
             var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
             var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-            var posObstacle = _actorObstacle.transform.position;
             var posActor = _actorRun.transform.position;
             var durationMove = ActorConfig.durationMove * 0.2f;
 
@@ -133,40 +137,6 @@ namespace Controllers.NewGame
         private Vector3 GetPointMoveOvercomeObstacle(Vector3 posActor, Vector3 offset, Vector3 offsetCharacter)
         {
             return posActor + offset;
-        }
-
-        private void MoveNewPointHead()
-        {
-            _actorRun.transform.DOKill();
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-            var posObstacle = _actorObstacle.transform.position;
-
-            var actorPos = _actorRun.transform.position;
-            var newPointTarget = actorPos + offset - offsetCharacter;
-
-            var durationMove = ActorConfig.durationMove * 0.2f;
-
-            _actorRun.transform
-                .DOMove(newPointTarget, durationMove)
-                .SetEase(Ease.Linear);
-        }
-
-        private void MoveFullRowHead()
-        {
-            _actorRun.transform.DOKill();
-            var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
-            var posObstacle = _actorObstacle.transform.position;
-
-            var actorPos = _actorRun.transform.position;
-            var newPointTarget = actorPos + (_isFullRow ? -offset - offsetCharacter : offset - offsetCharacter);
-
-            var durationMove = ActorConfig.durationMove * 0.2f;
-
-            _actorRun.transform
-                .DOMove(newPointTarget, durationMove)
-                .SetEase(Ease.Linear);
         }
 
         private bool IsSameTag(Collider2D other)
@@ -230,7 +200,7 @@ namespace Controllers.NewGame
         private void OnDrawGizmos()
         {
             var col = GetComponent<BoxCollider2D>();
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(transform.position, col.size);
         }
 #endif

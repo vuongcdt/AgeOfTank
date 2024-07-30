@@ -1,7 +1,6 @@
 using Controllers.Game;
 using DG.Tweening;
 using Events;
-using Interfaces;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -95,6 +94,7 @@ namespace Controllers.NewGame
 
             if (!actorAttackMin)
             {
+                Debug.Log($"{_actor.name} actorAttackMin");
                 // _actor.MoveToTarget();
                 this.SendEvent<MoveToTargetEvent>();
                 return;
