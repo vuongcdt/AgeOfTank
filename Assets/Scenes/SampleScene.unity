@@ -1568,8 +1568,8 @@ MonoBehaviour:
   actor: {fileID: 5477925782892730006, guid: 1a352e5e5d9e2b142970690c14fa7d0a, type: 3}
   start: {x: 0, y: 0, z: 0}
   end: {x: 0, y: 0, z: 0}
-  playerCount: 4
-  enemyCount: 4
+  playerCount: 7
+  enemyCount: 0
   playerHunterCount: 0
   enemyHunterCount: 0
 --- !u!4 &1705819379
