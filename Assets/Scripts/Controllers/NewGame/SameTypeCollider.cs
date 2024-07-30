@@ -1,3 +1,4 @@
+using System;
 using Controllers.Game;
 using DG.Tweening;
 using UnityEngine;
@@ -24,10 +25,10 @@ namespace Controllers.NewGame
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
-            {
-                CheckFullRow();
-            }
+            // if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
+            // {
+            //     CheckFullRow();
+            // }
 
             if (IsEnterObstacle(other))
             {
@@ -117,12 +118,13 @@ namespace Controllers.NewGame
             var offset = (_actorRun.id % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
             var offsetCharacter = (_actorRun.isPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posActor = _actorRun.transform.position;
-            var durationMove = ActorConfig.durationMove * 0.2f;
+            var durationMove = ActorConfig.durationMove * 0.1f;
 
-            var newPointTarget = _isFullRow
-                ? GetPointMoveFullRow(posActor, offset, offsetCharacter)
-                : GetPointMoveOvercomeObstacle(posActor, offset, offsetCharacter);
+            // var newPointTarget = _isFullRow
+            //     ? GetPointMoveFullRow(posActor, offset, offsetCharacter)
+            //     : GetPointMoveOvercomeObstacle(posActor, offset, offsetCharacter);
 
+            var newPointTarget = GetPointMoveOvercomeObstacle(posActor, offset, offsetCharacter);
 
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
@@ -136,7 +138,8 @@ namespace Controllers.NewGame
 
         private Vector3 GetPointMoveOvercomeObstacle(Vector3 posActor, Vector3 offset, Vector3 offsetCharacter)
         {
-            return posActor + offset;
+            bool isNearStartPoint =  Math.Abs(posActor.x + _actorRun.start.x) > 4;
+            return posActor + offset + (isNearStartPoint ? Vector3.zero : offsetCharacter);
         }
 
         private bool IsSameTag(Collider2D other)
