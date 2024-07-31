@@ -6,6 +6,7 @@ using Events;
 using QFramework;
 using UnityEngine;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Controllers.NewGame
 {
@@ -16,6 +17,7 @@ namespace Controllers.NewGame
 
         private readonly Dictionary<string, Actor> _actorsHead = new();
         private Actor _actorObstacle;
+        // private bool _isMoveToCompetitorPointX;
 
         public int id;
         public ENUMS.CharacterType type;
@@ -23,7 +25,7 @@ namespace Controllers.NewGame
         public bool isAttack;
         public bool isPlayer;
         public Vector3 start, end;
-        
+
         public Dictionary<string, Actor> ActorsHead => _actorsHead;
 
         public Actor ActorObstacle
@@ -35,8 +37,8 @@ namespace Controllers.NewGame
         protected override void AwaitCustom()
         {
             Init();
-            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttack);
-            this.RegisterEvent<MoveToTargetEvent>(e => MoveToTarget());
+            this.RegisterEvent<ActorAttackPointEvent>(e => { MoveToActorAttack(e); });
+            this.RegisterEvent<MoveToTargetEvent>(e => { MoveToTarget(); });
         }
 
         private void Init()
@@ -60,15 +62,19 @@ namespace Controllers.NewGame
             }
 
             var circleCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
-            var posX = e.Pos.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
-            
-            bool isNearStartPoint = Math.Abs(transform.position.x + start.x) > 4;
-            if (ActorsHead.Count >= 3 && !isNearStartPoint)
+            var newPosX = e.Position.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
+
+            if (ActorsHead.Count >= 3 && !IsNearStartPoint())
             {
                 return;
             }
 
-            MoveToPoint(transform.position.x, posX);
+            MoveToPoint(new Vector3(newPosX, e.Position.y));
+        }
+
+        public bool IsNearStartPoint()
+        {
+            return Math.Abs(transform.position.x + start.x) > 4;
         }
 
         public void Attack()
@@ -77,16 +83,11 @@ namespace Controllers.NewGame
             isAttack = true;
 
             GamePlayModel.ActorsAttacking.TryAdd(name, this);
-            
+
             this.SendEvent(new ActorAttackPointEvent(transform.position, type));
         }
 
-        private void MoveToTarget()
-        {
-            MoveToPoint(transform.position.x, end.x);
-        }
-
-        public void MoveToPoint(float currentX, float newX)
+        public void MoveToPoint(Vector3 newPos)
         {
             transform.DOKill();
             if (!gameObject.activeSelf)
@@ -94,16 +95,77 @@ namespace Controllers.NewGame
                 return;
             }
 
-            var durationMoveToTarget = Utils.GetDurationMoveToPoint(
-                currentX,
-                newX,
-                start.x,
-                end.x,
-                ActorConfig.durationMove);
+            var durationMoveToTarget = Vector3.Distance(transform.position, newPos) / 
+                Vector3.Distance(start, end) * ActorConfig.durationMove;
 
             transform
-                .DOMove(new Vector3(newX, transform.position.y), durationMoveToTarget)
+                .DOMove(newPos, durationMoveToTarget)
                 .SetEase(Ease.Linear);
+        }
+
+        public void MoveToActorAttackNearest(Actor actorAttackNearest)
+        {
+            var newPoint = GetActorAttackNearestPoint(actorAttackNearest);
+
+            MoveToPoint(newPoint);
+        }
+
+        public void MoveToTarget()
+        {
+            var actorAttackNearest = ActorAttackNearest();
+            if (!actorAttackNearest)
+            {
+                MoveToPoint(new Vector3(end.x, transform.position.y));
+                return;
+            }
+
+            MoveToActorAttackNearestX(actorAttackNearest);
+        }
+
+        private void MoveToActorAttackNearestX(Actor actorAttackNearest)
+        {
+            var newPoint = GetActorAttackNearestPoint(actorAttackNearest);
+
+            MoveToPoint(new Vector3(newPoint.x, transform.position.y));
+        }
+
+        private Vector3 GetActorAttackNearestPoint(Actor actorAttackNearest)
+        {
+            Vector3 actorAttackNearestPosition = actorAttackNearest.transform.position;
+            var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
+
+            var random = (1 - Random.value) * 0.1f;
+
+            var newPointX = actorAttackNearestPosition.x + (type == ENUMS.CharacterType.Player
+                ? -warriorCollider.radius * 2 + random
+                : warriorCollider.radius * 2 - random);
+
+            return new Vector3(newPointX, actorAttackNearestPosition.y);
+        }
+
+        private Actor ActorAttackNearest()
+        {
+            Actor actorAttackNearest = null;
+            var posActor = transform.position;
+            float minDistance = 10;
+            foreach (var pair in GamePlayModel.ActorsAttacking)
+            {
+                var actorAttack = pair.Value;
+                var posActorAttack = actorAttack.transform.position;
+                var distance = Vector3.Distance(posActor, posActorAttack);
+                if (!actorAttack.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (distance < minDistance && actorAttack.type != type)
+                {
+                    minDistance = distance;
+                    actorAttackNearest = actorAttack;
+                }
+            }
+
+            return actorAttackNearest;
         }
     }
 }

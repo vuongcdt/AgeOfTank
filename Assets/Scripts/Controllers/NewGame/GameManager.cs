@@ -17,7 +17,7 @@ namespace Controllers.NewGame
         [SerializeField] private int playerHunterCount;
         [SerializeField] private int enemyHunterCount;
         [SerializeField] private Button resetBtn;
-        [SerializeField] private int spawnMore;
+        [SerializeField] private int[] spawnMore;
 
         private int _count;
         private int _idPlayer, _idEnemy;
@@ -55,15 +55,15 @@ namespace Controllers.NewGame
 
             yield return new WaitForSeconds(1f);
 
-            foreach (var i in new int[playerHunterCount])
-            {
-                SpawnPlayer(ENUMS.CharacterTypeClass.Hunter);
-            }
-
-            foreach (var i in new int[playerCount])
-            {
-                SpawnPlayer();
-            }
+            // foreach (var i in new int[playerHunterCount])
+            // {
+            //     SpawnPlayer(ENUMS.CharacterTypeClass.Hunter);
+            // }
+            //
+            // foreach (var i in new int[playerCount])
+            // {
+            //     SpawnPlayer();
+            // }
 
             foreach (var i in new int[enemyHunterCount])
             {
@@ -75,18 +75,16 @@ namespace Controllers.NewGame
                 SpawnEnemy();
             }
 
-            for (var index = 0; index < new int[spawnMore].Length; index++)
+            for (var i = 0; i < spawnMore.Length; i++)
             {
-                StartCoroutine(Spawn5Player((index + 1) * 3));
-            }
-        }
+                var value = spawnMore[i];
 
-        private IEnumerator Spawn5Player(float time)
-        {
-            yield return new WaitForSeconds(time);
-            foreach (var i in new int[5])
-            {
-                SpawnPlayer();
+                foreach (var j in new int[value])
+                {
+                    SpawnPlayer();
+                }
+
+                yield return new WaitForSeconds((i + 1) * 3);
             }
         }
 
@@ -105,13 +103,13 @@ namespace Controllers.NewGame
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
 
-            var random = (1 - Random.value) * 0.2f;
+            var random = (1 - Random.value) * 0.1f;
 
-            var player = Instantiate(actor, new Vector3(start.x + random * 0.5f, start.y + random), Quaternion.identity,
+            var player = Instantiate(actor, new Vector3(start.x + random, start.y), Quaternion.identity,
                 transform);
             _pool.Add(player);
 
-            player.MoveToPoint(start.x, end.x);
+            player.MoveToTarget();
         }
 
         private void SpawnEnemy(ENUMS.CharacterTypeClass characterTypeClass = ENUMS.CharacterTypeClass.FighterEnemy)
@@ -129,13 +127,13 @@ namespace Controllers.NewGame
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
 
-            var random = (1 - Random.value) * 0.2f;
+            var random = (1 - Random.value) * 0.1f;
 
-            var enemy = Instantiate(actor, new Vector3(end.x + random * 0.5f, end.y + random), Quaternion.identity,
+            var enemy = Instantiate(actor, new Vector3(end.x + random, end.y), Quaternion.identity,
                 transform);
             _pool.Add(enemy);
 
-            enemy.MoveToPoint(end.x, start.x);
+            enemy.MoveToTarget();
         }
     }
 }

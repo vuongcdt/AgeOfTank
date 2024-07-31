@@ -59,21 +59,45 @@ namespace Controllers.NewGame
                 return;
             }
 
-            MoveToPoint();
+            // _actor.MoveToTarget();
+            MoveToCompetitor();
         }
 
-        private void MoveToPoint()
+        private void MoveToCompetitor()
         {
-            float minDistance = 10;
-            Vector3 point = new();
-            Actor actorAttackMin = null;
-            var posActor = _actor.transform.position;
-
             if (!_actor.gameObject.activeSelf)
             {
                 return;
             }
 
+            var actorAttackNearest = ActorAttackNearest();
+
+            if (!actorAttackNearest)
+            {
+                // _actor.MoveToTarget();
+                this.SendEvent<MoveToTargetEvent>();
+                return;
+            }
+
+            Vector3 actorAttackNearestPosition = actorAttackNearest.transform.position;
+
+            var random = Random.value * 0.1f;
+            var durationMove = 6f;
+
+            var posActorX = actorAttackNearestPosition.x + (_actor.type == ENUMS.CharacterType.Player
+                ? -_circleCollider.radius * 2 + random
+                : _circleCollider.radius * 2 - random);
+
+            _actor.transform
+                .DOMove(new Vector3(posActorX, actorAttackNearestPosition.y), durationMove)
+                .OnComplete(MoveToCompetitor);
+        }
+
+        private Actor ActorAttackNearest()
+        {
+            Actor actorAttackMin = null;
+            var posActor = _actor.transform.position;
+            float minDistance = 10;
             foreach (var pair in GamePlayModel.ActorsAttacking)
             {
                 var actorAttack = pair.Value;
@@ -87,28 +111,12 @@ namespace Controllers.NewGame
                 if (distance < minDistance && actorAttack.type != _actor.type)
                 {
                     minDistance = distance;
-                    point = posActorAttack;
+                    // point = posActorAttack;
                     actorAttackMin = actorAttack;
                 }
             }
 
-            if (!actorAttackMin)
-            {
-                // _actor.MoveToTarget();
-                this.SendEvent<MoveToTargetEvent>();
-                return;
-            }
-
-            var random = Random.value * 0.1f;
-            var durationMove = 6f;
-
-            var posActorX = point.x + (_actor.type == ENUMS.CharacterType.Player
-                ? -_circleCollider.radius * 2 + random
-                : _circleCollider.radius * 2 - random);
-
-            _actor.transform
-                .DOMove(new Vector3(posActorX, point.y), durationMove)
-                .OnComplete(MoveToPoint);
+            return actorAttackMin;
         }
 
 #if UNITY_EDITOR
@@ -119,6 +127,5 @@ namespace Controllers.NewGame
             Gizmos.DrawWireSphere(transform.position, col.radius);
         }
 #endif
-        
     }
 }

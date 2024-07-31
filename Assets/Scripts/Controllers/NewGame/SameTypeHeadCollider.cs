@@ -1,4 +1,5 @@
 ﻿using Controllers.Game;
+using DG.Tweening;
 using Events;
 using QFramework;
 using UnityEngine;
@@ -19,11 +20,6 @@ namespace Controllers.NewGame
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            // if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
-            // {
-            //     CheckFullRow();
-            // }
-
             if (!other.CompareTag(CONSTANS.Tag.SameTypeCollider))
             {
                 return;
@@ -50,7 +46,7 @@ namespace Controllers.NewGame
             {
                 return;
             }
-            
+
             var sameTypeCollider = other.GetComponent<SameTypeCollider>();
             //
             // if (!sameTypeCollider)
@@ -59,7 +55,6 @@ namespace Controllers.NewGame
             // }
             _actorRun.ActorsHead.Remove(sameTypeCollider.ActorName);
             // _actorRun.MoveToPoint(_actorRun.transform.position.x,sameTypeCollider.transform.position.x);
-
         }
 
 #if UNITY_EDITOR

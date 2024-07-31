@@ -20,48 +20,38 @@ namespace Controllers.NewGame
             _actorName = _actorRun.name;
         }
 
-        private void OnTriggerEnter2D(Collider2D other) //OnTriggerEnter2D
+        private void OnTriggerEnter2D(Collider2D other) 
         {
-            if (IsNotEnterObstacle(other))
+            if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
+            {
+                var runTransform = _actorRun.transform;
+                var position = runTransform.position;
+                runTransform.position = new Vector3(position.x - 0.4f, 0);
+                _actorRun.MoveToTarget();
+                // _actorRun.MoveToPoint(new Vector3(position.x + 0.4f, 0));
+                return;
+            }
+
+            if (!IsSameTag(other) || _actorRun.isAttack)
             {
                 return;
             }
 
-            if (_actorRun.ActorsHead.Count > 2)
+            var actorObstacle = other.GetComponentInParent<Actor>();
+            if (_actorRun.id <= actorObstacle.id)
+            {
+                return;
+            }
+
+            _actorRun.ActorObstacle = actorObstacle;
+
+            if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
             {
                 _actorRun.transform.DOKill();
                 return;
             }
 
             MoveAcross();
-        }
-
-        private bool IsNotEnterObstacle(Collider2D other)
-        {
-            if (!IsSameTag(other))
-            {
-                return true;
-            }
-
-            _actorRun.ActorObstacle = other.GetComponentInParent<Actor>();
-
-            if (_actorRun.id <= _actorRun.ActorObstacle.id)
-            {
-                return true;
-            }
-
-            // if (!_actorRun.IsMoveTarget)
-            // {
-            //     return;
-            // }
-
-            if (_actorRun.isAttack)
-            {
-                return true;
-            }
-
-
-            return false;
         }
 
         private void MoveAcross()
@@ -74,9 +64,10 @@ namespace Controllers.NewGame
             var durationMove = ActorConfig.durationMove * 0.1f;
 
             var posObstacle = _actorRun.ActorObstacle.transform.position;
-            bool isNearStartPoint = Math.Abs(posActor.x + _actorRun.start.x) > 4;
 
-            var newPointTarget = isNearStartPoint ? posObstacle + offset + offsetCharacter : posActor + offset;
+            var newPointTarget = _actorRun.IsNearStartPoint()
+                ? posObstacle + offset + offsetCharacter
+                : posActor + offset;
 
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
@@ -85,7 +76,7 @@ namespace Controllers.NewGame
 
         private void OnTriggerStay2D(Collider2D other) //OnTriggerStay2D
         {
-            if (!IsSameTag(other))
+            if (!IsSameTag(other) || _actorRun.isAttack)
             {
                 return;
             }
@@ -104,72 +95,6 @@ namespace Controllers.NewGame
             return other.CompareTag(tag)
                    && tag.Contains(CONSTANS.Tag.SameTypeCollider);
         }
-
-        // private void OnTriggerExit2D(Collider2D other) //OnTriggerExit2D
-        // {
-        //     if (IsNotObstacleExit(other))
-        //     {
-        //         return;
-        //     }
-        //
-        //     // _actorObstacle = null;
-        //     _actorRun.transform.DOKill();
-        //     MoveToTarget();
-        // }
-        //
-        //
-        // private bool IsNotObstacleExit(Collider2D other)
-        // {
-        //     if (!other.CompareTag(tag))
-        //     {
-        //         return true;
-        //     }
-        //
-        //     if (!_actorRun.ActorObstacle)
-        //     {
-        //         return true;
-        //     }
-        //
-        //     var actorExit = other.GetComponentInParent<Actor>();
-        //
-        //     if (!actorExit)
-        //     {
-        //         return true;
-        //     }
-        //
-        //     if (_actorRun.ActorObstacle.id != actorExit.id)
-        //     {
-        //         return true;
-        //     }
-        //
-        //     // if (!_actorRun.IsMoveTarget)
-        //     // {
-        //     //     return;
-        //     // }
-        //
-        //     if (_actorRun.isAttack)
-        //     {
-        //         return true;
-        //     }
-        //
-        //     Debug.Log($"{_actorRun.name} EXIT {_actorRun.ActorObstacle.name}");
-        //
-        //     return false;
-        // }
-        //
-        // private void MoveToTarget()
-        // {
-        //     var posRun = _actorRun.transform.position;
-        //     var durationMoveToTarget = Utils.GetDurationMoveToTarget(
-        //         posRun.x,
-        //         _actorRun.start.x,
-        //         _actorRun.end.x,
-        //         ActorConfig.durationMove);
-        //
-        //     _actorRun.transform
-        //         .DOMove(new Vector3(_actorRun.end.x, posRun.y), durationMoveToTarget)
-        //         .SetEase(Ease.Linear);
-        // }
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()
