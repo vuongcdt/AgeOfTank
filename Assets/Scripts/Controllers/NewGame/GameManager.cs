@@ -1,8 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using Controllers.Game;
 using QFramework;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 using Utilities;
 
 namespace Controllers.NewGame
@@ -14,8 +16,12 @@ namespace Controllers.NewGame
         [SerializeField] private int playerCount, enemyCount;
         [SerializeField] private int playerHunterCount;
         [SerializeField] private int enemyHunterCount;
+        [SerializeField] private Button resetBtn;
+        [SerializeField] private int spawnMore;
+
         private int _count;
         private int _idPlayer, _idEnemy;
+        private List<Actor> _pool = new();
 
         void Start()
         {
@@ -23,6 +29,21 @@ namespace Controllers.NewGame
             GraphicsSettings.transparencySortAxis = Vector3.up;
 
             this.RegisterEvent<Events.InitCharacter>(e => { SpawnPlayer(e.TypeClass); });
+
+            resetBtn.onClick.RemoveAllListeners();
+            resetBtn.onClick.AddListener(Reset);
+            StartCoroutine(SpawnPrefab());
+        }
+
+        private void Reset()
+        {
+            _idPlayer = 0;
+            _idEnemy = 0;
+            foreach (var item in _pool)
+            {
+                item.name += "DELETE";
+                item.gameObject.SetActive(false);
+            }
 
             StartCoroutine(SpawnPrefab());
         }
@@ -32,19 +53,17 @@ namespace Controllers.NewGame
             start = new(-2.5f, 0);
             end = new(2.5f, 0);
 
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
 
             foreach (var i in new int[playerHunterCount])
             {
                 SpawnPlayer(ENUMS.CharacterTypeClass.Hunter);
             }
 
-
             foreach (var i in new int[playerCount])
             {
                 SpawnPlayer();
             }
-
 
             foreach (var i in new int[enemyHunterCount])
             {
@@ -54,6 +73,20 @@ namespace Controllers.NewGame
             foreach (var i in new int[enemyCount])
             {
                 SpawnEnemy();
+            }
+
+            for (var index = 0; index < new int[spawnMore].Length; index++)
+            {
+                StartCoroutine(Spawn5Player((index + 1) * 3));
+            }
+        }
+
+        private IEnumerator Spawn5Player(float time)
+        {
+            yield return new WaitForSeconds(time);
+            foreach (var i in new int[5])
+            {
+                SpawnPlayer();
             }
         }
 
@@ -71,11 +104,12 @@ namespace Controllers.NewGame
             sameTypeCollider.tag = (int)characterTypeClass % 3 == 1
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
-            
+
             var random = (1 - Random.value) * 0.2f;
 
             var player = Instantiate(actor, new Vector3(start.x + random * 0.5f, start.y + random), Quaternion.identity,
                 transform);
+            _pool.Add(player);
 
             player.MoveToPoint(start.x, end.x);
         }
@@ -99,6 +133,7 @@ namespace Controllers.NewGame
 
             var enemy = Instantiate(actor, new Vector3(end.x + random * 0.5f, end.y + random), Quaternion.identity,
                 transform);
+            _pool.Add(enemy);
 
             enemy.MoveToPoint(end.x, start.x);
         }

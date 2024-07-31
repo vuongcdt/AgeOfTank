@@ -94,7 +94,6 @@ namespace Controllers.NewGame
 
             if (!actorAttackMin)
             {
-                Debug.Log($"{_actor.name} actorAttackMin");
                 // _actor.MoveToTarget();
                 this.SendEvent<MoveToTargetEvent>();
                 return;

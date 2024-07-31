@@ -18,6 +18,7 @@ TagManager:
   - SameTypeColliderHunter
   - TopBar
   - BotBar
+  - SameTypeColliderExit
   layers:
   - Default
   - TransparentFX

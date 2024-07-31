@@ -19,6 +19,11 @@ namespace Controllers.NewGame
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            // if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
+            // {
+            //     CheckFullRow();
+            // }
+
             if (!other.CompareTag(CONSTANS.Tag.SameTypeCollider))
             {
                 return;
@@ -35,11 +40,11 @@ namespace Controllers.NewGame
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!gameObject.activeSelf)
-            {
-                this.SendEvent(new ActorAttackPointEvent(transform.position, _actorRun.type));
-                return;
-            }
+            // if (!gameObject.activeSelf)
+            // {
+            //     this.SendEvent(new ActorAttackPointEvent(transform.position, _actorRun.type));
+            //     return;
+            // }
 
             if (!other.CompareTag(CONSTANS.Tag.SameTypeCollider))
             {
@@ -47,13 +52,14 @@ namespace Controllers.NewGame
             }
             
             var sameTypeCollider = other.GetComponent<SameTypeCollider>();
-            
-            if (!sameTypeCollider)
-            {
-                return;
-            }
-
+            //
+            // if (!sameTypeCollider)
+            // {
+            //     return;
+            // }
             _actorRun.ActorsHead.Remove(sameTypeCollider.ActorName);
+            // _actorRun.MoveToPoint(_actorRun.transform.position.x,sameTypeCollider.transform.position.x);
+
         }
 
 #if UNITY_EDITOR
