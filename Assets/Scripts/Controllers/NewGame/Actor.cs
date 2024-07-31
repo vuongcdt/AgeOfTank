@@ -87,7 +87,7 @@ namespace Controllers.NewGame
             this.SendEvent(new ActorAttackPointEvent(transform.position, type));
         }
 
-        public void MoveToPoint(Vector3 newPos)
+        private void MoveToPoint(Vector3 newPos)
         {
             transform.DOKill();
             if (!gameObject.activeSelf)
