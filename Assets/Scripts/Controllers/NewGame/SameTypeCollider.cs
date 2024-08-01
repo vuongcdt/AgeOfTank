@@ -20,15 +20,24 @@ namespace Controllers.NewGame
             _actorName = _actorRun.name;
         }
 
-        private void OnTriggerEnter2D(Collider2D other) 
+        //OnTriggerEnter2D
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.CompareTag(CONSTANS.Tag.TopBar) || other.CompareTag(CONSTANS.Tag.BotBar))
+            if (other.CompareTag(GetStartBarTag()))
             {
-                var runTransform = _actorRun.transform;
-                var position = runTransform.position;
-                runTransform.position = new Vector3(position.x - 0.4f, 0);
-                _actorRun.MoveToTarget();
-                // _actorRun.MoveToPoint(new Vector3(position.x + 0.4f, 0));
+                // if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
+                // {
+                //     _actorRun.transform.DOKill();
+                //     return;
+                // }
+
+                if (!_actorRun.ActorObstacle)
+                {
+                    _actorRun.MoveToTarget();
+                    return;
+                }
+
+                MoveAcross();
                 return;
             }
 
@@ -44,6 +53,10 @@ namespace Controllers.NewGame
             }
 
             _actorRun.ActorObstacle = actorObstacle;
+            if (_actorRun.IsNearStartPoint())
+            {
+                return;
+            }
 
             if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
             {
@@ -52,6 +65,11 @@ namespace Controllers.NewGame
             }
 
             MoveAcross();
+        }
+
+        private string GetStartBarTag()
+        {
+            return _actorRun.isPlayer ? CONSTANS.Tag.StartBarPlayer : CONSTANS.Tag.StartBarEnemy;
         }
 
         private void MoveAcross()
@@ -74,7 +92,8 @@ namespace Controllers.NewGame
                 .SetEase(Ease.Linear);
         }
 
-        private void OnTriggerStay2D(Collider2D other) //OnTriggerStay2D
+        //OnTriggerStay2D
+        private void OnTriggerStay2D(Collider2D other)
         {
             if (!IsSameTag(other) || _actorRun.isAttack)
             {
@@ -94,6 +113,29 @@ namespace Controllers.NewGame
         {
             return other.CompareTag(tag)
                    && tag.Contains(CONSTANS.Tag.SameTypeCollider);
+        }
+
+        //OnTriggerExit2D
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (_actorRun.isAttack || !_actorRun.ActorObstacle || !other.CompareTag(tag))
+            {
+                return;
+            }
+
+            var actorExit = other.GetComponentInParent<Actor>();
+
+            if (!actorExit)
+            {
+                return;
+            }
+
+            if (_actorRun.ActorObstacle.id != actorExit.id)
+            {
+                return;
+            }
+
+            _actorRun.MoveToTarget();
         }
 
 #if UNITY_EDITOR

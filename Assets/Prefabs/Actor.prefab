@@ -115,7 +115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6268969135887676913
 Transform:
   m_ObjectHideFlags: 0
@@ -267,13 +267,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 12
-  type: 0
-  typeClass: 0
+  id: 2
+  type: 1
+  typeClass: 3
   isAttack: 0
   isPlayer: 0
-  start: {x: -2.5, y: 0, z: 0}
-  end: {x: 2.5, y: 0, z: 0}
+  start: {x: 2.5, y: 0, z: 0}
+  end: {x: -2.5, y: 0, z: 0}
 --- !u!1 &2626945058477316506
 GameObject:
   m_ObjectHideFlags: 0

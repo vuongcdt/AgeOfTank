@@ -13,8 +13,8 @@
             public const string SameTypeColliderHunter = nameof(SameTypeColliderHunter);
             public const string WarriorColliderPlayer = nameof(WarriorColliderPlayer);
             public const string WarriorColliderEnemy = nameof(WarriorColliderEnemy);
-            public const string BotBar = nameof(BotBar);
-            public const string TopBar = nameof(TopBar);
+            public const string StartBarPlayer = nameof(StartBarPlayer);
+            public const string StartBarEnemy = nameof(StartBarEnemy);
         }
     }
 }

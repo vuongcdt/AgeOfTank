@@ -17,7 +17,6 @@ namespace Controllers.NewGame
 
         private readonly Dictionary<string, Actor> _actorsHead = new();
         private Actor _actorObstacle;
-        // private bool _isMoveToCompetitorPointX;
 
         public int id;
         public ENUMS.CharacterType type;
@@ -37,8 +36,8 @@ namespace Controllers.NewGame
         protected override void AwaitCustom()
         {
             Init();
-            this.RegisterEvent<ActorAttackPointEvent>(e => { MoveToActorAttack(e); });
-            this.RegisterEvent<MoveToTargetEvent>(e => { MoveToTarget(); });
+            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttackX);
+            this.RegisterEvent<MoveToTargetEvent>(e => MoveToTarget());
         }
 
         private void Init()
@@ -54,22 +53,22 @@ namespace Controllers.NewGame
             avatar.flipX = !isPlayer;
         }
 
-        private void MoveToActorAttack(ActorAttackPointEvent e)
+        private void MoveToActorAttackX(ActorAttackPointEvent e)
         {
             if (isAttack || type == e.Type)
             {
                 return;
             }
 
-            var circleCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
-            var newPosX = e.Position.x + (isPlayer ? -circleCollider.radius : circleCollider.radius);
-
             if (ActorsHead.Count >= 3 && !IsNearStartPoint())
             {
                 return;
             }
 
-            MoveToPoint(new Vector3(newPosX, e.Position.y));
+            var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
+            var newPosX = e.Position.x + (isPlayer ? -warriorCollider.radius * 2 : warriorCollider.radius * 2);
+
+            MoveToPoint(new Vector3(newPosX, transform.position.y));
         }
 
         public bool IsNearStartPoint()
@@ -95,7 +94,7 @@ namespace Controllers.NewGame
                 return;
             }
 
-            var durationMoveToTarget = Vector3.Distance(transform.position, newPos) / 
+            var durationMoveToTarget = Vector3.Distance(transform.position, newPos) /
                 Vector3.Distance(start, end) * ActorConfig.durationMove;
 
             transform
@@ -131,9 +130,8 @@ namespace Controllers.NewGame
 
         private Vector3 GetActorAttackNearestPoint(Actor actorAttackNearest)
         {
-            Vector3 actorAttackNearestPosition = actorAttackNearest.transform.position;
             var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
-
+            Vector3 actorAttackNearestPosition = actorAttackNearest.transform.position;
             var random = (1 - Random.value) * 0.1f;
 
             var newPointX = actorAttackNearestPosition.x + (type == ENUMS.CharacterType.Player

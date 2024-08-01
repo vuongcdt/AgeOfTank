@@ -19,6 +19,8 @@ TagManager:
   - TopBar
   - BotBar
   - SameTypeColliderExit
+  - StartBarPlayer
+  - StartBarEnemy
   layers:
   - Default
   - TransparentFX

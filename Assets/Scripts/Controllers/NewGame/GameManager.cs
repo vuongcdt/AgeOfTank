@@ -4,6 +4,7 @@ using Controllers.Game;
 using QFramework;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
@@ -18,7 +19,11 @@ namespace Controllers.NewGame
         [SerializeField] private int enemyHunterCount;
         [SerializeField] private Button resetBtn;
         [SerializeField] private int[] spawnMore;
+        [SerializeField] private int totalActorInRow = 10;
+        [SerializeField] private float timeClearCount = 0.07f;
 
+        private int _countActor;
+        private IEnumerator _timeCountPlayer;
         private int _count;
         private int _idPlayer, _idEnemy;
         private List<Actor> _pool = new();
@@ -39,6 +44,7 @@ namespace Controllers.NewGame
         {
             _idPlayer = 0;
             _idEnemy = 0;
+            _countActor = 0;
             foreach (var item in _pool)
             {
                 item.name += "DELETE";
@@ -103,13 +109,38 @@ namespace Controllers.NewGame
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
 
-            var random = (1 - Random.value) * 0.1f;
+            // var random = (1 - Random.value) * 0.1f;
+            //
+            // var player = Instantiate(actor, new Vector3(start.x + random, start.y), Quaternion.identity,
+            //     transform);
 
-            var player = Instantiate(actor, new Vector3(start.x + random, start.y), Quaternion.identity,
+            _countActor++;
+            var random = (1 - Random.value) * 0.1f;
+            var row = _countActor / totalActorInRow;
+            var posX = random - 0.4f * row;
+
+            if (_timeCountPlayer != null)
+            {
+                StopCoroutine(_timeCountPlayer);
+            }
+
+            _timeCountPlayer = StopCountPlayer();
+            StartCoroutine(_timeCountPlayer);
+
+            var player = Instantiate(actor,
+                new Vector3(start.x + posX, start.y + random),
+                Quaternion.identity,
                 transform);
+
             _pool.Add(player);
 
             player.MoveToTarget();
+        }
+
+        private IEnumerator StopCountPlayer()
+        {
+            yield return new WaitForSeconds(ActorConfig.durationMove * timeClearCount);
+            _countActor = 0;
         }
 
         private void SpawnEnemy(ENUMS.CharacterTypeClass characterTypeClass = ENUMS.CharacterTypeClass.FighterEnemy)
