@@ -4,9 +4,9 @@ using Controllers.Game;
 using QFramework;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Controllers.NewGame
 {
@@ -23,10 +23,11 @@ namespace Controllers.NewGame
         [SerializeField] private float timeClearCount = 0.07f;
 
         private int _countActor;
-        private IEnumerator _timeCountPlayer;
+        private IEnumerator _stopCountPlayerIE;
         private int _count;
         private int _idPlayer, _idEnemy;
         private List<Actor> _pool = new();
+        private float _timeCountdown;
 
         void Start()
         {
@@ -56,8 +57,8 @@ namespace Controllers.NewGame
 
         private IEnumerator SpawnPrefab()
         {
-            start = new(-2.5f, 0);
-            end = new(2.5f, 0);
+            start = new(-3f, 0);
+            end = new(3f, 0);
 
             yield return new WaitForSeconds(1f);
 
@@ -104,7 +105,7 @@ namespace Controllers.NewGame
             actor.end = end;
 
             var sameTypeCollider = actor.GetComponentInChildren<SameTypeCollider>();
-
+            var boxCollider2D = sameTypeCollider.GetComponent<BoxCollider2D>();
             sameTypeCollider.tag = (int)characterTypeClass % 3 == 1
                 ? CONSTANS.Tag.SameTypeColliderHunter
                 : CONSTANS.Tag.SameTypeCollider;
@@ -115,18 +116,21 @@ namespace Controllers.NewGame
             //     transform);
 
             _countActor++;
+            
             var random = (1 - Random.value) * 0.1f;
             var row = _countActor / totalActorInRow;
-            var posX = random - 0.4f * row;
-
-            if (_timeCountPlayer != null)
+            var posX = random - 0.3f * row ;
+            
+            // var posX = random - boxCollider2D.size.x - 0.5f * (row - _timeCountdown / timeClearCount);
+            
+            if (_stopCountPlayerIE != null)
             {
-                StopCoroutine(_timeCountPlayer);
+                StopCoroutine(_stopCountPlayerIE);
             }
-
-            _timeCountPlayer = StopCountPlayer();
-            StartCoroutine(_timeCountPlayer);
-
+            
+            _stopCountPlayerIE = StopCountPlayer();
+            StartCoroutine(_stopCountPlayerIE);
+            
             var player = Instantiate(actor,
                 new Vector3(start.x + posX, start.y + random),
                 Quaternion.identity,
@@ -137,9 +141,20 @@ namespace Controllers.NewGame
             player.MoveToTarget();
         }
 
+        private void FixedUpdate()
+        {
+            if (_timeCountdown > timeClearCount)
+            {
+                _timeCountdown = 0;
+            }
+
+            _timeCountdown += Time.deltaTime;
+        }
+
         private IEnumerator StopCountPlayer()
         {
-            yield return new WaitForSeconds(ActorConfig.durationMove * timeClearCount);
+            yield return new WaitForSeconds(timeClearCount);
+            _timeCountdown = 0;
             _countActor = 0;
         }
 

@@ -73,7 +73,8 @@ namespace Controllers.NewGame
 
         public bool IsNearStartPoint()
         {
-            return Math.Abs(transform.position.x + start.x) > 4;
+            var isNearStartPoint = Math.Abs(transform.position.x + start.x) > Mathf.Abs(start.x - end.x) - 0.8f;
+            return isNearStartPoint;
         }
 
         public void Attack()

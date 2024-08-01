@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5936150964848097340}
   - component: {fileID: 4837389121267291335}
   - component: {fileID: 7804619443271474341}
+  - component: {fileID: 5092286951557981868}
   m_Layer: 0
   m_Name: Id
   m_TagString: Untagged
@@ -97,6 +98,18 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4294967295
+--- !u!210 &5092286951557981868
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780849086111996252}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 11
+  m_SortAtRoot: 0
 --- !u!1 &1615600357879396112
 GameObject:
   m_ObjectHideFlags: 0
@@ -267,13 +280,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 18
+  id: 37
   type: 0
   typeClass: 0
   isAttack: 0
   isPlayer: 0
-  start: {x: -2.5, y: 0, z: 0}
-  end: {x: 2.5, y: 0, z: 0}
+  start: {x: -3, y: 0, z: 0}
+  end: {x: 3, y: 0, z: 0}
 --- !u!1 &2626945058477316506
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +403,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3, y: 0.15}
+  m_Size: {x: 0.2, y: 0.15}
   m_EdgeRadius: 0
 --- !u!1 &3434616107866641899
 GameObject:
@@ -662,7 +675,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.4, y: 0}
+  m_Offset: {x: 0.3, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -673,7 +686,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.35}
+  m_Size: {x: 0.15, y: 0.35}
   m_EdgeRadius: 0
 --- !u!1 &8790034693091094223
 GameObject:

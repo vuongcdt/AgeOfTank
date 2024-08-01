@@ -1,4 +1,3 @@
-using System;
 using Controllers.Game;
 using DG.Tweening;
 using UnityEngine;
@@ -25,18 +24,18 @@ namespace Controllers.NewGame
         {
             if (other.CompareTag(GetStartBarTag()))
             {
-                // if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
-                // {
-                //     _actorRun.transform.DOKill();
-                //     return;
-                // }
-
+                if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
+                {
+                    _actorRun.transform.DOKill();
+                    return;
+                }
+            
                 if (!_actorRun.ActorObstacle)
                 {
                     _actorRun.MoveToTarget();
                     return;
                 }
-
+            
                 MoveAcross();
                 return;
             }
@@ -71,7 +70,7 @@ namespace Controllers.NewGame
         {
             return _actorRun.isPlayer ? CONSTANS.Tag.StartBarPlayer : CONSTANS.Tag.StartBarEnemy;
         }
-
+        
         private void MoveAcross()
         {
             _actorRun.transform.DOKill();
@@ -83,9 +82,11 @@ namespace Controllers.NewGame
 
             var posObstacle = _actorRun.ActorObstacle.transform.position;
 
-            var newPointTarget = _actorRun.IsNearStartPoint()
-                ? posObstacle + offset + offsetCharacter
-                : posActor + offset;
+            // var newPointTarget = _actorRun.IsNearStartPoint()
+            //     ? posObstacle + offset + offsetCharacter
+            //     : posActor + offset;  
+            
+            var newPointTarget = posObstacle + offset + offsetCharacter;
 
             _actorRun.transform
                 .DOMove(newPointTarget, durationMove)
@@ -137,6 +138,7 @@ namespace Controllers.NewGame
 
             _actorRun.MoveToTarget();
         }
+
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()

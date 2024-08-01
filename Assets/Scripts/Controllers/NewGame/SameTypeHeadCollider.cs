@@ -1,7 +1,4 @@
 ﻿using Controllers.Game;
-using DG.Tweening;
-using Events;
-using QFramework;
 using UnityEngine;
 using Utilities;
 
