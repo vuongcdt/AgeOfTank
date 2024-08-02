@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using QFramework;
 using Systems;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Controllers.Game
         private Character _characterObstacle;
         private Transform _transformRun;
 
-        protected override  void AwaitCustom()
+        private void Start()
         {
             _characterRun = GetComponentInParent<Character>();
             _transformRun = _characterRun.transform;

@@ -1,4 +1,6 @@
 ﻿using Interfaces;
+using QFramework;
+using Systems;
 using Utilities;
 
 namespace Commands.Game
@@ -18,8 +20,9 @@ namespace Commands.Game
             InitCharacter();
         }
 
-        private void InitCharacter()
+        private async void InitCharacter()
         {
+            ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
             var isPlayer = (int)_typeClass < 3;
             int id;
             if (isPlayer)

@@ -13,8 +13,7 @@ namespace Controllers.Game
         private async void Awake()
         {
             GamePlayModel = this.GetModel<IGamePlayModel>();
-            var configSystem = this.GetSystem<ConfigSystem>();
-            ActorConfig = await configSystem.GetCharacterConfig();
+            ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
             AwaitCustom();
         }
 

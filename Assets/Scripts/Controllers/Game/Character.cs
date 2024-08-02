@@ -32,12 +32,13 @@ namespace Controllers.Game
 
         public void InitCharacter(string key)
         {
-            // var idText = GetComponent<TextMesh>();
+            var idText = GetComponentInChildren<TextMesh>();
             Stats = GamePlayModel.Characters[key];
             avatar.sprite = ActorConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
             tag = Stats.Tag;
             name = Stats.Name;
-            // idText.text = Stats.ID.ToString();
+            idText.text = Stats.ID.ToString();
+            idText.transform.localPosition = Stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
             gameObject.layer = Stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
@@ -223,22 +224,5 @@ namespace Controllers.Game
             healthBar.GetComponent<Canvas>().sortingOrder =
                 Mathf.CeilToInt(10 - transform.position.y * 10);
         }
-
-
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            var circleCollider = GetComponent<CircleCollider2D>();
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, circleCollider.radius);
-            if (!isGreenLine)
-            {
-                return;
-            }
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, 2);
-        }
-#endif
     }
 }
