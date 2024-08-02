@@ -34,6 +34,10 @@ namespace Events
     {
     }
 
+    public struct AttackEvent
+    {
+    }
+
     public struct AvoidObstacleSystemEvent
     {
         public Collider2D ColliderObstacle;

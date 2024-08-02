@@ -13,7 +13,7 @@ namespace Controllers.NewGame
 
         public string ActorName => _actorName;
 
-        protected override void AwaitCustom()
+        protected override void AwakeCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
             _actorName = _actorRun.name;

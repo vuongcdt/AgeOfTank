@@ -7,7 +7,7 @@ namespace Controllers.NewGame
     {
         private Actor _actorRun;
 
-        protected override void AwaitCustom()
+        protected override void AwakeCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
         }

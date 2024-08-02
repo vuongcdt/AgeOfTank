@@ -43,9 +43,10 @@ namespace Controllers.Game
             var parent = transform;
             var newCharacter =
                 SharedGameObjectPool.Rent(characterPrefab, parent.position, Quaternion.identity, parent);
+            
             var character = newCharacter.GetComponent<Character>();
 
-            character.InitCharacter(newKey);
+            character.RenderCharacter(newKey);
         }
     }
 }

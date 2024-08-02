@@ -1,209 +1,231 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Commands.Game;
-using Cysharp.Threading.Tasks;
+using Controllers.NewGame;
 using DG.Tweening;
+using Events;
 using Interfaces;
 using QFramework;
-using Systems;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Controllers.Game
 {
     public class Character : BaseGameController
     {
+        public bool IsMoveTarget => isMoveTarget;
+        public CharacterStats stats;
+
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
-        [SerializeField] private LayerMask layerPlayer;
-        [SerializeField] private LayerMask layerEnemy;
-        [SerializeField] private bool isGreenLine;
         [SerializeField] private bool isMoveTarget;
 
-        private Character _characterTarget;
-        private Character _characterStay;
-        private Dictionary<string, Character> _charEnterDictionary = new();
-
-        public bool IsMoveTarget => isMoveTarget;
-
-        public CharacterStats Stats;
-
-        public void InitCharacter(string key)
+        public bool IsNearStartPoint()
         {
+            var isNearStartPoint = Math.Abs(transform.position.x + stats.Source.x) >
+                                   Mathf.Abs(stats.Source.x - stats.Target.x) - 0.8f;
+            return isNearStartPoint;
+        }
+
+        public void RenderCharacter(string key)
+        {
+            stats = GamePlayModel.Characters[key];
+
             var idText = GetComponentInChildren<TextMesh>();
-            Stats = GamePlayModel.Characters[key];
-            avatar.sprite = ActorConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
-            tag = Stats.Tag;
-            name = Stats.Name;
-            idText.text = Stats.ID.ToString();
-            idText.transform.localPosition = Stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
+            avatar.sprite = ActorConfig.unitConfigs[(int)stats.TypeClass].imgAvatar;
+            tag = stats.Tag;
+            name = stats.Name;
+            idText.text = stats.ID.ToString();
+            idText.transform.localPosition = stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
-            gameObject.layer = Stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
+            gameObject.layer = stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
-            transform.position = Stats.Source;
+            transform.position = stats.Source;
             transform.DOKill();
-            avatar.flipX = !Stats.IsPlayer;
+            avatar.flipX = !stats.IsPlayer;
 
-            Stats.Health.Register(newValue =>
-            {
-                if (newValue <= 0)
-                {
-                    SetCharacterDeath();
-                    return;
-                }
+            //Register BindableProperty
+            stats.IsEnterSameTypeCollider.RegisterWithInitValue(MoveOverObstacle);
+            stats.Health.Register(SetHealthBar);
+            stats.CharacterBeaten.Register(Attack);
 
-                healthBar.SetActive(true);
-                SetSortingOrderHeathBar();
-
-                healthSlider.value = newValue / ActorConfig.unitConfigs[(int)Stats.TypeClass].health;
-            });
             MoveToTarget();
         }
 
-        public void MoveToTarget()
+        private void SetHealthBar(float newValue)
         {
-            if (Stats.IsDeath)
+            if (newValue <= 0)
             {
+                SetCharacterDeath();
                 return;
             }
 
-            isMoveTarget = true;
+            healthBar.SetActive(true);
+            SetSortingOrderHeathBar();
 
-            var position = transform.position;
-            var durationMoveToTarget = Utils.GetDurationMoveToTarget(
-                position.x,
-                Stats.Source.x,
-                Stats.Target.x,
-                ActorConfig.durationMove);
+            healthSlider.value = newValue / ActorConfig.unitConfigs[(int)stats.TypeClass].health;
+        }
+
+        private void MoveOverObstacle(bool isEnterSameTypeCollider)
+        {
+            if (isEnterSameTypeCollider)
+            {
+                MoveAcross();
+            }
+            else
+            {
+                MoveToTarget();
+            }
+        }
+
+        private void MoveAcross()
+        {
+            transform.DOKill();
+
+            var offset = (stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
+            var offsetCharacter = (stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            // var posActor = transform.position;
+            var durationMove = ActorConfig.durationMove * 0.1f;
+
+            var posObstacle = stats.CharacterObstacle.Value.transform.position;
+
+            // var newPointTarget = IsNearStartPoint()
+            //     ? posObstacle + offset + offsetCharacter
+            //     : posActor + offset;  
+
+            var newPointTarget = posObstacle + offset + offsetCharacter;
 
             transform
-                .DOMove(new Vector3(Stats.Target.x, position.y), durationMoveToTarget)
+                .DOMove(newPointTarget, durationMove)
                 .SetEase(Ease.Linear);
         }
 
-        public void MoveNewPoint(Vector3 newPosition, float time = 0)
+        private void Start()
         {
-            if (time == 0)
+            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttackX);
+            this.RegisterEvent<MoveToTargetEvent>(MoveToTarget);
+        }
+
+        private void MoveToActorAttackX(ActorAttackPointEvent e)
+        {
+            if (stats.IsAttack || stats.Type == e.Type)
             {
-                time = ActorConfig.durationMove * 0.1f;
+                return;
             }
 
+            if (stats.CharactersHead.Count >= 3 && !IsNearStartPoint())
+            {
+                return;
+            }
+
+            var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
+            var newPosX = e.Position.x + (stats.IsPlayer ? -warriorCollider.radius * 2 : warriorCollider.radius * 2);
+
+            MoveToPoint(new Vector3(newPosX, transform.position.y));
+        }
+
+        
+        private void Attack(Character characterBeaten)
+        {
             transform.DOKill();
+            GamePlayModel.CharactersAttacking.TryAdd(name, this);
+            if (stats.IsAttack)
+            {
+                return;
+            }
+            this.SendEvent(new AttackCommand(characterBeaten,this));
+            this.SendEvent(new ActorAttackPointEvent(transform.position, stats.Type));
+        }
+
+        private void MoveToPoint(Vector3 newPos)
+        {
+            transform.DOKill();
+            if (!gameObject.activeSelf)
+            {
+                return;
+            }
+
+            var durationMoveToTarget = Vector3.Distance(transform.position, newPos) /
+                Vector3.Distance(stats.Source, stats.Target) * ActorConfig.durationMove;
+
             transform
-                .DOMove(newPosition, time)
+                .DOMove(newPos, durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void MoveToActorAttackNearest(Character actorAttackNearest)
         {
-            var tagOpposition = Stats.IsPlayer ? CONSTANS.Tag.Enemy : CONSTANS.Tag.Player;
+            var newPoint = GetActorAttackNearestPoint(actorAttackNearest);
 
-            if (!other.CompareTag(tagOpposition))
-            {
-                return;
-            }
-
-            var characterEnter = other.GetComponent<Character>();
-            if (characterEnter)
-            {
-                _charEnterDictionary.TryAdd(characterEnter.name, characterEnter);
-            }
-
-            if (_characterTarget && !_characterTarget.Stats.IsDeath)
-            {
-                return;
-            }
-
-            _characterTarget = characterEnter;
-
-            transform.DOKill();
-
-            this.SendCommand(new AttackCommand(characterEnter, this));
+            MoveToPoint(newPoint);
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private void MoveToTarget(MoveToTargetEvent obj)
         {
-            var tagOpposition = Stats.IsPlayer ? CONSTANS.Tag.Enemy : CONSTANS.Tag.Player;
-
-            if (!other.CompareTag(tagOpposition) || Stats.IsDeath)
-            {
-                return;
-            }
-
-            transform.DOKill();
-            var characterExit = other.GetComponent<Character>();
-
-            if (characterExit && _charEnterDictionary.ContainsKey(characterExit.name))
-            {
-                _charEnterDictionary.Remove(characterExit.name);
-            }
-
-            if (!_characterTarget.Stats.IsDeath)
-            {
-                return;
-            }
-
-            foreach (var pair in _charEnterDictionary)
-            {
-                if (!_charEnterDictionary[pair.Key].Stats.IsDeath)
-                {
-                    _characterTarget = _charEnterDictionary[pair.Key];
-                    this.SendCommand(new AttackCommand(_characterTarget, this));
-                    return;
-                }
-            }
-
-            NextAction();
+            MoveToTarget();
         }
 
-        private async void NextAction()
+        private void MoveToTarget()
         {
-            if (Stats.IsDeath)
+            var actorAttackNearest = ActorAttackNearest();
+            if (!actorAttackNearest)
             {
+                MoveToPoint(new Vector3(stats.Target.x, transform.position.y));
                 return;
             }
 
-            var layerOpposition = Stats.IsPlayer ? layerEnemy : layerPlayer;
-            var position = transform.position;
-            var newPos = new Vector3(Stats.IsPlayer ? position.x + 0.5f : position.x - 0.5f, position.y - 3);
+            MoveToActorAttackNearestX(actorAttackNearest);
+        }
 
-            Collider2D[] collider2Ds = Physics2D.OverlapCircleAll(position, 2, layerOpposition);
+        private void MoveToActorAttackNearestX(Character actorAttackNearest)
+        {
+            var newPoint = GetActorAttackNearestPoint(actorAttackNearest);
 
-            isMoveTarget = false;
-            Vector3 pointMinDistance = new Vector3();
+            MoveToPoint(new Vector3(newPoint.x, transform.position.y));
+        }
+
+        private Vector3 GetActorAttackNearestPoint(Character actorAttackNearest)
+        {
+            var children = GetComponentInChildren<WarriorCollider>();
+            var warriorCollider = children.CircleCollider;
+            var actorAttackNearestPosition = actorAttackNearest.transform.position;
+
+            var random = (1 - Random.value) * 0.1f;
+
+            var newPointX = actorAttackNearestPosition.x + (stats.Type == ENUMS.CharacterType.Player
+                ? -warriorCollider.radius * 2 + random
+                : warriorCollider.radius * 2 - random);
+
+            return new Vector3(newPointX, actorAttackNearestPosition.y);
+        }
+
+        private Character ActorAttackNearest()
+        {
+            Character actorAttackNearest = null;
+            var posActor = transform.position;
             float minDistance = 10;
-
-            foreach (var col2D in collider2Ds)
+            foreach (var pair in GamePlayModel.CharactersAttacking)
             {
-                if (!col2D)
+                var actorAttack = pair.Value;
+                var posActorAttack = actorAttack.transform.position;
+                var distance = Vector3.Distance(posActor, posActorAttack);
+                if (!actorAttack.gameObject.activeSelf)
                 {
                     continue;
                 }
 
-                var distance = Vector3.Distance(col2D.transform.position, transform.position);
-                if (distance < minDistance)
+                if (distance < minDistance && actorAttack.stats.Type != stats.Type)
                 {
                     minDistance = distance;
-                    pointMinDistance = col2D.transform.position;
+                    actorAttackNearest = actorAttack;
                 }
             }
 
-            if (collider2Ds.Length == 0)
-            {
-                isMoveTarget = true;
-                enabled = false;
-                await UniTask.WaitForEndOfFrame(this);
-                enabled = true;
-                MoveToTarget();
-                return;
-            }
-
-            var durationMove = 0.5f / minDistance * (ActorConfig.durationMove * 0.1f);
-            var newPoint = new Vector3(Stats.IsPlayer ? pointMinDistance.x - 0.6f : pointMinDistance.x + 0.6f,
-                pointMinDistance.y);
-            MoveNewPoint(newPoint, durationMove);
+            return actorAttackNearest;
         }
 
         private void SetCharacterDeath()
@@ -214,8 +236,8 @@ namespace Controllers.Game
             }
 
             transform.DOKill();
+            GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
-            _characterTarget = null;
             SharedGameObjectPool.Return(gameObject);
         }
 

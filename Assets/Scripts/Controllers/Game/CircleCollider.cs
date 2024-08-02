@@ -10,7 +10,7 @@ namespace Controllers.Game
         private Character _characterRun;
         private Character _characterObstacle;
 
-        protected override void AwaitCustom()
+        protected override void AwakeCustom()
         {
             _characterRun = GetComponentInParent<Character>();
         }
@@ -21,7 +21,7 @@ namespace Controllers.Game
 
             var characterObstacle = other.GetComponentInParent<Character>();
 
-            if (_characterRun.Stats.ID <= characterObstacle.Stats.ID)
+            if (_characterRun.stats.ID <= characterObstacle.stats.ID)
             {
                 return;
             }
@@ -53,13 +53,13 @@ namespace Controllers.Game
         private  void MoveOvercomeObstacles()
         {
         
-            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.5f;
-            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.75f;
+            var offset = (_characterRun.stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1.5f;
+            var offsetCharacter = (_characterRun.stats.IsPlayer ? Vector3.right : Vector3.left) * 0.75f;
             var posObstacle = _characterObstacle.transform.position;
         
             var newPointTarget = posObstacle + offset + offsetCharacter;
           
-            _characterRun.MoveNewPoint(newPointTarget, ActorConfig.durationMove * 0.15f);
+            // _characterRun.MoveNewPoint(newPointTarget, ActorConfig.durationMove * 0.15f);
         }
 
         private void OnTriggerStay2D(Collider2D other)
@@ -67,7 +67,7 @@ namespace Controllers.Game
             if (IsCircleColliderTag(other)) return;
 
             var characterStay = other.GetComponentInParent<Character>();
-            if (characterStay.Stats.ID > _characterRun.Stats.ID)
+            if (characterStay.stats.ID > _characterRun.stats.ID)
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterObstacle.Stats.ID != characterExit.Stats.ID)
+            if (_characterObstacle.stats.ID != characterExit.stats.ID)
             {
                 return;
             }
@@ -101,7 +101,7 @@ namespace Controllers.Game
                 return;
             }
 
-            _characterRun.MoveToTarget();
+            // _characterRun.MoveToTarget();
         }
 
         private bool IsCircleColliderTag(Collider2D other)

@@ -10,7 +10,7 @@ namespace Controllers.NewGame
         private Actor _actorObstacle;
         private bool _isFullRow;
 
-        protected override void AwaitCustom()
+        protected override void AwakeCustom()
         {
             _actorRun = GetComponentInParent<Actor>();
         }

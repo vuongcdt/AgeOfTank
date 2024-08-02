@@ -14,10 +14,10 @@ namespace Controllers.Game
         {
             GamePlayModel = this.GetModel<IGamePlayModel>();
             ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
-            AwaitCustom();
+            AwakeCustom();
         }
 
-        protected virtual void AwaitCustom()
+        protected virtual void AwakeCustom()
         {
         }
 

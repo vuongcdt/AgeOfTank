@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Controllers.Game;
 using Controllers.NewGame;
 using QFramework;
 using UnityEngine;
@@ -12,14 +14,13 @@ namespace Interfaces
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
         public Dictionary<string, CharacterStats> Characters { get; }
-        public Dictionary<string, Actor> ActorsAttacking { get; }
-        public Dictionary<string, Actor> PlayerAttack { get; }
-        public Dictionary<string, Actor> EnemyAttack { get; }
+        public Dictionary<string, Character> CharactersAttacking { get; }
         public BindableProperty<string> InitCharacterKey { get; }
         public BindableProperty<float> ProductFoodProgress { get; }
         public BindableProperty<int> FoodNum { get; }
     }
 
+    [Serializable]
     public class CharacterStats
     {
         public BindableProperty<float> Health;
@@ -27,15 +28,22 @@ namespace Interfaces
         public float Damage;
         public Vector3 Target;
         public Vector3 Source;
-        public bool IsPlayer;
         public string Tag;
         public string Name;
+        public bool IsPlayer;
+        public bool IsAttack;
+        public BindableProperty<bool> IsEnterSameTypeCollider = new();
+        public BindableProperty<Character> CharacterBeaten = new();
+        public BindableProperty<Character> CharacterObstacle = new();
+        public Dictionary<string, Character> CharactersHead = new();
+        public Dictionary<string, Character> CharactersCanBeaten = new();
 
         public bool IsDeath => Health.Value < 0;
+        public ENUMS.CharacterType Type;
         public ENUMS.CharacterTypeClass TypeClass;
 
         public CharacterStats(float health, int id, float damage, Vector3 target, Vector3 source,
-            string tag, string name, ENUMS.CharacterTypeClass typeClass)
+            string tag, string name, ENUMS.CharacterTypeClass typeClass, ENUMS.CharacterType type)
         {
             Health = new BindableProperty<float>(health);
             ID = id;
@@ -46,6 +54,7 @@ namespace Interfaces
             Tag = tag;
             Name = name;
             TypeClass = typeClass;
+            Type = type;
         }
     }
 }

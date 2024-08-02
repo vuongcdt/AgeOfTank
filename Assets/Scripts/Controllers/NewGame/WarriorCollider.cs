@@ -16,7 +16,7 @@ namespace Controllers.NewGame
 
         public CircleCollider2D CircleCollider => _circleCollider;
 
-        protected override void AwaitCustom()
+        protected override void AwakeCustom()
         {
             Init();
         }
@@ -98,23 +98,23 @@ namespace Controllers.NewGame
             Actor actorAttackMin = null;
             var posActor = _actor.transform.position;
             float minDistance = 10;
-            foreach (var pair in GamePlayModel.ActorsAttacking)
-            {
-                var actorAttack = pair.Value;
-                var posActorAttack = actorAttack.transform.position;
-                var distance = Vector3.Distance(posActor, posActorAttack);
-                if (!actorAttack.gameObject.activeSelf)
-                {
-                    continue;
-                }
-
-                if (distance < minDistance && actorAttack.type != _actor.type)
-                {
-                    minDistance = distance;
-                    // point = posActorAttack;
-                    actorAttackMin = actorAttack;
-                }
-            }
+            // foreach (var pair in GamePlayModel.ActorsAttacking)
+            // {
+            //     var actorAttack = pair.Value;
+            //     var posActorAttack = actorAttack.transform.position;
+            //     var distance = Vector3.Distance(posActor, posActorAttack);
+            //     if (!actorAttack.gameObject.activeSelf)
+            //     {
+            //         continue;
+            //     }
+            //
+            //     // if (distance < minDistance && actorAttack.type != _actor.type)
+            //     // {
+            //     //     minDistance = distance;
+            //     //     // point = posActorAttack;
+            //     //     actorAttackMin = actorAttack;
+            //     // }
+            // }
 
             return actorAttackMin;
         }

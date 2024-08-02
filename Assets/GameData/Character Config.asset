@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53b2f076d1ee4bfa85d46c8ca3ca6c3c, type: 3}
   m_Name: Character Config
   m_EditorClassIdentifier: 
-  pointSource: {x: -2.2, y: 0, z: 0}
-  pointTarget: {x: 2.2, y: 0, z: 0}
+  pointSource: {x: -3, y: 0, z: 0}
+  pointTarget: {x: 3, y: 0, z: 0}
   durationMove: 20
   distanceHit: 0.2
   attackTime: 2

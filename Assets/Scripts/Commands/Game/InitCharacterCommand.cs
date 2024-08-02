@@ -14,7 +14,7 @@ namespace Commands.Game
             _typeClass = typeClass;
         }
 
-        protected override  void OnExecute()
+        protected override void OnExecute()
         {
             base.OnExecute();
             InitCharacter();
@@ -22,7 +22,7 @@ namespace Commands.Game
 
         private async void InitCharacter()
         {
-            ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
+            ActorConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
             var isPlayer = (int)_typeClass < 3;
             int id;
             if (isPlayer)
@@ -42,9 +42,10 @@ namespace Commands.Game
             var name = $"{tag} {id}";
             var source = isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
             var target = !isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
+            var type = isPlayer ? ENUMS.CharacterType.Player : ENUMS.CharacterType.Enemy;
 
             GamePlayModel.Characters.Add(name,
-                new CharacterStats(health, id, damage, target, source, tag, name, _typeClass));
+                new CharacterStats(health, id, damage, target, source, tag, name, _typeClass, type));
             GamePlayModel.InitCharacterKey.Value = name;
         }
     }
