@@ -24,19 +24,7 @@ namespace Controllers.NewGame
         {
             if (other.CompareTag(GetStartBarTag()))
             {
-                if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
-                {
-                    _actorRun.transform.DOKill();
-                    return;
-                }
-            
-                if (!_actorRun.ActorObstacle)
-                {
-                    _actorRun.MoveToTarget();
-                    return;
-                }
-            
-                MoveAcross();
+                MovetoOverStartBar();
                 return;
             }
 
@@ -66,11 +54,28 @@ namespace Controllers.NewGame
             MoveAcross();
         }
 
+        private void MovetoOverStartBar()
+        {
+            if (_actorRun.ActorsHead.Count > 2 && !_actorRun.IsNearStartPoint())
+            {
+                _actorRun.transform.DOKill();
+                return;
+            }
+
+            if (!_actorRun.ActorObstacle)
+            {
+                _actorRun.MoveToTarget();
+                return;
+            }
+
+            MoveAcross();
+        }
+
         private string GetStartBarTag()
         {
             return _actorRun.isPlayer ? CONSTANS.Tag.StartBarPlayer : CONSTANS.Tag.StartBarEnemy;
         }
-        
+
         private void MoveAcross()
         {
             _actorRun.transform.DOKill();
@@ -85,7 +90,7 @@ namespace Controllers.NewGame
             // var newPointTarget = _actorRun.IsNearStartPoint()
             //     ? posObstacle + offset + offsetCharacter
             //     : posActor + offset;  
-            
+
             var newPointTarget = posObstacle + offset + offsetCharacter;
 
             _actorRun.transform
