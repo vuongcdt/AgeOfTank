@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Commands.Game;
 using Controllers.NewGame;
 using DG.Tweening;
@@ -19,10 +20,13 @@ namespace Controllers.Game
         public bool IsMoveTarget => isMoveTarget;
         public CharacterStats stats;
 
+        [SerializeField] private int mass = 20;
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
         [SerializeField] private bool isMoveTarget;
+
+        private Rigidbody2D _rg;
 
         public bool IsNearStartPoint()
         {
@@ -42,18 +46,19 @@ namespace Controllers.Game
             idText.text = stats.ID.ToString();
             idText.transform.localPosition = stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
-            gameObject.layer = stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
+            // gameObject.layer = stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
             transform.position = stats.Source;
-            transform.DOKill();
+            // transform.DOKill();
             avatar.flipX = !stats.IsPlayer;
+            stats.GameObject = gameObject;
 
             //Register BindableProperty
             stats.IsEnterSameTypeCollider.RegisterWithInitValue(MoveOverObstacle);
             stats.Health.Register(SetHealthBar);
             stats.CharacterBeaten.Register(Attack);
 
-            MoveToTarget();
+            // MoveToTarget();
         }
 
         private void SetHealthBar(float newValue)
@@ -108,6 +113,21 @@ namespace Controllers.Game
         {
             this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttackX);
             this.RegisterEvent<MoveToTargetEvent>(MoveToTarget);
+            _rg = GetComponent<Rigidbody2D>();
+            _rg.velocity = stats.Target.normalized * 0.2f;
+            StartCoroutine(AddVelocityIE());
+        }
+
+        private IEnumerator AddVelocityIE()
+        {
+            var magnitude = _rg.velocity.magnitude;
+            if (magnitude < 0.2f)
+            {
+                _rg.velocity = stats.Target.normalized * 0.2f;
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            StartCoroutine(AddVelocityIE());
         }
 
         private void MoveToActorAttackX(ActorAttackPointEvent e)
@@ -123,38 +143,42 @@ namespace Controllers.Game
             }
 
             var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
-            var newPosX = e.Position.x + (stats.IsPlayer ? -warriorCollider.radius * 2 + 0.05f : warriorCollider.radius * 2 - 0.05f);
+            var newPosX = e.Position.x +
+                          (stats.IsPlayer ? -warriorCollider.radius * 2 + 0.05f : warriorCollider.radius * 2 - 0.05f);
 
             MoveToPoint(new Vector3(newPosX, transform.position.y));
         }
 
-        
+
         private void Attack(Character characterBeaten)
         {
-            transform.DOKill();
+            _rg.mass = mass;
+
+            // transform.DOKill();
             GamePlayModel.CharactersAttacking.TryAdd(name, this);
             if (stats.IsAttack)
             {
                 return;
             }
-            this.SendCommand(new AttackCommand(characterBeaten,this));
+
+            // this.SendCommand(new AttackCommand(characterBeaten,this));
             this.SendEvent(new ActorAttackPointEvent(transform.position, stats.Type));
         }
 
         private void MoveToPoint(Vector3 newPos)
         {
-            transform.DOKill();
-            if (!gameObject.activeSelf)
-            {
-                return;
-            }
-
-            var durationMoveToTarget = Vector3.Distance(transform.position, newPos) /
-                Vector3.Distance(stats.Source, stats.Target) * ActorConfig.durationMove;
-
-            transform
-                .DOMove(newPos, durationMoveToTarget)
-                .SetEase(Ease.Linear);
+            // transform.DOKill();
+            // if (!gameObject.activeSelf)
+            // {
+            //     return;
+            // }
+            //
+            // var durationMoveToTarget = Vector3.Distance(transform.position, newPos) /
+            //     Vector3.Distance(stats.Source, stats.Target) * ActorConfig.durationMove;
+            //
+            // transform
+            //     .DOMove(newPos, durationMoveToTarget)
+            //     .SetEase(Ease.Linear);
         }
 
         private void MoveToActorAttackNearest(Character actorAttackNearest)

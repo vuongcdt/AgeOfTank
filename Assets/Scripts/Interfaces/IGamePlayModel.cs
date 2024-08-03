@@ -23,6 +23,7 @@ namespace Interfaces
     [Serializable]
     public class CharacterStats
     {
+        public GameObject GameObject;
         public BindableProperty<float> Health;
         public int ID;
         public float Damage;

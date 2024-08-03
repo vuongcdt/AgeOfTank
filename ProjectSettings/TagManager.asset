@@ -30,9 +30,9 @@ TagManager:
   - UI
   - Player
   - Enemy
-  - 
-  - 
-  - 
+  - WarriorPlayer
+  - WarriorEnemy
+  - SameType
   - 
   - 
   - 

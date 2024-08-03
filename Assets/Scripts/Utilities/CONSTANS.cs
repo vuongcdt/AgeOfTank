@@ -16,5 +16,12 @@
             public const string StartBarPlayer = nameof(StartBarPlayer);
             public const string StartBarEnemy = nameof(StartBarEnemy);
         }
+        
+        public struct LayerMask
+        {
+            public const string WarriorPlayer = nameof(WarriorPlayer);
+            public const string WarriorEnemy = nameof(WarriorEnemy);
+            public const string SameType = nameof(SameType);
+        }
     }
 }
