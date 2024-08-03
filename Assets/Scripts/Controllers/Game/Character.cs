@@ -48,7 +48,8 @@ namespace Controllers.Game
 
             // gameObject.layer = stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
-            transform.position = stats.Source;
+            var random = (1 - Random.value) * 0.2f;
+            transform.position = new Vector3(stats.Source.x,stats.Source.y + random);
             // transform.DOKill();
             avatar.flipX = !stats.IsPlayer;
             stats.GameObject = gameObject;
@@ -121,9 +122,10 @@ namespace Controllers.Game
         private IEnumerator AddVelocityIE()
         {
             var magnitude = _rg.velocity.magnitude;
-            if (magnitude < 0.2f)
+            if (magnitude < 0.2f && !stats.IsAttack)
             {
-                _rg.velocity = stats.Target.normalized * 0.2f;
+                // _rg.velocity = stats.Target.normalized * 0.2f;
+                _rg.AddForce(stats.Target.normalized * 0.2f);
             }
 
             yield return new WaitForSeconds(0.1f);
@@ -142,7 +144,7 @@ namespace Controllers.Game
                 return;
             }
 
-            var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
+            var warriorCollider = GetComponentInChildren<WarriorCollision>().CircleCollider;
             var newPosX = e.Position.x +
                           (stats.IsPlayer ? -warriorCollider.radius * 2 + 0.05f : warriorCollider.radius * 2 - 0.05f);
 
@@ -152,6 +154,12 @@ namespace Controllers.Game
 
         private void Attack(Character characterBeaten)
         {
+            if (!characterBeaten)
+            {
+                _rg.mass = 1;
+                stats.IsAttack = false;
+                return;
+            }
             _rg.mass = mass;
 
             // transform.DOKill();
@@ -160,6 +168,8 @@ namespace Controllers.Game
             {
                 return;
             }
+
+            stats.IsAttack = true;
 
             // this.SendCommand(new AttackCommand(characterBeaten,this));
             this.SendEvent(new ActorAttackPointEvent(transform.position, stats.Type));
@@ -214,8 +224,7 @@ namespace Controllers.Game
 
         private Vector3 GetActorAttackNearestPoint(Character actorAttackNearest)
         {
-            var children = GetComponentInChildren<WarriorCollider>();
-            var warriorCollider = children.CircleCollider;
+            var warriorCollider = GetComponentInChildren<WarriorCollision>().CircleCollider;
             var actorAttackNearestPosition = actorAttackNearest.transform.position;
 
             var random = (1 - Random.value) * 0.1f;

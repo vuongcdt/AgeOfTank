@@ -21,6 +21,9 @@
         {
             Player = 6,
             Enemy,
+            WarriorPlayer,
+            WarriorEnemy,
+            SameType
         }
     }
 }

@@ -167,7 +167,7 @@ MonoBehaviour:
     IsAttack: 0
     Type: 0
     TypeClass: 0
-  mass: 100
+  mass: 200
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
@@ -215,7 +215,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.2, y: 0.15}
+  m_Size: {x: 0.3, y: 0.15}
   m_EdgeRadius: 0
 --- !u!50 &2698823889748445181
 Rigidbody2D:
@@ -233,7 +233,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: dcb51350bc8e62b4a867e4db65e02d5a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -662,7 +662,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3630323512553930994}
   - component: {fileID: 6303393089346762635}
-  - component: {fileID: 4156149303185069480}
+  - component: {fileID: 8149922396839130123}
   m_Layer: 0
   m_Name: WarriorCollider
   m_TagString: Untagged
@@ -720,7 +720,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.3
---- !u!114 &4156149303185069480
+--- !u!114 &8149922396839130123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -729,7 +729,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8875673128107096996}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8d6244bd37648c1ad9059c6545a5926, type: 3}
+  m_Script: {fileID: 11500000, guid: 288d00af64f1455e97572890b3e1e345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &71557681062890193
