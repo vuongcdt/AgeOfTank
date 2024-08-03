@@ -18,12 +18,12 @@ namespace Events
     {
     }
 
-    public struct ActorAttackPointEvent
+    public struct CharacterAttackPointEvent
     {
         public Vector3 Position;
         public ENUMS.CharacterType Type;
 
-        public ActorAttackPointEvent(Vector3 position, ENUMS.CharacterType type)
+        public CharacterAttackPointEvent(Vector3 position, ENUMS.CharacterType type)
         {
             Position = position;
             Type = type;

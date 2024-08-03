@@ -27,6 +27,8 @@ namespace Controllers.Game
         [SerializeField] private bool isMoveTarget;
 
         private Rigidbody2D _rg;
+        private Vector3 _targetMovePoint;
+        private CircleCollider2D _warriorCollider;
 
         public bool IsNearStartPoint()
         {
@@ -49,7 +51,7 @@ namespace Controllers.Game
             // gameObject.layer = stats.IsPlayer ? (int)ENUMS.Layer.Player : (int)ENUMS.Layer.Enemy;
             healthBar.SetActive(false);
             var random = (1 - Random.value) * 0.2f;
-            transform.position = new Vector3(stats.Source.x,stats.Source.y + random);
+            transform.position = new Vector3(stats.Source.x, stats.Source.y + random);
             // transform.DOKill();
             avatar.flipX = !stats.IsPlayer;
             stats.GameObject = gameObject;
@@ -112,27 +114,61 @@ namespace Controllers.Game
 
         private void Start()
         {
-            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttackX);
+            _warriorCollider = GetComponentInChildren<WarriorCollision>().CircleCollider;
+            // this.RegisterEvent<CharacterAttackPointEvent>(MoveToActorAttackX);
+            this.RegisterEvent<CharacterAttackPointEvent>(e =>
+            {
+                if (e.Type == stats.Type)
+                {
+                    return;
+                }
+
+                _targetMovePoint = e.Position;
+            });
             this.RegisterEvent<MoveToTargetEvent>(MoveToTarget);
             _rg = GetComponent<Rigidbody2D>();
             _rg.velocity = stats.Target.normalized * 0.2f;
+            _targetMovePoint = stats.Target;
             StartCoroutine(AddVelocityIE());
         }
 
         private IEnumerator AddVelocityIE()
         {
+            if (stats.IsAttack)
+            {
+                yield return new WaitForSeconds(0.1f);
+                StartCoroutine(AddVelocityIE());
+                yield break;
+            }
+
             var magnitude = _rg.velocity.magnitude;
+            if (name == "Player 10")
+            {
+                // Debug.Log(_targetMovePoint);
+            }
+
+            var position = transform.position;
+            var dir = _targetMovePoint - position;
+
+            if (Mathf.Abs(_targetMovePoint.x - position.x) < _warriorCollider.radius * 2 - 0.1f)
+            {
+                _rg.velocity = Vector3.zero;
+                Debug.Log($"VAR {name}");
+                yield break;
+            }
+            
+            // _rg.velocity = new Vector3(dir.x, position.y).normalized * 0.2f;
             if (magnitude < 0.2f && !stats.IsAttack)
             {
                 // _rg.velocity = stats.Target.normalized * 0.2f;
-                _rg.AddForce(stats.Target.normalized * 0.2f);
+                // _rg.AddForce((_targetMovePoint - position).normalized * 0.2f);
             }
 
             yield return new WaitForSeconds(0.1f);
             StartCoroutine(AddVelocityIE());
         }
 
-        private void MoveToActorAttackX(ActorAttackPointEvent e)
+        private void MoveToActorAttackX(CharacterAttackPointEvent e)
         {
             if (stats.IsAttack || stats.Type == e.Type)
             {
@@ -160,6 +196,7 @@ namespace Controllers.Game
                 stats.IsAttack = false;
                 return;
             }
+
             _rg.mass = mass;
 
             // transform.DOKill();
@@ -172,7 +209,7 @@ namespace Controllers.Game
             stats.IsAttack = true;
 
             // this.SendCommand(new AttackCommand(characterBeaten,this));
-            this.SendEvent(new ActorAttackPointEvent(transform.position, stats.Type));
+            this.SendEvent(new CharacterAttackPointEvent(transform.position, stats.Type));
         }
 
         private void MoveToPoint(Vector3 newPos)

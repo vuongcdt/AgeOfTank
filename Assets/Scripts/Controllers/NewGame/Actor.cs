@@ -36,7 +36,7 @@ namespace Controllers.NewGame
         protected override void AwakeCustom()
         {
             Init();
-            this.RegisterEvent<ActorAttackPointEvent>(MoveToActorAttackX);
+            this.RegisterEvent<CharacterAttackPointEvent>(MoveToActorAttackX);
             this.RegisterEvent<MoveToTargetEvent>(e => MoveToTarget());
         }
 
@@ -53,7 +53,7 @@ namespace Controllers.NewGame
             avatar.flipX = !isPlayer;
         }
 
-        private void MoveToActorAttackX(ActorAttackPointEvent e)
+        private void MoveToActorAttackX(CharacterAttackPointEvent e)
         {
             if (isAttack || type == e.Type)
             {
@@ -84,7 +84,7 @@ namespace Controllers.NewGame
 
             // GamePlayModel.ActorsAttacking.TryAdd(name, this);
 
-            this.SendEvent(new ActorAttackPointEvent(transform.position, type));
+            this.SendEvent(new CharacterAttackPointEvent(transform.position, type));
         }
 
         private void MoveToPoint(Vector3 newPos)
