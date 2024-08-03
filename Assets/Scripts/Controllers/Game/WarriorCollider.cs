@@ -43,6 +43,8 @@ namespace Controllers.Game
                 _character.stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
                 this.SendEvent(new ActorAttackPointEvent(transform.position, _character.stats.Type));
                 _character.stats.CharacterBeaten.Value = _characterBeaten;
+                
+                Debug.Log($"_characterBeaten {_characterBeaten.name}");
             }
         }
 
@@ -63,7 +65,12 @@ namespace Controllers.Game
 
             var characterExit = other.GetComponentInParent<Character>();
 
-            if (!_characterBeaten && !characterExit && _characterBeaten.stats.ID != characterExit.stats.ID)
+            if (!characterExit)
+            {
+                return;
+            }
+            
+            if (_characterBeaten.stats.ID != characterExit.stats.ID)
             {
                 return;
             }

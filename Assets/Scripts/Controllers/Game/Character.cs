@@ -123,7 +123,7 @@ namespace Controllers.Game
             }
 
             var warriorCollider = GetComponentInChildren<WarriorCollider>().CircleCollider;
-            var newPosX = e.Position.x + (stats.IsPlayer ? -warriorCollider.radius * 2 : warriorCollider.radius * 2);
+            var newPosX = e.Position.x + (stats.IsPlayer ? -warriorCollider.radius * 2 + 0.05f : warriorCollider.radius * 2 - 0.05f);
 
             MoveToPoint(new Vector3(newPosX, transform.position.y));
         }
@@ -137,7 +137,7 @@ namespace Controllers.Game
             {
                 return;
             }
-            this.SendEvent(new AttackCommand(characterBeaten,this));
+            this.SendCommand(new AttackCommand(characterBeaten,this));
             this.SendEvent(new ActorAttackPointEvent(transform.position, stats.Type));
         }
 
