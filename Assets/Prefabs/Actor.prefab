@@ -280,7 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 7804619443271474341}
   avatar: {fileID: 776502723355918966}
-  id: 20
+  id: 21
   type: 0
   typeClass: 0
   isAttack: 0
