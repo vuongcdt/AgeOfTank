@@ -167,7 +167,7 @@ MonoBehaviour:
     IsAttack: 0
     Type: 0
     TypeClass: 0
-  mass: 50
+  mass: 100
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
