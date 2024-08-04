@@ -114,6 +114,17 @@ namespace Controllers.Game
 
         private void Start()
         {
+            Debug.Log($" Start {name}");
+            Init();
+        }
+
+        private void OnEnable()
+        {
+            UnityEngine.Debug.Log($"OnEnable {name}");
+        }
+
+        private void Init()
+        {
             _warriorCollider = GetComponentInChildren<WarriorCollision>().CircleCollider;
             // this.RegisterEvent<CharacterAttackPointEvent>(MoveToActorAttackX);
             this.RegisterEvent<CharacterAttackPointEvent>(e =>
@@ -129,7 +140,7 @@ namespace Controllers.Game
             _rg = GetComponent<Rigidbody2D>();
             _rg.velocity = stats.Target.normalized * 0.2f;
             _targetMovePoint = stats.Target;
-            StartCoroutine(AddVelocityIE());
+            // StartCoroutine(AddVelocityIE());
         }
 
         private IEnumerator AddVelocityIE()
@@ -192,7 +203,7 @@ namespace Controllers.Game
         {
             if (!characterBeaten)
             {
-                _rg.mass = 1;
+                // _rg.mass = 1;
                 stats.IsAttack = false;
                 return;
             }

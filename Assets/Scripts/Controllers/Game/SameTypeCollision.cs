@@ -24,6 +24,7 @@ namespace Controllers.Game
         {
             if (IsCompareTag(other))
             {
+                Debug.Log($"OnTriggerEnter2D {name}");
                 transform.DOKill();
                 _rg.mass = 1;
                 _boxCollider.isTrigger = false;
