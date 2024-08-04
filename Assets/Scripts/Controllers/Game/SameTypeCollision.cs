@@ -1,5 +1,4 @@
-﻿using System;
-using DG.Tweening;
+﻿using System.Collections;
 using Interfaces;
 using UnityEngine;
 using Utilities;
@@ -11,34 +10,68 @@ namespace Controllers.Game
         private CharacterStats _characterStats;
         private Rigidbody2D _rg;
         private BoxCollider2D _boxCollider;
+        private CapsuleCollider2D _capsuleCollider;
 
         private void Start()
         {
             _rg = GetComponent<Rigidbody2D>();
             _boxCollider = GetComponent<BoxCollider2D>();
+            _capsuleCollider = GetComponent<CapsuleCollider2D>();
             _characterStats = GamePlayModel.Characters[name];
             // _characterStats = GetComponent<Character>().stats;
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnCollisionEnter2D(Collision2D other)
         {
-            if (IsCompareTag(other))
+            if (_characterStats.IsAttack)
             {
-                Debug.Log($"OnTriggerEnter2D {name}");
-                transform.DOKill();
-                _rg.mass = 1;
-                _boxCollider.isTrigger = false;
+                return;
             }
-         
+
+            StartCoroutine(AddVelocityIE());
         }
 
-        private bool IsCompareTag(Collider2D other)
+        private IEnumerator AddVelocityIE()
+        {
+            var magnitude = _rg.velocity.magnitude;
+
+            if (magnitude < 0.2f && !_characterStats.IsAttack)
+            {
+                // _rg.velocity = stats.Target.normalized * 0.2f;
+                // _rg.AddForce((_targetMovePoint - position).normalized * 0.2f);
+                _rg.AddForce(_characterStats.Target.normalized * 0.2f);
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            StartCoroutine(AddVelocityIE());
+        }
+
+        private void OnCollisionExit2D(Collision2D other)
+        {
+            Debug.Log($"OnCollisionExit2D {name}");
+            // _rg.velocity = _characterStats.Target.normalized * 0.2f;
+            _rg.velocity = Vector3.zero;
+            _rg.AddForce(_characterStats.Target.normalized * 0.2f);
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (IsCompareStartBarTag(other))
+            {
+                _rg.mass = 1;
+                // _boxCollider.isTrigger = false;
+                _capsuleCollider.isTrigger = false;
+            }
+        }
+
+        private bool IsCompareStartBarTag(Collider2D other)
         {
             _characterStats = GamePlayModel.Characters[name];
             if (_characterStats is null)
             {
                 return false;
             }
+
             var startBarTag = _characterStats.IsPlayer ? CONSTANS.Tag.StartBarPlayer : CONSTANS.Tag.StartBarEnemy;
             return other.CompareTag(startBarTag);
         }

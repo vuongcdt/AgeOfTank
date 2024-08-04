@@ -114,13 +114,7 @@ namespace Controllers.Game
 
         private void Start()
         {
-            Debug.Log($" Start {name}");
             Init();
-        }
-
-        private void OnEnable()
-        {
-            UnityEngine.Debug.Log($"OnEnable {name}");
         }
 
         private void Init()
@@ -209,6 +203,7 @@ namespace Controllers.Game
             }
 
             _rg.mass = mass;
+            _rg.velocity = Vector3.zero;
 
             // transform.DOKill();
             GamePlayModel.CharactersAttacking.TryAdd(name, this);

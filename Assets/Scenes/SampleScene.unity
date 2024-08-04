@@ -1195,9 +1195,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d2c56f4b24d4c2bab18e35d4f4f7c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resetBtn: {fileID: 1317503558}
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
-  playerTotal: 1
-  enemyTotal: 1
+  playersList: 01000000010000000000000002000000000000000000000004000000
+  enemiesList: 01000000
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0
