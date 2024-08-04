@@ -21,6 +21,7 @@ TagManager:
   - SameTypeColliderExit
   - StartBarPlayer
   - StartBarEnemy
+  - PlayerBar
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - WarriorPlayer
   - WarriorEnemy
   - SameType
-  - 
+  - PlayerBar
   - 
   - 
   - 

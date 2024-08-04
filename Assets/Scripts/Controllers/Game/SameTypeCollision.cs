@@ -8,9 +8,12 @@ namespace Controllers.Game
     public class SameTypeCollision : BaseGameController
     {
         private CharacterStats _characterStats;
+        private Character _character;
         private Rigidbody2D _rg;
         private BoxCollider2D _boxCollider;
         private CapsuleCollider2D _capsuleCollider;
+        private int _mass = 2;
+        private bool _isStopMove;
 
         private void Start()
         {
@@ -18,28 +21,46 @@ namespace Controllers.Game
             _boxCollider = GetComponent<BoxCollider2D>();
             _capsuleCollider = GetComponent<CapsuleCollider2D>();
             _characterStats = GamePlayModel.Characters[name];
-            // _characterStats = GetComponent<Character>().stats;
+            _character = GetComponent<Character>();
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
+            if (other.collider.CompareTag(CONSTANS.Tag.PlayerBar))
+            {
+                var attackingCount = GamePlayModel.CharactersAttacking.Count;
+                if (attackingCount > 0)
+                {
+                    Debug.Log($"{name} attackingCount {attackingCount}");
+
+                    _rg.mass = _mass;
+                    _rg.velocity = Vector3.zero;
+                    _isStopMove = true;
+                }
+                return;
+            }
+            
             if (_characterStats.IsAttack)
             {
                 return;
             }
-
+            // _rg.AddForce(_characterStats.Target.normalized * 0.2f);
             StartCoroutine(AddVelocityIE());
         }
 
         private IEnumerator AddVelocityIE()
         {
+            if (_isStopMove)
+            {
+                yield break;
+            }
             var magnitude = _rg.velocity.magnitude;
 
             if (magnitude < 0.2f && !_characterStats.IsAttack)
             {
                 // _rg.velocity = stats.Target.normalized * 0.2f;
                 // _rg.AddForce((_targetMovePoint - position).normalized * 0.2f);
-                _rg.AddForce(_characterStats.Target.normalized * 0.2f);
+                _rg.AddForce(_characterStats.Target.normalized * 0.5f);
             }
 
             yield return new WaitForSeconds(0.1f);
@@ -48,14 +69,20 @@ namespace Controllers.Game
 
         private void OnCollisionExit2D(Collision2D other)
         {
-            Debug.Log($"OnCollisionExit2D {name}");
             // _rg.velocity = _characterStats.Target.normalized * 0.2f;
-            _rg.velocity = Vector3.zero;
-            _rg.AddForce(_characterStats.Target.normalized * 0.2f);
-        }
+            if (!_character.IsNearStartPoint())
+            {
+                _rg.velocity = Vector3.zero;
+                _rg.AddForce(_characterStats.Target.normalized * 0.2f);
+            }
 
+            // _rg.AddForce(new Vector3(_characterStats.Target.x,transform.position.y).normalized * 0.2f);
+        }
+        
         private void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log($"OnTriggerEnter2D {other.tag}");
+
             if (IsCompareStartBarTag(other))
             {
                 _rg.mass = 1;

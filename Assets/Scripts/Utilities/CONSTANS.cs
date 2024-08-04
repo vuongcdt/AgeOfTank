@@ -15,6 +15,7 @@
             public const string WarriorColliderEnemy = nameof(WarriorColliderEnemy);
             public const string StartBarPlayer = nameof(StartBarPlayer);
             public const string StartBarEnemy = nameof(StartBarEnemy);
+            public const string PlayerBar = nameof(PlayerBar);
         }
         
         public struct LayerMask
