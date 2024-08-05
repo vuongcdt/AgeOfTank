@@ -156,19 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 031ee01eb7b4416fb1afc858a1ef418e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats:
-    GameObject: {fileID: 0}
-    ID: 0
-    Damage: 0
-    Target: {x: 0, y: 0, z: 0}
-    Source: {x: 0, y: 0, z: 0}
-    Tag: 
-    Name: 
-    IsPlayer: 0
-    IsAttack: 0
-    Type: 0
-    TypeClass: 0
-  mass: 2
+  mass: 20
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
@@ -257,6 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ffc79907d74ad6a56a34c218990845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mass: 20
 --- !u!70 &2247768392470249698
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -699,6 +688,7 @@ GameObject:
   - component: {fileID: 3630323512553930994}
   - component: {fileID: 6303393089346762635}
   - component: {fileID: 8149922396839130123}
+  - component: {fileID: 8461783263819135863}
   m_Layer: 0
   m_Name: WarriorCollider
   m_TagString: Untagged
@@ -768,6 +758,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 288d00af64f1455e97572890b3e1e345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!58 &8461783263819135863
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8875673128107096996}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.4
 --- !u!1001 &71557681062890193
 PrefabInstance:
   m_ObjectHideFlags: 0

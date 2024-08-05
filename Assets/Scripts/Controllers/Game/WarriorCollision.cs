@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -42,19 +43,30 @@ namespace Controllers.Game
             }
 
             _characterBeaten = other.collider.GetComponentInParent<Character>();
-            _character.Stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
-            _character.Stats.CharacterBeaten.Value = _characterBeaten;
+            _character.Attack(_characterBeaten);
         }
 
-        private void OnCollisionExit2D(Collision2D other)
+        private void OnTriggerExit2D(Collider2D other)
         {
-            if (!IsCompetitor(other.collider))
+            if (!IsCompetitor(other))
             {
                 return;
             }
-            
-            _character.Stats.CharacterBeaten.Value = null;
-            _character.Stats.CharactersCanBeaten.Remove(other.gameObject.name);
+
+            if (_character.Stats.IsDeath)
+            {
+                return;
+            }
+
+            var characterExit = other.GetComponentInParent<Character>();
+
+            if (characterExit && _characterBeaten.Stats.ID != characterExit.Stats.ID)
+            {
+                return;
+            }
+
+            _character.IsAttack = false;
+            _character.MoveHead();
         }
 
         private bool IsCompetitor(Collider2D other)

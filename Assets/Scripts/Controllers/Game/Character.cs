@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Commands.Game;
 using Controllers.NewGame;
 using DG.Tweening;
@@ -18,7 +19,14 @@ namespace Controllers.Game
     public class Character : BaseGameController
     {
         public bool IsMoveTarget => isMoveTarget;
-        public CharacterStats Stats;
+        public CharacterStats Stats => _stats;
+        public bool IsAttack
+        {
+            get => _isAttack;
+            set => _isAttack = value;
+        }
+
+        public Dictionary<string, Character> CharactersCanBeaten => _charactersCanBeaten;
 
         [SerializeField] private int mass = 20;
         [SerializeField] private SpriteRenderer avatar;
@@ -27,7 +35,25 @@ namespace Controllers.Game
         [SerializeField] private bool isMoveTarget;
 
         private Rigidbody2D _rg;
-        private Vector3 _targetMovePoint;
+        private bool _isAttack;
+        private CharacterStats _stats;
+        private Dictionary<string, Character> _charactersCanBeaten = new();
+        private Character _characterBeaten;
+
+        private void Start()
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            _stats.Health.Register(SetHealthBar);
+
+            this.RegisterEvent<MoveHeadEvent>(e => { MoveHead(); });
+
+            _rg = GetComponent<Rigidbody2D>();
+            _rg.velocity = _stats.Target.normalized * 0.2f;
+        }
 
         public bool IsNearStartPoint()
         {
@@ -38,44 +64,75 @@ namespace Controllers.Game
 
         public void RenderCharacter(string key)
         {
-            Stats = GamePlayModel.Characters[key];
+            _stats = GamePlayModel.Characters[key];
 
             var idText = GetComponentInChildren<TextMesh>();
-            avatar.sprite = ActorConfig.unitConfigs[(int)Stats.TypeClass].imgAvatar;
-            tag = Stats.Tag;
-            name = Stats.Name;
-            idText.text = Stats.ID.ToString();
-            idText.transform.localPosition = Stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
+            avatar.sprite = ActorConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
+            tag = _stats.Tag;
+            name = _stats.Name;
+            idText.text = _stats.ID.ToString();
+            idText.transform.localPosition = _stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
             healthBar.SetActive(false);
             var random = (1 - Random.value) * 0.2f;
-            transform.position = new Vector3(Stats.Source.x, Stats.Source.y + random);
-            avatar.flipX = !Stats.IsPlayer;
-            Stats.GameObject = gameObject;
-
-            Stats.Health.Register(SetHealthBar);
-            Stats.CharacterBeaten.Register(Attack);
+            transform.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
+            avatar.flipX = !_stats.IsPlayer;
+            _stats.GameObject = gameObject;
         }
 
-        private void Start()
+        public void Attack(Character characterBeaten)
         {
-            Init();
-        }
-
-        private void Init()
-        {
-            this.RegisterEvent<CharacterAttackPointEvent>(e =>
+            if (!characterBeaten)
             {
-                if (e.Type == Stats.Type)
-                {
-                    return;
-                }
+                _isAttack = false;
+                return;
+            }
 
-                _targetMovePoint = e.Position;
-            });
-            _rg = GetComponent<Rigidbody2D>();
-            _rg.velocity = Stats.Target.normalized * 0.2f;
-            _targetMovePoint = Stats.Target;
+            _characterBeaten = characterBeaten;
+
+            _rg.mass = mass;
+            _rg.velocity = Vector3.zero;
+
+            GamePlayModel.CharactersAttacking.TryAdd(name, this);
+            _charactersCanBeaten.TryAdd(characterBeaten.name, characterBeaten);
+
+            if (_isAttack)
+            {
+                return;
+            }
+
+            _isAttack = true;
+
+            this.SendCommand(new AttackCommand(characterBeaten, this));
+        }
+
+        public void MoveHead()
+        {
+            if (_characterBeaten && _characterBeaten._stats.IsDeath)
+            {
+                _isAttack = false;
+            }
+
+            if (_isAttack)
+            {
+                return;
+            }
+
+            StartCoroutine(AddVelocityIE());
+        }
+
+        private IEnumerator AddVelocityIE()
+        {
+            var magnitude = _rg.velocity.magnitude;
+
+            if (magnitude < 0.2f && !_isAttack)
+            {
+                // _rg.AddForce(_stats.Target.normalized);
+                _rg.velocity = _stats.Target.normalized * 0.2f;
+            }
+
+            yield return new WaitForSeconds(0.1f);
+            StartCoroutine(AddVelocityIE());
         }
 
         private void SetHealthBar(float newValue)
@@ -89,29 +146,7 @@ namespace Controllers.Game
             healthBar.SetActive(true);
             SetSortingOrderHeathBar();
 
-            healthSlider.value = newValue / ActorConfig.unitConfigs[(int)Stats.TypeClass].health;
-        }
-
-        private void Attack(Character characterBeaten)
-        {
-            if (!characterBeaten)
-            {
-                Stats.IsAttack = false;
-                return;
-            }
-
-            _rg.mass = mass;
-            _rg.velocity = Vector3.zero;
-
-            GamePlayModel.CharactersAttacking.TryAdd(name, this);
-            if (Stats.IsAttack)
-            {
-                return;
-            }
-
-            Stats.IsAttack = true;
-
-            this.SendEvent(new CharacterAttackPointEvent(transform.position, Stats.Type));
+            healthSlider.value = newValue / ActorConfig.unitConfigs[(int)_stats.TypeClass].health;
         }
 
         private void SetCharacterDeath()
@@ -121,9 +156,23 @@ namespace Controllers.Game
                 return;
             }
 
-            transform.DOKill();
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
+            bool isHasCharacter = false;
+
+            foreach (var pair in GamePlayModel.CharactersAttacking)
+            {
+                if (pair.Value._stats.Type == _stats.Type)
+                {
+                    isHasCharacter = true;
+                }
+            }
+
+            if (!isHasCharacter)
+            {
+                this.SendEvent<MoveHeadEvent>();
+            }
+
             SharedGameObjectPool.Return(gameObject);
         }
 

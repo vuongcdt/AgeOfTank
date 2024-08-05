@@ -300,6 +300,7 @@ namespace Controllers.Game
 
             return actorAttackNearest;
         }
+        
 
         private void SetCharacterDeath()
         {

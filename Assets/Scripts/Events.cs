@@ -17,6 +17,9 @@ namespace Events
     public struct InitConfigSystemEvent
     {
     }
+    public struct MoveHeadEvent
+    {
+    }
 
     public struct CharacterAttackPointEvent
     {

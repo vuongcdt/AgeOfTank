@@ -7,43 +7,37 @@ namespace Commands.Game
 {
     public class AttackCommand : BaseCommand
     {
-        private Character _characterTarget;
+        private Character _characterBeaten;
         private Character _characterAttack;
 
-        public AttackCommand(Character characterTarget, Character characterAttack)
+        public AttackCommand(Character characterBeaten, Character characterAttack)
         {
-            _characterTarget = characterTarget;
+            _characterBeaten = characterBeaten;
             _characterAttack = characterAttack;
         }
 
         protected override async void OnExecute()
         {
             base.OnExecute();
-            await AttackTarget();
-        }
-
-        private async UniTask AttackTarget()
-        {
             await AttackAsync();
         }
 
         private async UniTask AttackAsync()
         {
-            // _characterAttack.transform.DOKill();
             await UniTask.WaitForSeconds(ActorConfig.attackTime);
-            if (!_characterTarget)
+            
+            if (_characterAttack.Stats.IsDeath)
+            {
+                return;
+            }
+            if (!_characterBeaten ||_characterBeaten.Stats.IsDeath)
             {
                 return;
             }
 
-            if (_characterTarget.Stats.IsDeath || _characterAttack.Stats.IsDeath)
-            {
-                return;
-            }
+            _characterBeaten.Stats.Health.Value -= _characterAttack.Stats.Damage;
 
-            _characterTarget.Stats.Health.Value -= _characterAttack.Stats.Damage;
-
-            await AttackTarget();
+            await AttackAsync();
         }
     }
 }
