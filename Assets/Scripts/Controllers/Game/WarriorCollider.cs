@@ -30,7 +30,7 @@ namespace Controllers.Game
         private void Init()
         {
             _character = GetComponentInParent<Character>();
-            var isPlayer = _character.stats.Type == ENUMS.CharacterType.Player;
+            var isPlayer = _character.Stats.Type == ENUMS.CharacterType.Player;
             tag = isPlayer
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
@@ -42,7 +42,7 @@ namespace Controllers.Game
 
         private bool IsCompetitor(Collider2D other)
         {
-            var competitorTag = _character.stats.Type == ENUMS.CharacterType.Player
+            var competitorTag = _character.Stats.Type == ENUMS.CharacterType.Player
                 ? CONSTANS.Tag.WarriorColliderEnemy
                 : CONSTANS.Tag.WarriorColliderPlayer;
             return other.CompareTag(competitorTag);
@@ -57,8 +57,8 @@ namespace Controllers.Game
 
             _characterBeaten = other.collider.GetComponentInParent<Character>();
 
-            _character.stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
-            _character.stats.CharacterBeaten.Value = _characterBeaten;
+            _character.Stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
+            _character.Stats.CharacterBeaten.Value = _characterBeaten;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -70,8 +70,8 @@ namespace Controllers.Game
 
             _characterBeaten = other.GetComponentInParent<Character>();
 
-            _character.stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
-            _character.stats.CharacterBeaten.Value = _characterBeaten;
+            _character.Stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
+            _character.Stats.CharacterBeaten.Value = _characterBeaten;
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -88,12 +88,12 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterBeaten.stats.ID != characterExit.stats.ID)
+            if (_characterBeaten.Stats.ID != characterExit.Stats.ID)
             {
                 return;
             }
 
-            _character.stats.CharactersCanBeaten.Remove(characterExit.name);
+            _character.Stats.CharactersCanBeaten.Remove(characterExit.name);
             MoveToCompetitor();
         }
 
@@ -118,7 +118,7 @@ namespace Controllers.Game
             var random = Random.value * 0.1f;
             var durationMove = 6f;
 
-            var posCharacterX = characterAttackNearestPosition.x + (_character.stats.Type == ENUMS.CharacterType.Player
+            var posCharacterX = characterAttackNearestPosition.x + (_character.Stats.Type == ENUMS.CharacterType.Player
                 ? -_circleCollider.radius * 2 + random
                 : _circleCollider.radius * 2 - random);
 
@@ -142,7 +142,7 @@ namespace Controllers.Game
                     continue;
                 }
 
-                if (distance < minDistance && characterAttack.stats.Type != _character.stats.Type)
+                if (distance < minDistance && characterAttack.Stats.Type != _character.Stats.Type)
                 {
                     minDistance = distance;
                     // point = posCharacterAttack;

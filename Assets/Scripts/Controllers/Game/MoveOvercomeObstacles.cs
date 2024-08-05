@@ -26,7 +26,7 @@ namespace Controllers.Game
 
             _characterObstacle = other.GetComponentInParent<Character>();
 
-            if (_characterRun.stats.ID <= _characterObstacle.stats.ID)
+            if (_characterRun.Stats.ID <= _characterObstacle.Stats.ID)
             {
                 return;
             }
@@ -41,8 +41,8 @@ namespace Controllers.Game
 
         private void MoveNewPoint()
         {
-            var offset = (_characterRun.stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
-            var offsetCharacter = (_characterRun.stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
+            var offset = (_characterRun.Stats.ID % 2 == 0 ? Vector3.up : Vector3.down) * 1f;
+            var offsetCharacter = (_characterRun.Stats.IsPlayer ? Vector3.right : Vector3.left) * 0.5f;
             var posObstacle = _characterObstacle.transform.position;
 
             var newPointTarget = posObstacle + offset + offsetCharacter;
@@ -62,7 +62,7 @@ namespace Controllers.Game
             }
 
             var characterStay = other.GetComponentInParent<Character>();
-            if (characterStay.stats.ID > _characterRun.stats.ID)
+            if (characterStay.Stats.ID > _characterRun.Stats.ID)
             {
                 return;
             }
@@ -89,7 +89,7 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterObstacle.stats.ID != characterExit.stats.ID)
+            if (_characterObstacle.Stats.ID != characterExit.Stats.ID)
             {
                 return;
             }
@@ -108,12 +108,12 @@ namespace Controllers.Game
             var posRun = _transformRun.position;
             var durationMoveToTarget = Utils.GetDurationMoveToTarget(
                 posRun.x,
-                _characterRun.stats.Source.x,
-                _characterRun.stats.Target.x,
+                _characterRun.Stats.Source.x,
+                _characterRun.Stats.Target.x,
                 ActorConfig.durationMove);
 
             _transformRun
-                .DOMove(new Vector3(_characterRun.stats.Target.x, posRun.y), durationMoveToTarget)
+                .DOMove(new Vector3(_characterRun.Stats.Target.x, posRun.y), durationMoveToTarget)
                 .SetEase(Ease.Linear);
         }
     }

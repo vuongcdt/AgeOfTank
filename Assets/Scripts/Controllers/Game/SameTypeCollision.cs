@@ -7,18 +7,16 @@ namespace Controllers.Game
 {
     public class SameTypeCollision : BaseGameController
     {
+        [SerializeField] private int mass = 20;
         private CharacterStats _characterStats;
         private Character _character;
         private Rigidbody2D _rg;
-        private BoxCollider2D _boxCollider;
         private CapsuleCollider2D _capsuleCollider;
-        private int _mass = 2;
         private bool _isStopMove;
 
         private void Start()
         {
             _rg = GetComponent<Rigidbody2D>();
-            _boxCollider = GetComponent<BoxCollider2D>();
             _capsuleCollider = GetComponent<CapsuleCollider2D>();
             _characterStats = GamePlayModel.Characters[name];
             _character = GetComponent<Character>();
@@ -31,9 +29,7 @@ namespace Controllers.Game
                 var attackingCount = GamePlayModel.CharactersAttacking.Count;
                 if (attackingCount > 0)
                 {
-                    Debug.Log($"{name} attackingCount {attackingCount}");
-
-                    _rg.mass = _mass;
+                    _rg.mass = mass;
                     _rg.velocity = Vector3.zero;
                     _isStopMove = true;
                 }
@@ -44,7 +40,6 @@ namespace Controllers.Game
             {
                 return;
             }
-            // _rg.AddForce(_characterStats.Target.normalized * 0.2f);
             StartCoroutine(AddVelocityIE());
         }
 
@@ -58,8 +53,6 @@ namespace Controllers.Game
 
             if (magnitude < 0.2f && !_characterStats.IsAttack)
             {
-                // _rg.velocity = stats.Target.normalized * 0.2f;
-                // _rg.AddForce((_targetMovePoint - position).normalized * 0.2f);
                 _rg.AddForce(_characterStats.Target.normalized * 0.5f);
             }
 
@@ -69,24 +62,18 @@ namespace Controllers.Game
 
         private void OnCollisionExit2D(Collision2D other)
         {
-            // _rg.velocity = _characterStats.Target.normalized * 0.2f;
             if (!_character.IsNearStartPoint())
             {
                 _rg.velocity = Vector3.zero;
                 _rg.AddForce(_characterStats.Target.normalized * 0.2f);
             }
-
-            // _rg.AddForce(new Vector3(_characterStats.Target.x,transform.position.y).normalized * 0.2f);
         }
         
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log($"OnTriggerEnter2D {other.tag}");
-
             if (IsCompareStartBarTag(other))
             {
                 _rg.mass = 1;
-                // _boxCollider.isTrigger = false;
                 _capsuleCollider.isTrigger = false;
             }
         }
@@ -102,14 +89,5 @@ namespace Controllers.Game
             var startBarTag = _characterStats.IsPlayer ? CONSTANS.Tag.StartBarPlayer : CONSTANS.Tag.StartBarEnemy;
             return other.CompareTag(startBarTag);
         }
-
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            var col = GetComponent<BoxCollider2D>();
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(transform.position, col.size);
-        }
-#endif
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -25,7 +24,7 @@ namespace Controllers.Game
         private void Init()
         {
             _character = GetComponentInParent<Character>();
-            var isPlayer = _character.stats.Type == ENUMS.CharacterType.Player;
+            var isPlayer = _character.Stats.Type == ENUMS.CharacterType.Player;
             tag = isPlayer
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
@@ -43,8 +42,8 @@ namespace Controllers.Game
             }
 
             _characterBeaten = other.collider.GetComponentInParent<Character>();
-            _character.stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
-            _character.stats.CharacterBeaten.Value = _characterBeaten;
+            _character.Stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
+            _character.Stats.CharacterBeaten.Value = _characterBeaten;
         }
 
         private void OnCollisionExit2D(Collision2D other)
@@ -54,25 +53,25 @@ namespace Controllers.Game
                 return;
             }
             
-            _character.stats.CharacterBeaten.Value = null;
-            _character.stats.CharactersCanBeaten.Remove(other.gameObject.name);
+            _character.Stats.CharacterBeaten.Value = null;
+            _character.Stats.CharactersCanBeaten.Remove(other.gameObject.name);
         }
 
         private bool IsCompetitor(Collider2D other)
         {
-            var competitorTag = _character.stats.Type == ENUMS.CharacterType.Player
+            var competitorTag = _character.Stats.Type == ENUMS.CharacterType.Player
                 ? CONSTANS.Tag.WarriorColliderEnemy
                 : CONSTANS.Tag.WarriorColliderPlayer;
             return other.CompareTag(competitorTag);
         }
 
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            var col = GetComponent<CircleCollider2D>();
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, col.radius);
-        }
-#endif
+// #if UNITY_EDITOR
+//         private void OnDrawGizmos()
+//         {
+//             var col = GetComponent<CircleCollider2D>();
+//             Gizmos.color = Color.red;
+//             Gizmos.DrawWireSphere(transform.position, col.radius);
+//         }
+// #endif
     }
 }

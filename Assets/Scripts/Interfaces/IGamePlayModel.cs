@@ -20,7 +20,7 @@ namespace Interfaces
         public BindableProperty<int> FoodNum { get; }
     }
 
-    [Serializable]
+    // [Serializable]
     public class CharacterStats
     {
         public GameObject GameObject;

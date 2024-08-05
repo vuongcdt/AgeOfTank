@@ -35,7 +35,7 @@ namespace Controllers.Game
             }
 
             var characterObstacle = other.GetComponentInParent<Character>();
-            if (_characterStats.ID <= characterObstacle.stats.ID)
+            if (_characterStats.ID <= characterObstacle.Stats.ID)
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace Controllers.Game
             }
 
             var characterStay = other.GetComponentInParent<Character>();
-            if (characterStay.stats.ID > _characterStats.ID)
+            if (characterStay.Stats.ID > _characterStats.ID)
             {
                 return;
             }
@@ -120,7 +120,7 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_characterStats.CharacterObstacle.Value.stats.ID != characterExit.stats.ID)
+            if (_characterStats.CharacterObstacle.Value.Stats.ID != characterExit.Stats.ID)
             {
                 return;
             }

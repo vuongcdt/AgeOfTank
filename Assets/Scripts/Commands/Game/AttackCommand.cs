@@ -36,12 +36,12 @@ namespace Commands.Game
                 return;
             }
 
-            if (_characterTarget.stats.IsDeath || _characterAttack.stats.IsDeath)
+            if (_characterTarget.Stats.IsDeath || _characterAttack.Stats.IsDeath)
             {
                 return;
             }
 
-            _characterTarget.stats.Health.Value -= _characterAttack.stats.Damage;
+            _characterTarget.Stats.Health.Value -= _characterAttack.Stats.Damage;
 
             await AttackTarget();
         }
