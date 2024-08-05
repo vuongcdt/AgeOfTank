@@ -113,11 +113,10 @@ namespace Controllers.Game
                 _isAttack = false;
             }
 
-            if (_isAttack)
+            if (_isAttack || _stats.IsDeath)
             {
                 return;
             }
-
             StartCoroutine(AddVelocityIE());
         }
 
