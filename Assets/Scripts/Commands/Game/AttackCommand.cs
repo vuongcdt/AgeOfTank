@@ -26,12 +26,22 @@ namespace Commands.Game
         {
             await UniTask.WaitForSeconds(ActorConfig.attackTime);
             
-            if (_characterAttack.Stats.IsDeath)
+            if (_characterAttack.Stats.IsDeath || !_characterBeaten)
             {
                 return;
             }
-            if (!_characterBeaten ||_characterBeaten.Stats.IsDeath)
+            
+            if (_characterBeaten.Stats.IsDeath)
             {
+                foreach (var pair in _characterAttack.Stats.CharactersCanBeaten)
+                {
+                    if (!pair.Value.Stats.IsDeath)
+                    {
+                        _characterBeaten = pair.Value;
+                        await AttackAsync();
+                        break;
+                    }
+                }
                 return;
             }
 

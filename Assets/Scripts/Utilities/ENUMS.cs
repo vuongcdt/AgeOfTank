@@ -4,7 +4,7 @@
     {
         public enum CharacterTypeClass
         {
-            Fighter,
+            Fighter = 0,
             Hunter,
             Warrior,
             FighterEnemy,

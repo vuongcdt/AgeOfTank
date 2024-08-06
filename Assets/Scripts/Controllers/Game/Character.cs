@@ -26,8 +26,6 @@ namespace Controllers.Game
             set => _isAttack = value;
         }
 
-        public Dictionary<string, Character> CharactersCanBeaten => _charactersCanBeaten;
-
         [SerializeField] private int mass = 20;
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
@@ -37,7 +35,6 @@ namespace Controllers.Game
         private Rigidbody2D _rg;
         private bool _isAttack;
         private CharacterStats _stats;
-        private Dictionary<string, Character> _charactersCanBeaten = new();
         private Character _characterBeaten;
 
         private void Start()
@@ -82,6 +79,9 @@ namespace Controllers.Game
 
         public void Attack(Character characterBeaten)
         {
+            _rg.mass = mass;
+            _rg.velocity = Vector3.zero;
+            
             if (!characterBeaten)
             {
                 _isAttack = false;
@@ -90,11 +90,8 @@ namespace Controllers.Game
 
             _characterBeaten = characterBeaten;
 
-            _rg.mass = mass;
-            _rg.velocity = Vector3.zero;
-
             GamePlayModel.CharactersAttacking.TryAdd(name, this);
-            _charactersCanBeaten.TryAdd(characterBeaten.name, characterBeaten);
+            _stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
 
             if (_isAttack)
             {
@@ -106,7 +103,7 @@ namespace Controllers.Game
             this.SendCommand(new AttackCommand(characterBeaten, this));
         }
 
-        public void MoveHead()
+        public void MoveHead(float speed = 0.2f)
         {
             if (_characterBeaten && _characterBeaten._stats.IsDeath)
             {
@@ -117,21 +114,21 @@ namespace Controllers.Game
             {
                 return;
             }
-            StartCoroutine(AddVelocityIE());
+            StartCoroutine(AddVelocityIE(speed));
         }
 
-        private IEnumerator AddVelocityIE()
+        private IEnumerator AddVelocityIE(float speed)
         {
             var magnitude = _rg.velocity.magnitude;
 
             if (magnitude < 0.2f && !_isAttack)
             {
                 // _rg.AddForce(_stats.Target.normalized);
-                _rg.velocity = _stats.Target.normalized * 0.2f;
+                _rg.velocity = _stats.Target.normalized * speed;
             }
 
             yield return new WaitForSeconds(0.1f);
-            StartCoroutine(AddVelocityIE());
+            StartCoroutine(AddVelocityIE(speed));
         }
 
         private void SetHealthBar(float newValue)
@@ -155,9 +152,11 @@ namespace Controllers.Game
                 return;
             }
 
+            _isAttack = false;
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
             bool isHasCharacter = false;
+            _rg.mass = 1;
 
             foreach (var pair in GamePlayModel.CharactersAttacking)
             {

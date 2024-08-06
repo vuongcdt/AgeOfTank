@@ -112,9 +112,9 @@ GameObject:
   m_Component:
   - component: {fileID: 127724278237315419}
   - component: {fileID: 289541618245617897}
+  - component: {fileID: 7444606350394331235}
   - component: {fileID: 377431334740551655}
   - component: {fileID: 2698823889748445181}
-  - component: {fileID: 7444606350394331235}
   - component: {fileID: 2247768392470249698}
   m_Layer: 10
   m_Name: Charcter
@@ -161,6 +161,19 @@ MonoBehaviour:
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
   isMoveTarget: 0
+--- !u!114 &7444606350394331235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939331758896391020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ffc79907d74ad6a56a34c218990845, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 20
 --- !u!61 &377431334740551655
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -233,19 +246,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &7444606350394331235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4939331758896391020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85ffc79907d74ad6a56a34c218990845, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mass: 20
 --- !u!70 &2247768392470249698
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

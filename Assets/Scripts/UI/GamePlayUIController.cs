@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Utilities;
 
@@ -11,6 +12,8 @@ namespace UI
         [SerializeField] private Slider slider;
         [SerializeField] private TMP_Text sliderText;
         [SerializeField] private CardCharacterUIController[] cards;
+
+        public bool isEnemy;
 
         private void Start()
         {
@@ -27,10 +30,9 @@ namespace UI
         private async void SetTypeCard()
         {
             await UniTask.WaitForEndOfFrame(this);
-
             for (var index = 0; index < cards.Length; index++)
             {
-                cards[index].InitCard((ENUMS.CharacterTypeClass)index);
+                cards[index].InitCard((ENUMS.CharacterTypeClass)(isEnemy ? index + 3 : index));
             }
         }
 

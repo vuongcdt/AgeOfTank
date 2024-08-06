@@ -59,13 +59,13 @@ namespace Controllers.Game
 
             var characterExit = other.GetComponentInParent<Character>();
 
-            if (characterExit && _characterBeaten.Stats.ID != characterExit.Stats.ID)
+            if (characterExit && _characterBeaten && _characterBeaten.Stats.ID != characterExit.Stats.ID)
             {
                 return;
             }
 
             _character.IsAttack = false;
-            _character.MoveHead();
+            _character.MoveHead(0.05f);
         }
 
         private bool IsCompetitor(Collider2D other)
