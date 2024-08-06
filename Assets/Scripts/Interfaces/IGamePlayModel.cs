@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Controllers.Game;
-using Controllers.NewGame;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -32,11 +30,6 @@ namespace Interfaces
         public string Tag;
         public string Name;
         public bool IsPlayer;
-        public bool IsAttack;
-        public BindableProperty<bool> IsEnterSameTypeCollider = new();
-        public BindableProperty<Character> CharacterBeaten = new();
-        public BindableProperty<Character> CharacterObstacle = new();
-        public Dictionary<string, Character> CharactersHead = new();
         public Dictionary<string, Character> CharactersCanBeaten = new();
 
         public bool IsDeath => Health.Value < 0;

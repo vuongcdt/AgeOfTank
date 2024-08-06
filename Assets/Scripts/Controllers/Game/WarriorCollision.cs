@@ -63,9 +63,37 @@ namespace Controllers.Game
             {
                 return;
             }
-
             _character.IsAttack = false;
-            _character.MoveHead(0.05f);
+
+            var characterNearest = GetCharacterNearest();
+            if (characterNearest)
+            {
+                var point = characterNearest.transform.position;
+                _character.MoveToPoint(point);
+                return;
+            }
+
+            _character.MoveHead();
+        }
+
+        private Character GetCharacterNearest()
+        {
+            Character characterNearest = null;
+            float minDistance = 10;
+            foreach (var (key, value) in GamePlayModel.CharactersAttacking)
+            {
+                if (_character.Stats.Type == value.Stats.Type)
+                {
+                    continue;
+                }
+                var distance = Vector3.Distance(_character.transform.position, value.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    characterNearest = value;
+                }
+            }
+            return characterNearest;
         }
 
         private bool IsCompetitor(Collider2D other)

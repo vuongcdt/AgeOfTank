@@ -24,7 +24,7 @@ namespace Controllers.Game
 
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
-            this.RegisterEvent<Events.InitCharacter>(e => { this.SendCommand(new InitCharacterCommand(e.TypeClass)); });
+            this.RegisterEvent<InitCharacter>(e => { this.SendCommand(new InitCharacterCommand(e.TypeClass)); });
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
 

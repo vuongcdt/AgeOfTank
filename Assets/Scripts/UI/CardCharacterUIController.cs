@@ -48,7 +48,7 @@ namespace UI
         private void OnClickCard()
         {
             this.SendCommand(new ConsumeFoodNumCommand(_foodNum));
-            this.SendEvent(new Events.InitCharacter(_typeClass));
+            this.SendEvent(new InitCharacter(_typeClass));
         }
 
         public void InitCard(ENUMS.CharacterTypeClass typeClass)

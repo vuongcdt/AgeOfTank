@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Controllers.Game;
-using Controllers.NewGame;
 using Interfaces;
 using QFramework;
 

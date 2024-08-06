@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Commands.Game;
-using Controllers.NewGame;
-using DG.Tweening;
-using Events;
 using Interfaces;
 using QFramework;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
-using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Controllers.Game
@@ -20,6 +14,7 @@ namespace Controllers.Game
     {
         public bool IsMoveTarget => isMoveTarget;
         public CharacterStats Stats => _stats;
+
         public bool IsAttack
         {
             get => _isAttack;
@@ -81,7 +76,7 @@ namespace Controllers.Game
         {
             _rg.mass = mass;
             _rg.velocity = Vector3.zero;
-            
+
             if (!characterBeaten)
             {
                 _isAttack = false;
@@ -103,7 +98,18 @@ namespace Controllers.Game
             this.SendCommand(new AttackCommand(characterBeaten, this));
         }
 
-        public void MoveHead(float speed = 0.2f)
+        public void MoveToPoint(Vector3 point)
+        {
+            return;
+            var position = transform.position;
+            var newPoint = new Vector3(position.x, point.y) - position;
+            
+            Debug.Log($"_character {name} {position} point {point} newPoint {newPoint} {newPoint.normalized}");
+
+            StartCoroutine(AddVelocityIE(newPoint.normalized * 0.2f));
+        }
+
+        public void MoveHead()
         {
             if (_characterBeaten && _characterBeaten._stats.IsDeath)
             {
@@ -114,21 +120,21 @@ namespace Controllers.Game
             {
                 return;
             }
-            StartCoroutine(AddVelocityIE(speed));
+
+            StartCoroutine(AddVelocityIE(_stats.Target.normalized * 0.2f));
         }
 
-        private IEnumerator AddVelocityIE(float speed)
+        private IEnumerator AddVelocityIE(Vector3 velocity)
         {
             var magnitude = _rg.velocity.magnitude;
 
             if (magnitude < 0.2f && !_isAttack)
             {
-                // _rg.AddForce(_stats.Target.normalized);
-                _rg.velocity = _stats.Target.normalized * speed;
+                _rg.velocity = velocity;
             }
 
             yield return new WaitForSeconds(0.1f);
-            StartCoroutine(AddVelocityIE(speed));
+            StartCoroutine(AddVelocityIE(velocity));
         }
 
         private void SetHealthBar(float newValue)
