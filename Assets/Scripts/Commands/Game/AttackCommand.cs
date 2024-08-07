@@ -1,18 +1,20 @@
-﻿using Controllers.Game;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using Interfaces;
 
 namespace Commands.Game
 {
     public class AttackCommand : BaseCommand
     {
-        private Character _characterBeaten;
-        private Character _characterAttack;
+        private CharacterStats _statsBeaten;
+        private CharacterStats _statsAttack;
 
-        public AttackCommand(Character characterBeaten, Character characterAttack)
+        private string _keyBeaten;
+        private string _keyAttack;
+
+        public AttackCommand(string keyBeaten, string keyAttack)
         {
-            _characterBeaten = characterBeaten;
-            _characterAttack = characterAttack;
+            _keyBeaten = keyBeaten;
+            _keyAttack = keyAttack;
         }
 
         protected override async void OnExecute()
@@ -23,24 +25,28 @@ namespace Commands.Game
 
         private async UniTask AttackAsync()
         {
-            var characterBeatenId = _characterBeaten.Stats.ID;
-            var characterAttackId = _characterAttack.Stats.ID;
             await UniTask.WaitForSeconds(ActorConfig.attackTime);
-
-            if (_characterAttack.Stats.IsDeath || !_characterBeaten ||
-                _characterBeaten.Stats.IsDeath || _characterBeaten.Stats.ID != characterBeatenId
-                || _characterAttack.Stats.ID != characterAttackId)
+            if (!GamePlayModel.Characters.ContainsKey(_keyBeaten)
+                || !GamePlayModel.Characters.ContainsKey(_keyAttack))
             {
                 return;
             }
 
-            if (_characterBeaten.Stats.IsDeath)
+            _statsBeaten = GamePlayModel.Characters[_keyBeaten];
+            _statsAttack = GamePlayModel.Characters[_keyAttack];
+
+            if (_statsAttack.IsDeath || _statsBeaten.IsDeath)
             {
-                foreach (var (_, character) in _characterAttack.Stats.CharactersCanBeaten)
+                return;
+            }
+
+            if (_statsBeaten.IsDeath)
+            {
+                foreach (var (_, character) in _statsAttack.CharactersCanBeaten)
                 {
                     if (!character.Stats.IsDeath)
                     {
-                        _characterBeaten = character;
+                        _statsBeaten = character.Stats;
                         await AttackAsync();
                         break;
                     }
@@ -49,7 +55,7 @@ namespace Commands.Game
                 return;
             }
 
-            _characterBeaten.Stats.Health.Value -= _characterAttack.Stats.Damage;
+            _statsBeaten.Health.Value -= _statsAttack.Damage;
 
             await AttackAsync();
         }

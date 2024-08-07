@@ -44,12 +44,8 @@ namespace Commands.Game
             var target = !isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
             var type = isPlayer ? ENUMS.CharacterType.Player : ENUMS.CharacterType.Enemy;
 
-            var characterStats = new CharacterStats(health, id, damage, target, source, tag, name, _typeClass, type)
-                {
-                    CharactersCanBeaten = new()
-                };
-            GamePlayModel.Characters.Add(name,
-                characterStats);
+            var characterStats = new CharacterStats(health, id, damage, target, source, tag, name, _typeClass, type);
+            GamePlayModel.Characters.Add(name, characterStats);
             GamePlayModel.InitCharacterKey.Value = name;
         }
     }

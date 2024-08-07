@@ -12,7 +12,6 @@ namespace Controllers.Game
 {
     public class Character : BaseGameController
     {
-        public bool IsMoveTarget => isMoveTarget;
         public CharacterStats Stats => _stats;
 
         public bool IsAttack
@@ -91,7 +90,8 @@ namespace Controllers.Game
 
             _isAttack = true;
 
-            this.SendCommand(new AttackCommand(characterBeaten, this));
+            // this.SendCommand(new AttackCommand(characterBeaten, this));
+            this.SendCommand(new AttackCommand(characterBeaten.name, name));
         }
 
         private IEnumerator _moveToPoint;
@@ -202,25 +202,28 @@ namespace Controllers.Game
 
         private void SetCharacterDeath()
         {
-            if (!gameObject.activeSelf)
-            {
-                return;
-            }
+            // if (!gameObject.activeSelf)
+            // {
+            //     return;
+            // }
 
             _isAttack = false;
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
+            GamePlayModel.CharactersAttacking.Remove(name);
+            _stats.CharactersCanBeaten = new();
+            
             bool isHasCharacter = false;
             _rg.mass = 1;
 
-            foreach (var (key, character) in GamePlayModel.CharactersAttacking)
+            foreach (var (_, character) in GamePlayModel.CharactersAttacking)
             {
                 if (character._stats.Type == _stats.Type)
                 {
                     isHasCharacter = true;
                 }
             }
-            GamePlayModel.CharactersAttacking.Remove(name);
+
             if (!isHasCharacter)
             {
                 this.SendEvent<MoveHeadEvent>();
