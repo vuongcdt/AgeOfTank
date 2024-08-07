@@ -159,7 +159,7 @@ namespace Controllers.Game
 
             if (magnitude < 0.2f && !_isAttack)
             {
-                // _rg.velocity = point;
+                // _rg.AddForce((point - transform.position).normalized * speed);
                 _rg.velocity = (point - transform.position).normalized * speed;
             }
 
@@ -178,7 +178,7 @@ namespace Controllers.Game
                     StopCoroutine(_moveToPoint);
                 }
 
-                _moveToPoint = MoveToPointIE(newPoint, 0.1f);
+                _moveToPoint = MoveToPointIE(newPoint);
                 StartCoroutine(_moveToPoint);
                 yield break;
             }
@@ -213,14 +213,14 @@ namespace Controllers.Game
             bool isHasCharacter = false;
             _rg.mass = 1;
 
-            foreach (var pair in GamePlayModel.CharactersAttacking)
+            foreach (var (key, character) in GamePlayModel.CharactersAttacking)
             {
-                if (pair.Value._stats.Type == _stats.Type)
+                if (character._stats.Type == _stats.Type)
                 {
                     isHasCharacter = true;
                 }
             }
-
+            GamePlayModel.CharactersAttacking.Remove(name);
             if (!isHasCharacter)
             {
                 this.SendEvent<MoveHeadEvent>();

@@ -1,6 +1,5 @@
 ﻿using Controllers.Game;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 
 namespace Commands.Game
@@ -24,24 +23,29 @@ namespace Commands.Game
 
         private async UniTask AttackAsync()
         {
+            var characterBeatenId = _characterBeaten.Stats.ID;
+            var characterAttackId = _characterAttack.Stats.ID;
             await UniTask.WaitForSeconds(ActorConfig.attackTime);
-            
-            if (_characterAttack.Stats.IsDeath || !_characterBeaten)
+
+            if (_characterAttack.Stats.IsDeath || !_characterBeaten ||
+                _characterBeaten.Stats.IsDeath || _characterBeaten.Stats.ID != characterBeatenId
+                || _characterAttack.Stats.ID != characterAttackId)
             {
                 return;
             }
-            
+
             if (_characterBeaten.Stats.IsDeath)
             {
-                foreach (var pair in _characterAttack.Stats.CharactersCanBeaten)
+                foreach (var (_, character) in _characterAttack.Stats.CharactersCanBeaten)
                 {
-                    if (!pair.Value.Stats.IsDeath)
+                    if (!character.Stats.IsDeath)
                     {
-                        _characterBeaten = pair.Value;
+                        _characterBeaten = character;
                         await AttackAsync();
                         break;
                     }
                 }
+
                 return;
             }
 
