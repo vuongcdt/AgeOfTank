@@ -32,11 +32,6 @@ namespace Controllers.Game
         private CharacterStats _stats;
         private Character _characterBeaten;
 
-        private void Start()
-        {
-            Init();
-        }
-
         private void Init()
         {
             _stats.Health.Register(SetHealthBar);
@@ -70,6 +65,7 @@ namespace Controllers.Game
             transform.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
             avatar.flipX = !_stats.IsPlayer;
             _stats.GameObject = gameObject;
+            Init();
         }
 
         public void Attack(Character characterBeaten)
@@ -98,15 +94,38 @@ namespace Controllers.Game
             this.SendCommand(new AttackCommand(characterBeaten, this));
         }
 
-        public void MoveToPoint(Vector3 point)
-        {
-            return;
-            var position = transform.position;
-            var newPoint = new Vector3(position.x, point.y) - position;
-            
-            Debug.Log($"_character {name} {position} point {point} newPoint {newPoint} {newPoint.normalized}");
+        private IEnumerator _moveToPoint;
 
-            StartCoroutine(AddVelocityIE(newPoint.normalized * 0.2f));
+        public void MoveToPoint()
+        {
+            if (_moveToPoint != null)
+            {
+                StopCoroutine(_moveToPoint);
+            }
+
+            StartCoroutine(MoveToPointIE(_stats.Target));
+        }
+
+        private Character GetCharacterAttackNearest()
+        {
+            Character characterNearest = null;
+            float minDistance = 10;
+            foreach (var (key, character) in GamePlayModel.CharactersAttacking)
+            {
+                if (_stats.Type == character.Stats.Type || _stats.IsDeath || character.Stats.IsDeath)
+                {
+                    continue;
+                }
+
+                var distance = Vector3.Distance(transform.position, character.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    characterNearest = character;
+                }
+            }
+
+            return characterNearest;
         }
 
         public void MoveHead()
@@ -121,20 +140,50 @@ namespace Controllers.Game
                 return;
             }
 
-            StartCoroutine(AddVelocityIE(_stats.Target.normalized * 0.2f));
+            if (_moveToPoint != null)
+            {
+                StopCoroutine(_moveToPoint);
+            }
+
+            StartCoroutine(MoveToPointIE(_stats.Target));
         }
 
-        private IEnumerator AddVelocityIE(Vector3 velocity)
+        private IEnumerator MoveToPointIE(Vector3 point, float speed = 0.2f)
         {
             var magnitude = _rg.velocity.magnitude;
+            var distance = Vector3.Distance(point, transform.position);
+            if (distance < 0.1f || _isAttack)
+            {
+                yield break;
+            }
 
             if (magnitude < 0.2f && !_isAttack)
             {
-                _rg.velocity = velocity;
+                // _rg.velocity = point;
+                _rg.velocity = (point - transform.position).normalized * speed;
             }
 
-            yield return new WaitForSeconds(0.1f);
-            StartCoroutine(AddVelocityIE(velocity));
+            yield return new WaitForSeconds(0.2f);
+            var characterAttackNearest = GetCharacterAttackNearest();
+            if (characterAttackNearest)
+            {
+                var characterNearestPos = characterAttackNearest.transform.position;
+                var newPoint =
+                    new Vector3(_stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f,
+                        characterNearestPos.y);
+
+
+                if (_moveToPoint != null)
+                {
+                    StopCoroutine(_moveToPoint);
+                }
+
+                _moveToPoint = MoveToPointIE(newPoint, 0.1f);
+                StartCoroutine(_moveToPoint);
+                yield break;
+            }
+
+            StartCoroutine(MoveToPointIE(point));
         }
 
         private void SetHealthBar(float newValue)

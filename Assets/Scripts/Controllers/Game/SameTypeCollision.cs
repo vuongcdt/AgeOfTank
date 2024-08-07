@@ -6,7 +6,7 @@ namespace Controllers.Game
     public class SameTypeCollision : BaseGameController
     {
         [SerializeField] private int mass = 20;
-        
+
         private Character _character;
         private Rigidbody2D _rg;
         private CapsuleCollider2D _capsuleCollider;
@@ -28,6 +28,7 @@ namespace Controllers.Game
                     _rg.mass = mass;
                     _rg.velocity = Vector3.zero;
                 }
+
                 return;
             }
 
@@ -42,7 +43,7 @@ namespace Controllers.Game
                 _rg.AddForce(_character.Stats.Target.normalized * 0.2f);
             }
         }
-        
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (IsCompareStartBarTag(other))
