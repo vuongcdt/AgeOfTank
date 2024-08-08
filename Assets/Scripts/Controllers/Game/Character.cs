@@ -14,6 +14,12 @@ namespace Controllers.Game
     {
         public CharacterStats Stats => _stats;
 
+        public Rigidbody2D Rg
+        {
+            get => _rg;
+            set => _rg = value;
+        }
+
         public bool IsAttack
         {
             get => _isAttack;
@@ -24,13 +30,13 @@ namespace Controllers.Game
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
-        [SerializeField] private bool isMoveTarget;
 
         private Rigidbody2D _rg;
         private bool _isAttack;
-        [SerializeField] private CharacterStats _stats;
+        private CharacterStats _stats;
         private Character _characterBeaten;
-        private IEnumerator _moveToPoint;
+        private IEnumerator _moveToPointIE;
+        private IEnumerator _attackCharacterIE;
 
         public bool IsNearStartPoint()
         {
@@ -94,15 +100,44 @@ namespace Controllers.Game
 
             _isAttack = true;
 
-            // this.SendCommand(new AttackCommand(characterBeaten, this));
-            this.SendCommand(new AttackCommand(characterBeaten.name, name));
+            _attackCharacterIE = AttackCharacterIE(characterBeaten.name);
+            StartCoroutine(_attackCharacterIE);
+        }
+
+        private IEnumerator AttackCharacterIE(string keyBeaten)
+        {
+            yield return new WaitForSeconds(CharacterConfig.attackTime);
+            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(keyBeaten);
+
+            if (!isCharacterBeaten)
+            {
+                _stats.CharactersCanBeaten.Remove(keyBeaten);
+                foreach (var (_, character) in _stats.CharactersCanBeaten)
+                {
+                    if (!character.Stats.IsDeath)
+                    {
+                        _attackCharacterIE = AttackCharacterIE(character.name);
+                        StartCoroutine(_attackCharacterIE);
+                        break;
+                    }
+                }
+
+                yield break;
+            }
+
+            var statsBeaten = GamePlayModel.Characters[keyBeaten];
+
+            this.SendCommand(new AttackCommand(statsBeaten.Name, name));
+
+            _attackCharacterIE = AttackCharacterIE(keyBeaten);
+            StartCoroutine(_attackCharacterIE);
         }
 
         public void MoveToPoint()
         {
-            if (_moveToPoint != null)
+            if (_moveToPointIE != null)
             {
-                StopCoroutine(_moveToPoint);
+                StopCoroutine(_moveToPointIE);
             }
 
             StartCoroutine(MoveToPointIE(_stats.Target));
@@ -112,7 +147,7 @@ namespace Controllers.Game
         {
             Character characterNearest = null;
             float minDistance = 10;
-            foreach (var (key, character) in GamePlayModel.CharactersAttacking)
+            foreach (var (_, character) in GamePlayModel.CharactersAttacking)
             {
                 if (_stats.Type == character.Stats.Type || _stats.IsDeath || character.Stats.IsDeath)
                 {
@@ -142,12 +177,13 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_moveToPoint != null)
+            if (_moveToPointIE != null)
             {
-                StopCoroutine(_moveToPoint);
+                StopCoroutine(_moveToPointIE);
             }
 
-            StartCoroutine(MoveToPointIE(_stats.Target));
+            _moveToPointIE = MoveToPointIE(_stats.Target);
+            StartCoroutine(_moveToPointIE);
         }
 
         private IEnumerator MoveToPointIE(Vector3 point)
@@ -161,8 +197,8 @@ namespace Controllers.Game
 
             if (magnitude < 0.2f && !_isAttack)
             {
-                // _rg.AddForce((point - transform.position).normalized * speed);
-                _rg.velocity = (point - transform.position).normalized * CharacterConfig.speed;
+                _rg.AddForce((point - transform.position).normalized * CharacterConfig.speed);
+                // _rg.velocity = (point - transform.position).normalized * CharacterConfig.speed;
             }
 
             yield return new WaitForSeconds(0.2f);
@@ -175,13 +211,13 @@ namespace Controllers.Game
                         characterNearestPos.y);
 
 
-                if (_moveToPoint != null)
+                if (_moveToPointIE != null)
                 {
-                    StopCoroutine(_moveToPoint);
+                    StopCoroutine(_moveToPointIE);
                 }
 
-                _moveToPoint = MoveToPointIE(newPoint);
-                StartCoroutine(_moveToPoint);
+                _moveToPointIE = MoveToPointIE(newPoint);
+                StartCoroutine(_moveToPointIE);
                 yield break;
             }
 
@@ -204,6 +240,16 @@ namespace Controllers.Game
 
         private void SetCharacterDeath()
         {
+            if (_moveToPointIE != null)
+            {
+                StopCoroutine(_moveToPointIE);
+            }
+
+            if (_attackCharacterIE != null)
+            {
+                StopCoroutine(_attackCharacterIE);
+            }
+
             _isAttack = false;
             _stats.CharactersCanBeaten.Clear();
             GamePlayModel.CharactersAttacking.Remove(name);

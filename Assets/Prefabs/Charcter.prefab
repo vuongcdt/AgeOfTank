@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 031ee01eb7b4416fb1afc858a1ef418e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 20
+  mass: 200
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
@@ -168,6 +168,7 @@ MonoBehaviour:
     Tag: 
     Name: 
     IsPlayer: 0
+    Type: 0
     TypeClass: 0
 --- !u!114 &7444606350394331235
 MonoBehaviour:
@@ -181,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ffc79907d74ad6a56a34c218990845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 20
+  mass: 200
 --- !u!50 &2698823889748445181
 Rigidbody2D:
   serializedVersion: 4

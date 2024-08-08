@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-using Interfaces;
-using UnityEngine;
+﻿using Interfaces;
 
 namespace Commands.Game
 {
@@ -18,15 +16,9 @@ namespace Commands.Game
             _keyAttack = keyAttack;
         }
 
-        protected override async void OnExecute()
+        protected override void OnExecute()
         {
             base.OnExecute();
-            await AttackAsync();
-        }
-
-        private async UniTask AttackAsync()
-        {
-            await UniTask.WaitForSeconds(CharacterConfig.attackTime);
 
             if (!GamePlayModel.Characters.ContainsKey(_keyBeaten)
                 || !GamePlayModel.Characters.ContainsKey(_keyAttack))
@@ -37,29 +29,7 @@ namespace Commands.Game
             _statsBeaten = GamePlayModel.Characters[_keyBeaten];
             _statsAttack = GamePlayModel.Characters[_keyAttack];
 
-            if (_statsAttack.IsDeath || _statsBeaten.IsDeath)
-            {
-                return;
-            }
-
-            if (_statsBeaten.IsDeath)
-            {
-                foreach (var (_, character) in _statsAttack.CharactersCanBeaten)
-                {
-                    if (!character.Stats.IsDeath)
-                    {
-                        _statsBeaten = character.Stats;
-                        await AttackAsync();
-                        break;
-                    }
-                }
-
-                return;
-            }
-
             _statsBeaten.Health.Value -= _statsAttack.Damage;
-
-            await AttackAsync();
         }
     }
 }

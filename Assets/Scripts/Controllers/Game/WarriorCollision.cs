@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -8,14 +7,6 @@ namespace Controllers.Game
     {
         private Character _character;
         private Character _characterBeaten;
-        private CircleCollider2D _circleCollider;
-        public CircleCollider2D CircleCollider => _circleCollider;
-
-        protected override void AwakeCustom()
-        {
-            base.AwakeCustom();
-            _circleCollider = GetComponent<CircleCollider2D>();
-        }
 
         private void Start()
         {

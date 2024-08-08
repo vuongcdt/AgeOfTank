@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -45,8 +44,9 @@ namespace Controllers.Game
         {
             if (!_character.IsNearStartPoint())
             {
-                _rg.velocity = Vector3.zero;
-                _rg.AddForce(_character.Stats.Target.normalized * 0.2f);
+                // _rg.velocity = Vector3.zero;
+                // _rg.AddForce(_character.Stats.Target.normalized * CharacterConfig.speed * 0.5f);
+                _rg.velocity = _character.Stats.Target.normalized * CharacterConfig.speed * 0.5f;
             }
         }
 
