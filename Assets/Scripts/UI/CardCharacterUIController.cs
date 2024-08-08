@@ -57,8 +57,8 @@ namespace UI
             foodNumText.color = Color.red;
             bgCard.color = _colorDisable;
 
-            avatar.sprite = ActorConfig.unitConfigs[(int)typeClass].imgAvatar;
-            _foodNum = ActorConfig.unitConfigs[(int)typeClass].foodNum;
+            avatar.sprite = CharacterConfig.unitConfigs[(int)typeClass].imgAvatar;
+            _foodNum = CharacterConfig.unitConfigs[(int)typeClass].foodNum;
             foodNumText.text = _foodNum.ToString();
         }
     }

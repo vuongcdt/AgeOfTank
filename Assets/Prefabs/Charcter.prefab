@@ -159,6 +159,16 @@ MonoBehaviour:
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
   isMoveTarget: 0
+  _stats:
+    GameObject: {fileID: 0}
+    ID: 0
+    Damage: 0
+    Target: {x: 0, y: 0, z: 0}
+    Source: {x: 0, y: 0, z: 0}
+    Tag: 
+    Name: 
+    IsPlayer: 0
+    TypeClass: 0
 --- !u!114 &7444606350394331235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,7 +238,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

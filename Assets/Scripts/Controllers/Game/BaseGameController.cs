@@ -8,12 +8,12 @@ namespace Controllers.Game
     public class BaseGameController : MonoBehaviour, IController, ICanSendEvent
     {
         protected IGamePlayModel GamePlayModel;
-        protected CharacterConfig ActorConfig;
+        protected CharacterConfig CharacterConfig;
 
         private async void Awake()
         {
             GamePlayModel = this.GetModel<IGamePlayModel>();
-            ActorConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
+            CharacterConfig = await  this.GetSystem<ConfigSystem>().GetCharacterConfig();
             AwakeCustom();
         }
 

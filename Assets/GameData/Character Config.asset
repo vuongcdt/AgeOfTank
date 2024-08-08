@@ -15,7 +15,8 @@ MonoBehaviour:
   pointSource: {x: -3, y: 0, z: 0}
   pointTarget: {x: 3, y: 0, z: 0}
   durationMove: 20
-  attackTime: 2
+  speed: 0.5
+  attackTime: 1
   unitConfigs:
   - health: 21
     damage: 2

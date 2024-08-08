@@ -28,18 +28,9 @@ namespace Controllers.Game
 
         private Rigidbody2D _rg;
         private bool _isAttack;
-        private CharacterStats _stats;
+        [SerializeField] private CharacterStats _stats;
         private Character _characterBeaten;
-
-        private void Init()
-        {
-            _stats.Health.Register(SetHealthBar);
-
-            this.RegisterEvent<MoveHeadEvent>(e => { MoveHead(); });
-
-            _rg = GetComponent<Rigidbody2D>();
-            _rg.velocity = _stats.Target.normalized * 0.2f;
-        }
+        private IEnumerator _moveToPoint;
 
         public bool IsNearStartPoint()
         {
@@ -52,8 +43,11 @@ namespace Controllers.Game
         {
             _stats = GamePlayModel.Characters[key];
 
+            var warriorCollision = GetComponentInChildren<WarriorCollision>();
+            warriorCollision.SetTagAndLayer(_stats.Type);
+
             var idText = GetComponentInChildren<TextMesh>();
-            avatar.sprite = ActorConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
+            avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
             tag = _stats.Tag;
             name = _stats.Name;
             idText.text = _stats.ID.ToString();
@@ -65,6 +59,16 @@ namespace Controllers.Game
             avatar.flipX = !_stats.IsPlayer;
             _stats.GameObject = gameObject;
             Init();
+        }
+
+        private void Init()
+        {
+            _stats.Health.Register(SetHealthBar);
+
+            this.RegisterEvent<MoveHeadEvent>(e => { MoveHead(); });
+
+            _rg = GetComponent<Rigidbody2D>();
+            _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
         }
 
         public void Attack(Character characterBeaten)
@@ -93,8 +97,6 @@ namespace Controllers.Game
             // this.SendCommand(new AttackCommand(characterBeaten, this));
             this.SendCommand(new AttackCommand(characterBeaten.name, name));
         }
-
-        private IEnumerator _moveToPoint;
 
         public void MoveToPoint()
         {
@@ -148,7 +150,7 @@ namespace Controllers.Game
             StartCoroutine(MoveToPointIE(_stats.Target));
         }
 
-        private IEnumerator MoveToPointIE(Vector3 point, float speed = 0.2f)
+        private IEnumerator MoveToPointIE(Vector3 point)
         {
             var magnitude = _rg.velocity.magnitude;
             var distance = Vector3.Distance(point, transform.position);
@@ -160,7 +162,7 @@ namespace Controllers.Game
             if (magnitude < 0.2f && !_isAttack)
             {
                 // _rg.AddForce((point - transform.position).normalized * speed);
-                _rg.velocity = (point - transform.position).normalized * speed;
+                _rg.velocity = (point - transform.position).normalized * CharacterConfig.speed;
             }
 
             yield return new WaitForSeconds(0.2f);
@@ -197,22 +199,16 @@ namespace Controllers.Game
             healthBar.SetActive(true);
             SetSortingOrderHeathBar();
 
-            healthSlider.value = newValue / ActorConfig.unitConfigs[(int)_stats.TypeClass].health;
+            healthSlider.value = newValue / CharacterConfig.unitConfigs[(int)_stats.TypeClass].health;
         }
 
         private void SetCharacterDeath()
         {
-            // if (!gameObject.activeSelf)
-            // {
-            //     return;
-            // }
-
             _isAttack = false;
+            _stats.CharactersCanBeaten.Clear();
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
-            GamePlayModel.CharactersAttacking.Remove(name);
-            _stats.CharactersCanBeaten = new();
-            
+
             bool isHasCharacter = false;
             _rg.mass = 1;
 

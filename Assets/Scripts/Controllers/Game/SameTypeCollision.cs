@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -14,8 +15,13 @@ namespace Controllers.Game
         private void Start()
         {
             _rg = GetComponent<Rigidbody2D>();
-            _capsuleCollider = GetComponent<CapsuleCollider2D>();
             _character = GetComponent<Character>();
+        }
+
+        private void OnEnable()
+        {
+            _capsuleCollider = GetComponent<CapsuleCollider2D>();
+            _capsuleCollider.isTrigger = true;
         }
 
         private void OnCollisionEnter2D(Collision2D other)

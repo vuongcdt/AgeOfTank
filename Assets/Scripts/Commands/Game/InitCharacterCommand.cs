@@ -22,7 +22,7 @@ namespace Commands.Game
 
         private async void InitCharacter()
         {
-            ActorConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
+            CharacterConfig = await this.GetSystem<ConfigSystem>().GetCharacterConfig();
             var isPlayer = (int)_typeClass < 3;
             int id;
             if (isPlayer)
@@ -36,12 +36,12 @@ namespace Commands.Game
                 id = GamePlayModel.IdEnemy.Value;
             }
 
-            var health = ActorConfig.unitConfigs[(int)_typeClass].health;
-            var damage = ActorConfig.unitConfigs[(int)_typeClass].damage;
+            var health = CharacterConfig.unitConfigs[(int)_typeClass].health;
+            var damage = CharacterConfig.unitConfigs[(int)_typeClass].damage;
             var tag = isPlayer ? CONSTANS.Tag.Player : CONSTANS.Tag.Enemy;
             var name = $"{tag} {id}";
-            var source = isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
-            var target = !isPlayer ? ActorConfig.pointSource : ActorConfig.pointTarget;
+            var source = isPlayer ? CharacterConfig.pointSource : CharacterConfig.pointTarget;
+            var target = !isPlayer ? CharacterConfig.pointSource : CharacterConfig.pointTarget;
             var type = isPlayer ? ENUMS.CharacterType.Player : ENUMS.CharacterType.Enemy;
 
             var characterStats = new CharacterStats(health, id, damage, target, source, tag, name, _typeClass, type);

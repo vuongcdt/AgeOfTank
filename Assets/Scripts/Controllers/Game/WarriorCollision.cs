@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -18,13 +19,12 @@ namespace Controllers.Game
 
         private void Start()
         {
-            Init();
+            _character = GetComponentInParent<Character>();
         }
 
-        private void Init()
+        public void SetTagAndLayer(ENUMS.CharacterType type)
         {
-            _character = GetComponentInParent<Character>();
-            var isPlayer = _character.Stats.Type == ENUMS.CharacterType.Player;
+            var isPlayer = type == ENUMS.CharacterType.Player;
             tag = isPlayer
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
@@ -42,6 +42,12 @@ namespace Controllers.Game
             }
 
             _characterBeaten = other.collider.GetComponentInParent<Character>();
+
+            if (_character.IsNearStartPoint() || _characterBeaten.IsNearStartPoint())
+            {
+                return;
+            }
+
             _character.Attack(_characterBeaten);
         }
 
@@ -76,14 +82,5 @@ namespace Controllers.Game
                 : CONSTANS.Tag.WarriorColliderPlayer;
             return other.CompareTag(competitorTag);
         }
-
-// #if UNITY_EDITOR
-//         private void OnDrawGizmos()
-//         {
-//             var col = GetComponent<CircleCollider2D>();
-//             Gizmos.color = Color.red;
-//             Gizmos.DrawWireSphere(transform.position, col.radius);
-//         }
-// #endif
     }
 }

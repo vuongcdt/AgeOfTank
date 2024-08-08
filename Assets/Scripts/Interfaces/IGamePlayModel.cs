@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Controllers.Game;
 using QFramework;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Interfaces
         public BindableProperty<int> FoodNum { get; }
     }
 
-    // [Serializable]
+    [Serializable]
     public class CharacterStats
     {
         public GameObject GameObject;

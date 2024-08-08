@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Interfaces;
+using UnityEngine;
 
 namespace Commands.Game
 {
@@ -25,7 +26,8 @@ namespace Commands.Game
 
         private async UniTask AttackAsync()
         {
-            await UniTask.WaitForSeconds(ActorConfig.attackTime);
+            await UniTask.WaitForSeconds(CharacterConfig.attackTime);
+
             if (!GamePlayModel.Characters.ContainsKey(_keyBeaten)
                 || !GamePlayModel.Characters.ContainsKey(_keyAttack))
             {
