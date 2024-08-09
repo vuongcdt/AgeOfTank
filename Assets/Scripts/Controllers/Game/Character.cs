@@ -2,6 +2,7 @@
 using System.Collections;
 using Commands.Game;
 using Interfaces;
+using JetBrains.Annotations;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -85,10 +86,10 @@ namespace Controllers.Game
         {
             _stats.Health.Register(SetHealthBar);
 
-            this.RegisterEvent<MoveHeadEvent>(e => { MoveHead(); });
+            this.RegisterEvent<MoveHeadEvent>(e => MoveToTarget());
 
             _rg = GetComponent<Rigidbody2D>();
-            _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
+            MoveHead();
         }
 
         public void Attack(Character characterBeaten)
@@ -130,7 +131,9 @@ namespace Controllers.Game
             }
             else
             {
-                this.SendCommand(new AttackCommand(keyBeaten, name));
+                // this.SendCommand(new AttackCommand(keyBeaten, name));
+                var statsBeaten = GamePlayModel.Characters[keyBeaten];
+                statsBeaten.Health.Value -= _stats.Damage;
             }
 
             if (keyBeaten is null)
@@ -162,12 +165,6 @@ namespace Controllers.Game
             return keyBeaten;
         }
 
-        public void MoveToPoint()
-        {
-            _moveToPointIE = MoveToPointIE(_stats.Target);
-            StartCoroutine(_moveToPointIE);
-        }
-
         private Character GetCharacterAttackNearest()
         {
             Character characterNearest = null;
@@ -192,18 +189,21 @@ namespace Controllers.Game
 
         public void MoveHead()
         {
-            if (_characterBeaten && _characterBeaten._stats.IsDeath)
-            {
-                _isAttack = false;
-            }
+            _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
+        }
 
-            if (_isAttack || _stats.IsDeath)
+        public void AddForce()
+        {
+            _rg.AddForce(_stats.Target.normalized * CharacterConfig.speed);
+        }
+        public void MoveToTarget()
+        {
+            if (_isAttack)
             {
                 return;
             }
 
-            _moveToPointIE = MoveToPointIE(_stats.Target);
-            StartCoroutine(_moveToPointIE);
+            MoveHead();
         }
 
         private IEnumerator MoveToPointIE(Vector3 point)
@@ -279,7 +279,7 @@ namespace Controllers.Game
             if (!isHasCharacter)
             {
                 this.SendEvent<MoveHeadEvent>();
-                this.SendEvent(new InitCharacter(_stats.TypeClass));
+                // this.SendEvent(new InitCharacter(_stats.TypeClass));
             }
 
             SharedGameObjectPool.Return(gameObject);
@@ -290,5 +290,6 @@ namespace Controllers.Game
             healthBar.GetComponent<Canvas>().sortingOrder =
                 Mathf.CeilToInt(10 - transform.position.y * 10);
         }
+
     }
 }

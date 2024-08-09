@@ -154,22 +154,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 031ee01eb7b4416fb1afc858a1ef418e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 200
+  mass: 10
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
-  isMoveTarget: 0
-  _stats:
-    GameObject: {fileID: 0}
-    ID: 0
-    Damage: 0
-    Target: {x: 0, y: 0, z: 0}
-    Source: {x: 0, y: 0, z: 0}
-    Tag: 
-    Name: 
-    IsPlayer: 0
-    Type: 0
-    TypeClass: 0
 --- !u!114 &7444606350394331235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,7 +170,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ffc79907d74ad6a56a34c218990845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 200
 --- !u!50 &2698823889748445181
 Rigidbody2D:
   serializedVersion: 4
@@ -199,7 +186,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 16fdd9b862c7d07478dd864f3e593d7e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -638,7 +625,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.4
+  m_Radius: 0.45
 --- !u!1001 &71557681062890193
 PrefabInstance:
   m_ObjectHideFlags: 0

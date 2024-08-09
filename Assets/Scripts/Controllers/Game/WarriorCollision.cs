@@ -60,10 +60,8 @@ namespace Controllers.Game
             {
                 return;
             }
-
-            _character.IsAttack = false;
-
-            _character.MoveToPoint();
+            
+            _character.MoveHead();
         }
 
         private bool IsCompetitor(Collider2D other)

@@ -56,7 +56,7 @@ namespace Controllers.Game
             {
                 foreach (var i in new int[value])
                 {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.WarriorEnemy));
+                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
                     await UniTask.WaitForSeconds(0.1f);
                 }
 

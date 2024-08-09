@@ -5,8 +5,6 @@ namespace Controllers.Game
 {
     public class SameTypeCollision : BaseGameController
     {
-        [SerializeField] private int mass = 20;
-
         private Character _character;
         private Rigidbody2D _rg;
         private CapsuleCollider2D _capsuleCollider;
@@ -23,31 +21,13 @@ namespace Controllers.Game
             _capsuleCollider.isTrigger = true;
         }
 
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            if (other.collider.CompareTag(CONSTANS.Tag.PlayerBar))
-            {
-                var attackingCount = GamePlayModel.CharactersAttacking.Count;
-                if (attackingCount > 0)
-                {
-                    _rg.mass = mass;
-                    _rg.velocity = Vector3.zero;
-                }
-
-                return;
-            }
-
-            _character.MoveHead();
-        }
-
         private void OnCollisionExit2D(Collision2D other)
         {
-            if (!_character.IsNearStartPoint())
+            if (_character.IsNearStartPoint())
             {
-                // _rg.velocity = Vector3.zero;
-                // _rg.AddForce(_character.Stats.Target.normalized * CharacterConfig.speed * 0.5f);
-                _rg.velocity = _character.Stats.Target.normalized * CharacterConfig.speed * 0.5f;
+                return;
             }
+            _character.MoveToTarget();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
