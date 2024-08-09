@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 031ee01eb7b4416fb1afc858a1ef418e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 10
+  mass: 20
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
@@ -625,7 +625,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.45
+  m_Radius: 0.35
 --- !u!1001 &71557681062890193
 PrefabInstance:
   m_ObjectHideFlags: 0

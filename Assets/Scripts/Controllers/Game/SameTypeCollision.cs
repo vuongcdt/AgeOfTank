@@ -27,7 +27,7 @@ namespace Controllers.Game
             {
                 return;
             }
-            _character.MoveToTarget();
+            _character.MoveToCharacterAttack();
         }
 
         private void OnTriggerEnter2D(Collider2D other)

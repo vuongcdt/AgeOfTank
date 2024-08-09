@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections;
-using Commands.Game;
 using Interfaces;
-using JetBrains.Annotations;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
 using uPools;
-using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Controllers.Game
@@ -15,18 +12,6 @@ namespace Controllers.Game
     public class Character : BaseGameController
     {
         public CharacterStats Stats => _stats;
-
-        public Rigidbody2D Rg
-        {
-            get => _rg;
-            set => _rg = value;
-        }
-
-        public bool IsAttack
-        {
-            get => _isAttack;
-            set => _isAttack = value;
-        }
 
         [SerializeField] private int mass = 20;
         [SerializeField] private SpriteRenderer avatar;
@@ -86,7 +71,7 @@ namespace Controllers.Game
         {
             _stats.Health.Register(SetHealthBar);
 
-            this.RegisterEvent<MoveHeadEvent>(e => MoveToTarget());
+            this.RegisterEvent<MoveHeadEvent>(e => MoveToCharacterAttack());
 
             _rg = GetComponent<Rigidbody2D>();
             MoveHead();
@@ -140,12 +125,39 @@ namespace Controllers.Game
             {
                 _isAttack = false;
                 StopCoroutine(_attackCharacterIE);
+                //moveToCharacterAttack
+                MoveToCharacterAttack();
                 yield break;
             }
 
             _attackCharacterIE = AttackCharacterIE(keyBeaten);
 
             StartCoroutine(_attackCharacterIE);
+        }
+
+        public void MoveToCharacterAttack()
+        {
+            if (_isAttack)
+            {
+                return;
+            }
+
+            var characterAttackNearest = GetCharacterAttackNearest();
+            if (characterAttackNearest)
+            {
+                var characterNearestPos = characterAttackNearest.transform.position;
+                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
+                var newPoint = new Vector3(newPointX, characterNearestPos.y);
+
+                var velocity = (newPoint - transform.position).normalized;
+                // Debug.Log(
+                //     $"{name} {transform.position} {characterAttackNearest.name} {characterNearestPos} {velocity}");
+                _rg.velocity = velocity;
+            }
+            else
+            {
+                MoveHead();
+            }
         }
 
         private string GetCharacterCanBeaten()
@@ -196,53 +208,6 @@ namespace Controllers.Game
         {
             _rg.AddForce(_stats.Target.normalized * CharacterConfig.speed);
         }
-        public void MoveToTarget()
-        {
-            if (_isAttack)
-            {
-                return;
-            }
-
-            MoveHead();
-        }
-
-        private IEnumerator MoveToPointIE(Vector3 point)
-        {
-            var magnitude = _rg.velocity.magnitude;
-            var distance = Vector3.Distance(point, transform.position);
-            if (distance < 0.1f || _isAttack)
-            {
-                yield break;
-            }
-
-            if (magnitude < 0.2f && !_isAttack)
-            {
-                _rg.AddForce((point - transform.position).normalized * CharacterConfig.speed);
-                // _rg.velocity = (point - transform.position).normalized * CharacterConfig.speed;
-            }
-
-            if (_moveToPointIE != null)
-            {
-                StopCoroutine(_moveToPointIE);
-            }
-
-            yield return new WaitForSeconds(0.2f);
-            var characterAttackNearest = GetCharacterAttackNearest();
-            if (characterAttackNearest)
-            {
-                var characterNearestPos = characterAttackNearest.transform.position;
-                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
-                var newPoint = new Vector3(newPointX, characterNearestPos.y);
-
-                _moveToPointIE = MoveToPointIE(newPoint);
-            }
-            else
-            {
-                _moveToPointIE = MoveToPointIE(point);
-            }
-
-            StartCoroutine(_moveToPointIE);
-        }
 
         private void SetHealthBar(float newValue)
         {
@@ -290,6 +255,5 @@ namespace Controllers.Game
             healthBar.GetComponent<Canvas>().sortingOrder =
                 Mathf.CeilToInt(10 - transform.position.y * 10);
         }
-
     }
 }

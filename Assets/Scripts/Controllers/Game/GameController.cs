@@ -13,6 +13,7 @@ namespace Controllers.Game
     public class GameController : BaseGameController
     {
         [SerializeField] private Button resetBtn;
+        [SerializeField] private Button playBtn;
         [SerializeField] private GameObject characterPrefab;
         [SerializeField] private int[] playersList;
         [SerializeField] private int[] enemiesList;
@@ -20,7 +21,9 @@ namespace Controllers.Game
         private void Start()
         {
             resetBtn.onClick.RemoveAllListeners();
-            resetBtn.onClick.AddListener(Reset);
+            resetBtn.onClick.AddListener(OnReset);
+            playBtn.onClick.RemoveAllListeners();
+            playBtn.onClick.AddListener(OnPlay);
 
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
@@ -34,6 +37,11 @@ namespace Controllers.Game
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;
+        }
+
+        private void OnPlay()
+        {
+            Time.timeScale = 1;
         }
 
         private async void SpawnPlayer()
@@ -64,7 +72,7 @@ namespace Controllers.Game
             }
         }
 
-        private void Reset()
+        private void OnReset()
         {
             foreach (var pair in GamePlayModel.Characters)
             {

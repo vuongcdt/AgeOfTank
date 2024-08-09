@@ -60,7 +60,7 @@ namespace Controllers.Game
             {
                 return;
             }
-            
+
             _character.MoveHead();
         }
 
