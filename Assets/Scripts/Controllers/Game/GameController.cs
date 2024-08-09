@@ -24,7 +24,7 @@ namespace Controllers.Game
 
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
-            this.RegisterEvent<InitCharacter>(e => { this.SendCommand(new InitCharacterCommand(e.TypeClass)); });
+            this.RegisterEvent<InitCharacter>(e => this.SendCommand(new InitCharacterCommand(e.TypeClass)));
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
 
@@ -56,7 +56,7 @@ namespace Controllers.Game
             {
                 foreach (var i in new int[value])
                 {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
+                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.WarriorEnemy));
                     await UniTask.WaitForSeconds(0.1f);
                 }
 

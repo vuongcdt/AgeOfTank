@@ -6,6 +6,7 @@ using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
 using uPools;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Controllers.Game
@@ -37,6 +38,19 @@ namespace Controllers.Game
         private Character _characterBeaten;
         private IEnumerator _moveToPointIE;
         private IEnumerator _attackCharacterIE;
+
+        private void OnDisable()
+        {
+            if (_moveToPointIE != null)
+            {
+                StopCoroutine(_moveToPointIE);
+            }
+
+            if (_attackCharacterIE != null)
+            {
+                StopCoroutine(_attackCharacterIE);
+            }
+        }
 
         public bool IsNearStartPoint()
         {
@@ -112,35 +126,46 @@ namespace Controllers.Game
             if (!isCharacterBeaten)
             {
                 _stats.CharactersCanBeaten.Remove(keyBeaten);
-                foreach (var (_, character) in _stats.CharactersCanBeaten)
-                {
-                    if (!character.Stats.IsDeath)
-                    {
-                        _attackCharacterIE = AttackCharacterIE(character.name);
-                        StartCoroutine(_attackCharacterIE);
-                        break;
-                    }
-                }
+                keyBeaten = GetCharacterCanBeaten();
+            }
+            else
+            {
+                this.SendCommand(new AttackCommand(keyBeaten, name));
+            }
 
+            if (keyBeaten is null)
+            {
+                _isAttack = false;
+                StopCoroutine(_attackCharacterIE);
                 yield break;
             }
 
-            var statsBeaten = GamePlayModel.Characters[keyBeaten];
-
-            this.SendCommand(new AttackCommand(statsBeaten.Name, name));
-
             _attackCharacterIE = AttackCharacterIE(keyBeaten);
+
             StartCoroutine(_attackCharacterIE);
+        }
+
+        private string GetCharacterCanBeaten()
+        {
+            string keyBeaten = null;
+            foreach (var (_, character) in _stats.CharactersCanBeaten)
+            {
+                if (character.Stats.IsDeath)
+                {
+                    continue;
+                }
+
+                keyBeaten = character.name;
+                break;
+            }
+
+            return keyBeaten;
         }
 
         public void MoveToPoint()
         {
-            if (_moveToPointIE != null)
-            {
-                StopCoroutine(_moveToPointIE);
-            }
-
-            StartCoroutine(MoveToPointIE(_stats.Target));
+            _moveToPointIE = MoveToPointIE(_stats.Target);
+            StartCoroutine(_moveToPointIE);
         }
 
         private Character GetCharacterAttackNearest()
@@ -177,11 +202,6 @@ namespace Controllers.Game
                 return;
             }
 
-            if (_moveToPointIE != null)
-            {
-                StopCoroutine(_moveToPointIE);
-            }
-
             _moveToPointIE = MoveToPointIE(_stats.Target);
             StartCoroutine(_moveToPointIE);
         }
@@ -201,27 +221,27 @@ namespace Controllers.Game
                 // _rg.velocity = (point - transform.position).normalized * CharacterConfig.speed;
             }
 
+            if (_moveToPointIE != null)
+            {
+                StopCoroutine(_moveToPointIE);
+            }
+
             yield return new WaitForSeconds(0.2f);
             var characterAttackNearest = GetCharacterAttackNearest();
             if (characterAttackNearest)
             {
                 var characterNearestPos = characterAttackNearest.transform.position;
-                var newPoint =
-                    new Vector3(_stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f,
-                        characterNearestPos.y);
-
-
-                if (_moveToPointIE != null)
-                {
-                    StopCoroutine(_moveToPointIE);
-                }
+                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
+                var newPoint = new Vector3(newPointX, characterNearestPos.y);
 
                 _moveToPointIE = MoveToPointIE(newPoint);
-                StartCoroutine(_moveToPointIE);
-                yield break;
+            }
+            else
+            {
+                _moveToPointIE = MoveToPointIE(point);
             }
 
-            StartCoroutine(MoveToPointIE(point));
+            StartCoroutine(_moveToPointIE);
         }
 
         private void SetHealthBar(float newValue)
@@ -240,23 +260,13 @@ namespace Controllers.Game
 
         private void SetCharacterDeath()
         {
-            if (_moveToPointIE != null)
-            {
-                StopCoroutine(_moveToPointIE);
-            }
-
-            if (_attackCharacterIE != null)
-            {
-                StopCoroutine(_attackCharacterIE);
-            }
-
+            _rg.mass = 1;
             _isAttack = false;
             _stats.CharactersCanBeaten.Clear();
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);
 
             bool isHasCharacter = false;
-            _rg.mass = 1;
 
             foreach (var (_, character) in GamePlayModel.CharactersAttacking)
             {
@@ -269,6 +279,7 @@ namespace Controllers.Game
             if (!isHasCharacter)
             {
                 this.SendEvent<MoveHeadEvent>();
+                this.SendEvent(new InitCharacter(_stats.TypeClass));
             }
 
             SharedGameObjectPool.Return(gameObject);
