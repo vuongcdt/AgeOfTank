@@ -22,7 +22,6 @@
         {
             public const string WarriorPlayer = nameof(WarriorPlayer);
             public const string WarriorEnemy = nameof(WarriorEnemy);
-            public const string SameType = nameof(SameType);
         }
     }
 }

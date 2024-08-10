@@ -23,7 +23,9 @@
             Enemy,
             WarriorPlayer,
             WarriorEnemy,
-            SameType
+            SameType,
+            PlayerBar,
+            SameTypeHunter,
         }
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Controllers.Game
@@ -22,7 +23,7 @@ namespace Controllers.Game
 
         private Rigidbody2D _rg;
         private CharacterStats _stats;
-        private Character _characterBeaten;
+        [SerializeField] private string _keyBeaten;
         private IEnumerator _moveToPointIE;
         private IEnumerator _attackCharacterIE;
         private Move _move;
@@ -56,6 +57,7 @@ namespace Controllers.Game
             
             var isHunterClass = (int)_stats.TypeClass % 3 == 1;
             hunterCollider.SetActive(isHunterClass);
+            gameObject.layer = isHunterClass ? (int)ENUMS.Layer.SameTypeHunter : (int)ENUMS.Layer.SameType;
             
             var idText = GetComponentInChildren<TextMesh>();
             avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
@@ -93,10 +95,10 @@ namespace Controllers.Game
                 return;
             }
         
-            _characterBeaten = characterBeaten;
+            _keyBeaten = characterBeaten.name;
         
             GamePlayModel.CharactersAttacking.TryAdd(name, this);
-            _stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
+            _stats.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
     
             if (_stats.IsAttack)
             {
@@ -105,28 +107,28 @@ namespace Controllers.Game
         
             _stats.IsAttack = true;
         
-            _attackCharacterIE = AttackCharacterIE(characterBeaten.name);
+            _attackCharacterIE = AttackCharacterIE();
             StartCoroutine(_attackCharacterIE);
         }
         
-        private IEnumerator AttackCharacterIE(string keyBeaten)
+        private IEnumerator AttackCharacterIE()
         {
             yield return new WaitForSeconds(CharacterConfig.attackTime);
-            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(keyBeaten);
+            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
         
             if (!isCharacterBeaten)
             {
-                _stats.CharactersCanBeaten.Remove(keyBeaten);
-                keyBeaten = GetCharacterCanBeaten();
+                _stats.CharactersCanBeaten.Remove(_keyBeaten);
+                _keyBeaten = GetCharacterCanBeaten();
             }
             else
             {
                 // this.SendCommand(new AttackCommand(keyBeaten, name));
-                var statsBeaten = GamePlayModel.Characters[keyBeaten];
+                var statsBeaten = GamePlayModel.Characters[_keyBeaten];
                 statsBeaten.Health.Value -= _stats.Damage;
             }
         
-            if (keyBeaten is null)
+            if (_keyBeaten is null)
             {
                 _stats.IsAttack = false;
                 StopCoroutine(_attackCharacterIE);
@@ -134,7 +136,7 @@ namespace Controllers.Game
                 yield break;
             }
         
-            _attackCharacterIE = AttackCharacterIE(keyBeaten);
+            _attackCharacterIE = AttackCharacterIE();
         
             StartCoroutine(_attackCharacterIE);
         }
@@ -170,7 +172,7 @@ namespace Controllers.Game
                 var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
                 var newPoint = new Vector3(newPointX, characterNearestPos.y);
         
-                var velocity = (newPoint - transform.position).normalized;
+                var velocity = (newPoint - transform.position).normalized * CharacterConfig.speed;
                 _rg.velocity = velocity;
             }
             else
@@ -178,6 +180,7 @@ namespace Controllers.Game
                 MoveHead();
             }
         }
+        
         private Character GetCharacterAttackNearest()
         {
             Character characterNearest = null;

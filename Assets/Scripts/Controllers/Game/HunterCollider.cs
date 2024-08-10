@@ -1,10 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
 {
-    public class HunterCollider : MonoBehaviour
+    public class HunterCollider : BaseGameController
     {
         private Character _character;
 
@@ -12,12 +11,6 @@ namespace Controllers.Game
         {
             _character = GetComponentInParent<Character>();
             tag = CONSTANS.Tag.HunterCollider;
-        }
-
-        private void OnEnable()
-        {
-            var character = GetComponentInParent<Character>();
-            Debug.Log(character);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -43,12 +36,12 @@ namespace Controllers.Game
         }
 
 #if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            var col = GetComponent<CircleCollider2D>();
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, col.radius);
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     var col = GetComponent<CircleCollider2D>();
+        //     Gizmos.color = Color.green;
+        //     Gizmos.DrawWireSphere(transform.position, col.radius);
+        // }
 #endif
     }
 }

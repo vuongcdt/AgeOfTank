@@ -20,9 +20,10 @@ namespace Controllers.Game
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
 
+            // gameObject.layer = isPlayer ? (int)ENUMS.Layer.WarriorPlayer : (int)ENUMS.Layer.WarriorEnemy;
             gameObject.layer = isPlayer
-                ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
-                : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
+            ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
+            : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
         }
 
         private void OnCollisionEnter2D(Collision2D other)

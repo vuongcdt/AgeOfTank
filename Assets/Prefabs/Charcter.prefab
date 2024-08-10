@@ -162,6 +162,7 @@ MonoBehaviour:
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
   hunterCollider: {fileID: 8105614125749578426}
+  _keyBeaten: 
 --- !u!114 &7444606350394331235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,9 +551,9 @@ GameObject:
   - component: {fileID: 7676157774368020886}
   - component: {fileID: 2442281063908549911}
   - component: {fileID: 7558221446660733932}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HunterCollider
-  m_TagString: Untagged
+  m_TagString: HunterCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
