@@ -27,6 +27,7 @@ namespace Controllers.Game
             {
                 return;
             }
+
             _character.MoveToCharacterAttack();
         }
 
@@ -36,6 +37,21 @@ namespace Controllers.Game
             {
                 _rg.mass = 1;
                 _capsuleCollider.isTrigger = false;
+            }
+
+            var characterHead = other.GetComponent<Character>();
+            if (!characterHead)
+            {
+                return;
+            }
+
+            var isCharacterBehind = _character.Stats.ID > characterHead.Stats.ID;
+            if (_character.IsNearStartPoint() && other.CompareTag(tag) && isCharacterBehind)
+            {
+                var characterHeadPos = other.transform.position;
+                var characterTransform = _character.transform;
+                var random = (0.5f - Random.value) * 0.05f;
+                characterTransform.position = new Vector3(characterHeadPos.x + random, characterTransform.position.y);
             }
         }
 
