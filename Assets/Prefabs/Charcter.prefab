@@ -161,6 +161,7 @@ MonoBehaviour:
   avatar: {fileID: 1461441956428462645}
   healthSlider: {fileID: 684498704856485495}
   healthBar: {fileID: 284708132954042884}
+  hunterCollider: {fileID: 8105614125749578426}
 --- !u!114 &7444606350394331235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,7 +556,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7676157774368020886
 Transform:
   m_ObjectHideFlags: 0

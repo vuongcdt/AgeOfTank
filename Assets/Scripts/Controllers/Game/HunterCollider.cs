@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -7,13 +8,16 @@ namespace Controllers.Game
     {
         private Character _character;
 
-        public void Init(Character character)
+        private void Start()
         {
-            _character = character;
-            var isHunterClass = (int)_character.Stats.TypeClass % 3 == 1;
-            gameObject.SetActive(isHunterClass);
-
+            _character = GetComponentInParent<Character>();
             tag = CONSTANS.Tag.HunterCollider;
+        }
+
+        private void OnEnable()
+        {
+            var character = GetComponentInParent<Character>();
+            Debug.Log(character);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -22,6 +26,7 @@ namespace Controllers.Game
             {
                 return;
             }
+
             var characterBeaten = other.GetComponentInParent<Character>();
 
             // var opposingTag = _character.Stats.Type == ENUMS.CharacterType.Player

@@ -3,6 +3,7 @@ using System.Collections;
 using Interfaces;
 using QFramework;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
 using Random = UnityEngine.Random;
@@ -17,6 +18,7 @@ namespace Controllers.Game
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
+        [SerializeField] private GameObject hunterCollider;
 
         private Rigidbody2D _rg;
         private CharacterStats _stats;
@@ -51,9 +53,10 @@ namespace Controllers.Game
 
             var warriorCollision = GetComponentInChildren<WarriorCollision>();
             warriorCollision.SetTagAndLayer(_stats.Type);
-            var hunterCollider = GetComponentInChildren<HunterCollider>();
-            hunterCollider.Init(this);
-
+            
+            var isHunterClass = (int)_stats.TypeClass % 3 == 1;
+            hunterCollider.SetActive(isHunterClass);
+            
             var idText = GetComponentInChildren<TextMesh>();
             avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
             tag = _stats.Tag;
