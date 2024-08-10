@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Utilities;
+using Random = UnityEngine.Random;
 
 namespace Controllers.Game
 {
@@ -31,7 +33,7 @@ namespace Controllers.Game
             _character.MoveToCharacterAttack();
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerExit2D(Collider2D other)
         {
             if (IsCompareStartBarTag(other))
             {
