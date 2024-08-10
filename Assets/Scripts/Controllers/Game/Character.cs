@@ -3,7 +3,6 @@ using System.Collections;
 using Interfaces;
 using QFramework;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using uPools;
 using Utilities;
@@ -206,11 +205,6 @@ namespace Controllers.Game
         public void MoveHead()
         {
             _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
-        }
-        
-        public void AddForce()
-        {
-            _rg.AddForce(_stats.Target.normalized * CharacterConfig.speed);
         }
 
         private void SetHealthBar(float newValue)

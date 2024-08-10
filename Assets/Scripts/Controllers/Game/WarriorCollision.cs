@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -20,15 +21,23 @@ namespace Controllers.Game
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
 
-            // gameObject.layer = isPlayer ? (int)ENUMS.Layer.WarriorPlayer : (int)ENUMS.Layer.WarriorEnemy;
-            gameObject.layer = isPlayer
-            ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
-            : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
+            gameObject.layer = isPlayer 
+                ? (int)ENUMS.Layer.WarriorPlayer 
+                : (int)ENUMS.Layer.WarriorEnemy;
+            
+            // gameObject.layer = isPlayer
+            // ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
+            // : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (!IsCompetitor(other.collider))
+            if (IsTargetCompetitor(other.collider))
+            {
+                StartCoroutine(AttackTarget());
+                return;
+            }
+            if (!IsCharacterCompetitor(other.collider))
             {
                 return;
             }
@@ -36,16 +45,29 @@ namespace Controllers.Game
             _characterBeaten = other.collider.GetComponentInParent<Character>();
             if (!_characterBeaten)
             {
-                Debug.Log("TARGET");
                 return;
             }
 
             _character.Attack(_characterBeaten);
         }
 
+        private IEnumerator AttackTarget()
+        {
+            yield return new WaitForSeconds(CharacterConfig.attackTime);
+            if (_character.Stats.IsPlayer)
+            {
+                GamePlayModel.HealthTargetPlayer.Value -= _character.Stats.Damage;
+            }
+            else
+            {
+                GamePlayModel.HealthTargetEnemy.Value -= _character.Stats.Damage;
+            }
+            StartCoroutine(AttackTarget());
+        }
+
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (!IsCompetitor(other))
+            if (!IsCharacterCompetitor(other))
             {
                 return;
             }
@@ -65,11 +87,18 @@ namespace Controllers.Game
             _character.MoveHead();
         }
 
-        private bool IsCompetitor(Collider2D other)
+        private bool IsCharacterCompetitor(Collider2D other)
         {
             var competitorTag = _character.Stats.Type == ENUMS.CharacterType.Player
                 ? CONSTANS.Tag.WarriorColliderEnemy
                 : CONSTANS.Tag.WarriorColliderPlayer;
+            return other.CompareTag(competitorTag);
+        }
+        private bool IsTargetCompetitor(Collider2D other)
+        {
+            var competitorTag = _character.Stats.Type == ENUMS.CharacterType.Player
+                ? CONSTANS.Tag.TargetPlayer
+                : CONSTANS.Tag.TargetEnemy;
             return other.CompareTag(competitorTag);
         }
     }

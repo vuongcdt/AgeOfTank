@@ -16,6 +16,8 @@
             public const string StartBarPlayer = nameof(StartBarPlayer);
             public const string StartBarEnemy = nameof(StartBarEnemy);
             public const string PlayerBar = nameof(PlayerBar);
+            public const string TargetEnemy = nameof(TargetEnemy);
+            public const string TargetPlayer = nameof(TargetPlayer);
         }
         
         public struct LayerMask

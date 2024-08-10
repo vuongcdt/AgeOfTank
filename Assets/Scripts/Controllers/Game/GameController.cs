@@ -2,6 +2,7 @@
 using Commands.Game;
 using Cysharp.Threading.Tasks;
 using QFramework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -19,6 +20,13 @@ namespace Controllers.Game
         [SerializeField] private int[] enemiesList;
         [SerializeField] private int[] playersHunterList;
         [SerializeField] private int[] enemiesHunterList;
+        [SerializeField] private int healthTargetPlayer = 100;
+        [SerializeField] private int healthTargetEnemy = 10;
+        [SerializeField] private Slider healthTargetPlayerSlider;
+        [SerializeField] private Slider healthTargetEnemySlider;
+        [SerializeField] private TMP_Text healthTargetPlayerText;
+        [SerializeField] private TMP_Text healthTargetEnemyText;
+
 
         private void Start()
         {
@@ -32,6 +40,29 @@ namespace Controllers.Game
             this.RegisterEvent<InitCharacter>(e => this.SendCommand(new InitCharacterCommand(e.TypeClass)));
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
+            
+            GamePlayModel.HealthTargetPlayer.Register(newValue =>
+            {
+                if (newValue <= 0)
+                {
+                    SetGameWin();
+                }
+                healthTargetPlayerSlider.value = newValue / healthTargetPlayer;
+                healthTargetPlayerText.text = newValue.ToString("0");
+            });
+            
+            GamePlayModel.HealthTargetEnemy.Register(newValue =>
+            {
+                if (newValue <= 0)
+                {
+                    SetGameOver();
+                }
+                healthTargetEnemyText.text = newValue.ToString("0");
+                healthTargetEnemySlider.value = newValue / healthTargetEnemy;
+            });
+            
+            GamePlayModel.HealthTargetPlayer.Value = healthTargetPlayer;
+            GamePlayModel.HealthTargetEnemy.Value = healthTargetEnemy;
 
             SpawnEnemies();
 
@@ -39,6 +70,18 @@ namespace Controllers.Game
 
             GraphicsSettings.transparencySortMode = TransparencySortMode.CustomAxis;
             GraphicsSettings.transparencySortAxis = Vector3.up;
+        }
+
+        private void SetGameOver()
+        {
+            Debug.Log("Game Over");
+            Time.timeScale = 0;
+        }
+
+        private void SetGameWin()
+        {
+            Debug.Log("GAME WIN");
+            Time.timeScale = 0;
         }
 
         private void OnPlay()

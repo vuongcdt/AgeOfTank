@@ -22,6 +22,8 @@ TagManager:
   - StartBarPlayer
   - StartBarEnemy
   - PlayerBar
+  - TargetEnemy
+  - TargetPlayer
   layers:
   - Default
   - TransparentFX

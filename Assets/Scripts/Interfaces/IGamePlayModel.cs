@@ -16,6 +16,8 @@ namespace Interfaces
         public Dictionary<string, Character> CharactersAttacking { get; }
         public BindableProperty<string> InitCharacterKey { get; }
         public BindableProperty<float> ProductFoodProgress { get; }
+        public BindableProperty<float> HealthTargetPlayer { get; }
+        public BindableProperty<float> HealthTargetEnemy { get; }
         public BindableProperty<int> FoodNum { get; }
     }
 
