@@ -17,8 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 34a7c19c92897d54b93bef25ab4de97a
   m_SerializeEntries:
-  - m_GUID: c60d4f36b30d5f443b48104b056590e0
-    m_Address: GameUIData
+  - m_GUID: e7d1942658a41b64296fc560f0531306
+    m_Address: character_config
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

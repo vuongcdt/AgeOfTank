@@ -5,7 +5,23 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - Cricle
+  - CircleCollider
+  - ColliderHunter
+  - WarriorColliderEnemy
+  - HunterColliderEnemy
+  - HunterColliderPlayer
+  - WarriorColliderPlayer
+  - SameTypeCollider
+  - HunterCollider
+  - WarriorCollider
+  - SameTypeHunterCollider
+  - SameTypeColliderHunter
+  - TopBar
+  - BotBar
+  - SameTypeColliderExit
+  - StartBarPlayer
+  - StartBarEnemy
+  - PlayerBar
   layers:
   - Default
   - TransparentFX
@@ -13,12 +29,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - WarriorPlayer
+  - WarriorEnemy
+  - SameType
+  - PlayerBar
   - 
   - 
   - 
