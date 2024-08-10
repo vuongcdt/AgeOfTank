@@ -51,6 +51,8 @@ namespace Controllers.Game
 
             var warriorCollision = GetComponentInChildren<WarriorCollision>();
             warriorCollision.SetTagAndLayer(_stats.Type);
+            var hunterCollider = GetComponentInChildren<HunterCollider>();
+            hunterCollider.Init(this);
 
             var idText = GetComponentInChildren<TextMesh>();
             avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;

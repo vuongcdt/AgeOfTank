@@ -17,6 +17,8 @@ namespace Controllers.Game
         [SerializeField] private GameObject characterPrefab;
         [SerializeField] private int[] playersList;
         [SerializeField] private int[] enemiesList;
+        [SerializeField] private int[] playersHunterList;
+        [SerializeField] private int[] enemiesHunterList;
 
         private void Start()
         {
@@ -56,11 +58,33 @@ namespace Controllers.Game
 
                 await UniTask.WaitForSeconds(2);
             }
+
+            foreach (var value in playersHunterList)
+            {
+                foreach (var i in new int[value])
+                {
+                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.Hunter));
+                    await UniTask.WaitForSeconds(0.1f);
+                }
+
+                await UniTask.WaitForSeconds(2);
+            }
         }
 
         private async void SpawnEnemies()
         {
             foreach (var value in enemiesList)
+            {
+                foreach (var i in new int[value])
+                {
+                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
+                    await UniTask.WaitForSeconds(0.1f);
+                }
+
+                await UniTask.WaitForSeconds(2);
+            }
+
+            foreach (var value in enemiesHunterList)
             {
                 foreach (var i in new int[value])
                 {
