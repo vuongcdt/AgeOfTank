@@ -19,11 +19,11 @@ namespace Controllers.Game
         [SerializeField] private GameObject healthBar;
 
         private Rigidbody2D _rg;
-        private bool _isAttack;
         private CharacterStats _stats;
         private Character _characterBeaten;
         private IEnumerator _moveToPointIE;
         private IEnumerator _attackCharacterIE;
+        private Move _move;
 
         private void OnDisable()
         {
@@ -81,34 +81,34 @@ namespace Controllers.Game
         {
             _rg.mass = mass;
             _rg.velocity = Vector3.zero;
-
+        
             if (!characterBeaten)
             {
-                _isAttack = false;
+                _stats.IsAttack = false;
                 return;
             }
-
+        
             _characterBeaten = characterBeaten;
-
+        
             GamePlayModel.CharactersAttacking.TryAdd(name, this);
             _stats.CharactersCanBeaten.TryAdd(_characterBeaten.name, _characterBeaten);
-
-            if (_isAttack)
+    
+            if (_stats.IsAttack)
             {
                 return;
             }
-
-            _isAttack = true;
-
+        
+            _stats.IsAttack = true;
+        
             _attackCharacterIE = AttackCharacterIE(characterBeaten.name);
             StartCoroutine(_attackCharacterIE);
         }
-
+        
         private IEnumerator AttackCharacterIE(string keyBeaten)
         {
             yield return new WaitForSeconds(CharacterConfig.attackTime);
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(keyBeaten);
-
+        
             if (!isCharacterBeaten)
             {
                 _stats.CharactersCanBeaten.Remove(keyBeaten);
@@ -120,46 +120,20 @@ namespace Controllers.Game
                 var statsBeaten = GamePlayModel.Characters[keyBeaten];
                 statsBeaten.Health.Value -= _stats.Damage;
             }
-
+        
             if (keyBeaten is null)
             {
-                _isAttack = false;
+                _stats.IsAttack = false;
                 StopCoroutine(_attackCharacterIE);
-                //moveToCharacterAttack
                 MoveToCharacterAttack();
                 yield break;
             }
-
+        
             _attackCharacterIE = AttackCharacterIE(keyBeaten);
-
+        
             StartCoroutine(_attackCharacterIE);
         }
-
-        public void MoveToCharacterAttack()
-        {
-            if (_isAttack)
-            {
-                return;
-            }
-
-            var characterAttackNearest = GetCharacterAttackNearest();
-            if (characterAttackNearest)
-            {
-                var characterNearestPos = characterAttackNearest.transform.position;
-                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
-                var newPoint = new Vector3(newPointX, characterNearestPos.y);
-
-                var velocity = (newPoint - transform.position).normalized;
-                // Debug.Log(
-                //     $"{name} {transform.position} {characterAttackNearest.name} {characterNearestPos} {velocity}");
-                _rg.velocity = velocity;
-            }
-            else
-            {
-                MoveHead();
-            }
-        }
-
+        
         private string GetCharacterCanBeaten()
         {
             string keyBeaten = null;
@@ -169,14 +143,36 @@ namespace Controllers.Game
                 {
                     continue;
                 }
-
+        
                 keyBeaten = character.name;
                 break;
             }
-
+        
             return keyBeaten;
         }
-
+        
+        public void MoveToCharacterAttack()
+        {
+            if (_stats.IsAttack)
+            {
+                return;
+            }
+        
+            var characterAttackNearest = GetCharacterAttackNearest();
+            if (characterAttackNearest)
+            {
+                var characterNearestPos = characterAttackNearest.transform.position;
+                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
+                var newPoint = new Vector3(newPointX, characterNearestPos.y);
+        
+                var velocity = (newPoint - transform.position).normalized;
+                _rg.velocity = velocity;
+            }
+            else
+            {
+                MoveHead();
+            }
+        }
         private Character GetCharacterAttackNearest()
         {
             Character characterNearest = null;
@@ -187,7 +183,7 @@ namespace Controllers.Game
                 {
                     continue;
                 }
-
+        
                 var distance = Vector3.Distance(transform.position, character.transform.position);
                 if (distance < minDistance)
                 {
@@ -195,15 +191,15 @@ namespace Controllers.Game
                     characterNearest = character;
                 }
             }
-
+        
             return characterNearest;
         }
-
+        
         public void MoveHead()
         {
             _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
         }
-
+        
         public void AddForce()
         {
             _rg.AddForce(_stats.Target.normalized * CharacterConfig.speed);
@@ -226,7 +222,7 @@ namespace Controllers.Game
         private void SetCharacterDeath()
         {
             _rg.mass = 1;
-            _isAttack = false;
+            _stats.IsAttack = false;
             _stats.CharactersCanBeaten.Clear();
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);

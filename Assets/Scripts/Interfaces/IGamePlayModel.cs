@@ -19,7 +19,7 @@ namespace Interfaces
         public BindableProperty<int> FoodNum { get; }
     }
 
-    [Serializable]
+    // [Serializable]
     public class CharacterStats
     {
         public GameObject GameObject;
@@ -31,6 +31,7 @@ namespace Interfaces
         public string Tag;
         public string Name;
         public bool IsPlayer;
+        public bool IsAttack;
         public Dictionary<string, Character> CharactersCanBeaten = new();
 
         public bool IsDeath => Health.Value < 0;

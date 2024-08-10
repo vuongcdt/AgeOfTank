@@ -33,9 +33,9 @@ namespace Controllers.Game
             }
 
             _characterBeaten = other.collider.GetComponentInParent<Character>();
-
-            if (_character.IsNearStartPoint() || _characterBeaten.IsNearStartPoint())
+            if (!_characterBeaten)
             {
+                Debug.Log("TARGET");
                 return;
             }
 
