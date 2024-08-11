@@ -1,6 +1,7 @@
-﻿using System.Collections;
-using Controllers.Game;
+﻿using System.Threading;
+using Cysharp.Threading.Tasks;
 using Interfaces;
+using QFramework;
 using UnityEngine;
 
 namespace Commands.Game
@@ -12,6 +13,8 @@ namespace Commands.Game
 
         private string _keyBeaten;
         private string _keyAttack;
+
+        private CancellationTokenSource _cancelAttackCharacter = new();
 
         public AttackCharacterCommand(string keyBeaten, string keyAttack)
         {
@@ -31,39 +34,39 @@ namespace Commands.Game
 
             _statsBeaten = GamePlayModel.Characters[_keyBeaten];
             _statsAttack = GamePlayModel.Characters[_keyAttack];
-
-            // _statsBeaten.Health.Value -= _statsAttack.Damage;
+            
+            AttackCharacter();
         }
-        
-         public void AttackCharacter(Character characterBeaten)
+
+        private void AttackCharacter()
         {
-            if (!characterBeaten)
-            {
-                _statsAttack.IsAttack = false;
-                return;
-            }
-            
-            _keyBeaten = characterBeaten.name;
-            
+            _keyBeaten = _statsBeaten.Name;
+
             GamePlayModel.CharactersAttacking.TryAdd(_statsAttack.Name, _statsAttack);
-            _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
-            
+            _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, _statsBeaten);
+
             if (_statsAttack.IsAttack)
             {
                 return;
             }
-            
+
             _statsAttack.IsAttack = true;
-            
-            // _attackCharacterIE = AttackCharacterIE();
-            // StartCoroutine(_attackCharacterIE);
+
+            AttackCharacterAsync();
         }
-        
-        private IEnumerator AttackCharacterIE()
+
+        private async void AttackCharacterAsync()
         {
-            yield return new WaitForSeconds(CharacterConfig.attackTime);
+            await UniTask.WaitForSeconds(CharacterConfig.attackTime,
+                cancellationToken: _cancelAttackCharacter.Token);
+
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
-        
+            var isCharacterAttack= GamePlayModel.Characters.ContainsKey(_keyAttack);
+            if (!isCharacterAttack)
+            {
+                return;
+            }
+
             if (!isCharacterBeaten)
             {
                 _statsAttack.CharactersCanBeaten.Remove(_keyBeaten);
@@ -71,40 +74,41 @@ namespace Commands.Game
             }
             else
             {
-                // this.SendCommand(new AttackCommand(keyBeaten, name));
                 var statsBeaten = GamePlayModel.Characters[_keyBeaten];
                 statsBeaten.Health.Value -= _statsAttack.Damage;
             }
-        
+
             if (_keyBeaten is null)
             {
                 _statsAttack.IsAttack = false;
-                // StopCoroutine(_attackCharacterIE);
+                if (!_cancelAttackCharacter.IsCancellationRequested)
+                {
+                    _cancelAttackCharacter.Cancel();
+                }
+
                 // MoveToCharacterAttack();
-                yield break;
+                this.SendCommand(new MoveToCharacterAttackCommand(_statsAttack.Name));
+                return;
             }
-        
-            // _attackCharacterIE = AttackCharacterIE();
-            //
-            // StartCoroutine(_attackCharacterIE);
+
+            AttackCharacterAsync();
         }
-        
+
         private string GetCharacterCanBeaten()
         {
             string keyBeaten = null;
-            foreach (var (_, character) in _statsAttack.CharactersCanBeaten)
+            foreach (var (_, characterStats) in _statsAttack.CharactersCanBeaten)
             {
-                if (character.Stats.IsDeath)
+                if (_statsAttack.IsDeath)
                 {
                     continue;
                 }
-        
-                keyBeaten = character.name;
+
+                keyBeaten = characterStats.Name;
                 break;
             }
-        
+
             return keyBeaten;
         }
-
     }
 }

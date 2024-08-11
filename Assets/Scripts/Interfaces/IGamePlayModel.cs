@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Controllers.Game;
 using QFramework;
 using UnityEngine;
@@ -34,8 +35,7 @@ namespace Interfaces
         public string Name;
         public bool IsPlayer;
         public bool IsAttack;
-        public Dictionary<string, Character> CharactersCanBeaten = new();
-
+        public Dictionary<string, CharacterStats> CharactersCanBeaten = new();
         public bool IsDeath => Health.Value < 0;
         public ENUMS.CharacterType Type;
         public ENUMS.CharacterTypeClass TypeClass;

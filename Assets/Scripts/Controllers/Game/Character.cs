@@ -54,11 +54,11 @@ namespace Controllers.Game
 
             var warriorCollision = GetComponentInChildren<WarriorCollision>();
             warriorCollision.SetTagAndLayer(_stats.Type);
-            
+
             var isHunterClass = (int)_stats.TypeClass % 3 == 1;
             hunterCollider.SetActive(isHunterClass);
             gameObject.layer = isHunterClass ? (int)ENUMS.Layer.SameTypeHunter : (int)ENUMS.Layer.SameType;
-            
+
             var idText = GetComponentInChildren<TextMesh>();
             avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
             tag = _stats.Tag;
@@ -69,7 +69,7 @@ namespace Controllers.Game
             healthBar.SetActive(false);
             var random = (1 - Random.value) * 0.2f;
             var transform1 = transform;
-            
+
             transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
             avatar.flipX = !_stats.IsPlayer;
             _stats.Transform = transform1;
@@ -80,102 +80,103 @@ namespace Controllers.Game
         {
             _stats.Health.Register(SetHealthBar);
 
-            this.RegisterEvent<MoveHeadEvent>(e => MoveToCharacterAttack());
+            // this.RegisterEvent<MoveHeadEvent>(e => MoveToCharacterAttack());
+            this.RegisterEvent<MoveHeadEvent>(e => this.SendCommand(new MoveToCharacterAttackCommand(name)));
 
             _rg = GetComponent<Rigidbody2D>();
             MoveHead();
         }
 
-        public void AttackCharacter(Character characterBeaten)
+        public void AttackCharacter(string keyBeaten)
         {
             _rg.mass = mass;
             _rg.velocity = Vector3.zero;
 
-            // this.SendCommand(new AttackCharacterCommand(keyBeaten,name));
+            this.SendCommand(new AttackCharacterCommand(keyBeaten, name));
 
-            if (!characterBeaten)
-            {
-                _stats.IsAttack = false;
-                return;
-            }
-            
-            _keyBeaten = characterBeaten.name;
-            
-            GamePlayModel.CharactersAttacking.TryAdd(name, _stats);
-            _stats.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
-            
-            if (_stats.IsAttack)
-            {
-                return;
-            }
-            
-            _stats.IsAttack = true;
-            
-            _attackCharacterIE = AttackCharacterIE();
-            StartCoroutine(_attackCharacterIE);
+            // if (!characterBeaten)
+            // {
+            //     _stats.IsAttack = false;
+            //     return;
+            // }
+            //
+            // _keyBeaten = characterBeaten.name;
+            //
+            // GamePlayModel.CharactersAttacking.TryAdd(name, _stats);
+            // _stats.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
+            //
+            // if (_stats.IsAttack)
+            // {
+            //     return;
+            // }
+            //
+            // _stats.IsAttack = true;
+            //
+            // _attackCharacterIE = AttackCharacterIE();
+            // StartCoroutine(_attackCharacterIE);
         }
-        
-        private IEnumerator AttackCharacterIE()
-        {
-            yield return new WaitForSeconds(CharacterConfig.attackTime);
-            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
-        
-            if (!isCharacterBeaten)
-            {
-                _stats.CharactersCanBeaten.Remove(_keyBeaten);
-                _keyBeaten = GetCharacterCanBeaten();
-            }
-            else
-            {
-                // this.SendCommand(new AttackCommand(keyBeaten, name));
-                var statsBeaten = GamePlayModel.Characters[_keyBeaten];
-                statsBeaten.Health.Value -= _stats.Damage;
-            }
-        
-            if (_keyBeaten is null)
-            {
-                _stats.IsAttack = false;
-                StopCoroutine(_attackCharacterIE);
-                MoveToCharacterAttack();
-                yield break;
-            }
-        
-            _attackCharacterIE = AttackCharacterIE();
-        
-            StartCoroutine(_attackCharacterIE);
-        }
-        
-        private string GetCharacterCanBeaten()
-        {
-            string keyBeaten = null;
-            foreach (var (_, character) in _stats.CharactersCanBeaten)
-            {
-                if (character.Stats.IsDeath)
-                {
-                    continue;
-                }
-        
-                keyBeaten = character.name;
-                break;
-            }
-        
-            return keyBeaten;
-        }
-        
+
+        // private IEnumerator AttackCharacterIE()
+        // {
+        //     yield return new WaitForSeconds(CharacterConfig.attackTime);
+        //     var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
+        //
+        //     if (!isCharacterBeaten)
+        //     {
+        //         _stats.CharactersCanBeaten.Remove(_keyBeaten);
+        //         _keyBeaten = GetCharacterCanBeaten();
+        //     }
+        //     else
+        //     {
+        //         // this.SendCommand(new AttackCommand(keyBeaten, name));
+        //         var statsBeaten = GamePlayModel.Characters[_keyBeaten];
+        //         statsBeaten.Health.Value -= _stats.Damage;
+        //     }
+        //
+        //     if (_keyBeaten is null)
+        //     {
+        //         _stats.IsAttack = false;
+        //         StopCoroutine(_attackCharacterIE);
+        //         MoveToCharacterAttack();
+        //         yield break;
+        //     }
+        //
+        //     _attackCharacterIE = AttackCharacterIE();
+        //
+        //     StartCoroutine(_attackCharacterIE);
+        // }
+        //
+        // private string GetCharacterCanBeaten()
+        // {
+        //     string keyBeaten = null;
+        //     foreach (var (_, character) in _stats.CharactersCanBeaten)
+        //     {
+        //         if (character.Stats.IsDeath)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         keyBeaten = character.name;
+        //         break;
+        //     }
+        //
+        //     return keyBeaten;
+        // }
+
         public void MoveToCharacterAttack()
         {
             if (_stats.IsAttack)
             {
                 return;
             }
-        
+
             var characterAttackNearest = GetCharacterAttackNearest();
             if (characterAttackNearest)
             {
                 var characterNearestPos = characterAttackNearest.transform.position;
                 var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
                 var newPoint = new Vector3(newPointX, characterNearestPos.y);
-        
+
                 var velocity = (newPoint - transform.position).normalized * CharacterConfig.speed;
                 _rg.velocity = velocity;
             }
@@ -184,7 +185,7 @@ namespace Controllers.Game
                 MoveHead();
             }
         }
-        
+
         private Character GetCharacterAttackNearest()
         {
             Character characterNearest = null;
@@ -195,7 +196,7 @@ namespace Controllers.Game
                 {
                     continue;
                 }
-        
+
                 var distance = Vector3.Distance(transform.position, characterStats.Transform.position);
                 if (distance < minDistance)
                 {
@@ -203,10 +204,10 @@ namespace Controllers.Game
                     characterNearest = characterStats.Transform.GetComponent<Character>();
                 }
             }
-        
+
             return characterNearest;
         }
-        
+
         public void MoveHead()
         {
             _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;

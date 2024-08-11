@@ -48,7 +48,7 @@ namespace Controllers.Game
                 return;
             }
 
-            _character.AttackCharacter(_characterBeaten);
+            _character.AttackCharacter(_characterBeaten.name);
         }
 
         private IEnumerator AttackTarget()

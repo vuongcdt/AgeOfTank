@@ -1,4 +1,6 @@
 ﻿using System;
+using Commands.Game;
+using QFramework;
 using UnityEngine;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -30,7 +32,9 @@ namespace Controllers.Game
                 return;
             }
 
-            _character.MoveToCharacterAttack();
+            // _character.MoveToCharacterAttack();
+            this.SendCommand(new MoveToCharacterAttackCommand(_character.name));
+            // _character.MoveHead();
         }
 
         private void OnTriggerExit2D(Collider2D other)
