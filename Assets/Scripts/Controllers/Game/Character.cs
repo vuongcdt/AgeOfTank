@@ -80,7 +80,6 @@ namespace Controllers.Game
         {
             _stats.Health.Register(SetHealthBar);
 
-            // this.RegisterEvent<MoveHeadEvent>(e => MoveToCharacterAttack());
             this.RegisterEvent<MoveHeadEvent>(e => this.SendCommand(new MoveToCharacterAttackCommand(name)));
 
             _rg = GetComponent<Rigidbody2D>();
@@ -93,119 +92,6 @@ namespace Controllers.Game
             _rg.velocity = Vector3.zero;
 
             this.SendCommand(new AttackCharacterCommand(keyBeaten, name));
-
-            // if (!characterBeaten)
-            // {
-            //     _stats.IsAttack = false;
-            //     return;
-            // }
-            //
-            // _keyBeaten = characterBeaten.name;
-            //
-            // GamePlayModel.CharactersAttacking.TryAdd(name, _stats);
-            // _stats.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
-            //
-            // if (_stats.IsAttack)
-            // {
-            //     return;
-            // }
-            //
-            // _stats.IsAttack = true;
-            //
-            // _attackCharacterIE = AttackCharacterIE();
-            // StartCoroutine(_attackCharacterIE);
-        }
-
-        // private IEnumerator AttackCharacterIE()
-        // {
-        //     yield return new WaitForSeconds(CharacterConfig.attackTime);
-        //     var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
-        //
-        //     if (!isCharacterBeaten)
-        //     {
-        //         _stats.CharactersCanBeaten.Remove(_keyBeaten);
-        //         _keyBeaten = GetCharacterCanBeaten();
-        //     }
-        //     else
-        //     {
-        //         // this.SendCommand(new AttackCommand(keyBeaten, name));
-        //         var statsBeaten = GamePlayModel.Characters[_keyBeaten];
-        //         statsBeaten.Health.Value -= _stats.Damage;
-        //     }
-        //
-        //     if (_keyBeaten is null)
-        //     {
-        //         _stats.IsAttack = false;
-        //         StopCoroutine(_attackCharacterIE);
-        //         MoveToCharacterAttack();
-        //         yield break;
-        //     }
-        //
-        //     _attackCharacterIE = AttackCharacterIE();
-        //
-        //     StartCoroutine(_attackCharacterIE);
-        // }
-        //
-        // private string GetCharacterCanBeaten()
-        // {
-        //     string keyBeaten = null;
-        //     foreach (var (_, character) in _stats.CharactersCanBeaten)
-        //     {
-        //         if (character.Stats.IsDeath)
-        //         {
-        //             continue;
-        //         }
-        //
-        //         keyBeaten = character.name;
-        //         break;
-        //     }
-        //
-        //     return keyBeaten;
-        // }
-
-        public void MoveToCharacterAttack()
-        {
-            if (_stats.IsAttack)
-            {
-                return;
-            }
-
-            var characterAttackNearest = GetCharacterAttackNearest();
-            if (characterAttackNearest)
-            {
-                var characterNearestPos = characterAttackNearest.transform.position;
-                var newPointX = _stats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
-                var newPoint = new Vector3(newPointX, characterNearestPos.y);
-
-                var velocity = (newPoint - transform.position).normalized * CharacterConfig.speed;
-                _rg.velocity = velocity;
-            }
-            else
-            {
-                MoveHead();
-            }
-        }
-
-        private Character GetCharacterAttackNearest()
-        {
-            Character characterNearest = null;
-            float minDistance = 10;
-            foreach (var (_, characterStats) in GamePlayModel.CharactersAttacking)
-            {
-                if (_stats.Type == characterStats.Type || _stats.IsDeath || characterStats.IsDeath)
-                {
-                    continue;
-                }
-
-                var distance = Vector3.Distance(transform.position, characterStats.Transform.position);
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    characterNearest = characterStats.Transform.GetComponent<Character>();
-                }
-            }
-
-            return characterNearest;
         }
 
         public void MoveHead()
@@ -230,7 +116,7 @@ namespace Controllers.Game
         private void SetCharacterDeath()
         {
             _rg.mass = 1;
-            _stats.IsAttack = false;
+            _stats.IsAttackCharacter = false;
             _stats.CharactersCanBeaten.Clear();
             GamePlayModel.CharactersAttacking.Remove(name);
             GamePlayModel.Characters.Remove(name);

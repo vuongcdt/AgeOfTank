@@ -32,9 +32,7 @@ namespace Controllers.Game
                 return;
             }
 
-            // _character.MoveToCharacterAttack();
             this.SendCommand(new MoveToCharacterAttackCommand(_character.name));
-            // _character.MoveHead();
         }
 
         private void OnTriggerExit2D(Collider2D other)

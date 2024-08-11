@@ -2,7 +2,6 @@
 using Cysharp.Threading.Tasks;
 using Interfaces;
 using QFramework;
-using UnityEngine;
 
 namespace Commands.Game
 {
@@ -25,7 +24,11 @@ namespace Commands.Game
         protected override void OnExecute()
         {
             base.OnExecute();
+            AttackCharacter();
+        }
 
+        private void AttackCharacter()
+        {
             if (!GamePlayModel.Characters.ContainsKey(_keyBeaten)
                 || !GamePlayModel.Characters.ContainsKey(_keyAttack))
             {
@@ -34,23 +37,16 @@ namespace Commands.Game
 
             _statsBeaten = GamePlayModel.Characters[_keyBeaten];
             _statsAttack = GamePlayModel.Characters[_keyAttack];
-            
-            AttackCharacter();
-        }
 
-        private void AttackCharacter()
-        {
-            _keyBeaten = _statsBeaten.Name;
-
-            GamePlayModel.CharactersAttacking.TryAdd(_statsAttack.Name, _statsAttack);
             _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, _statsBeaten);
 
-            if (_statsAttack.IsAttack)
+            if (_statsAttack.IsAttackCharacter)
             {
                 return;
             }
 
-            _statsAttack.IsAttack = true;
+            _statsAttack.IsAttackCharacter = true;
+            GamePlayModel.CharactersAttacking.TryAdd(_keyAttack, _statsAttack);
 
             AttackCharacterAsync();
         }
@@ -61,32 +57,32 @@ namespace Commands.Game
                 cancellationToken: _cancelAttackCharacter.Token);
 
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
-            var isCharacterAttack= GamePlayModel.Characters.ContainsKey(_keyAttack);
+            var isCharacterAttack = GamePlayModel.CharactersAttacking.ContainsKey(_keyAttack);
+
             if (!isCharacterAttack)
             {
                 return;
             }
 
-            if (!isCharacterBeaten)
-            {
-                _statsAttack.CharactersCanBeaten.Remove(_keyBeaten);
-                _keyBeaten = GetCharacterCanBeaten();
-            }
-            else
+            if (isCharacterBeaten)
             {
                 var statsBeaten = GamePlayModel.Characters[_keyBeaten];
                 statsBeaten.Health.Value -= _statsAttack.Damage;
+                AttackCharacterAsync();
+                return;
             }
+
+            _statsAttack.CharactersCanBeaten.Remove(_keyBeaten);
+            _keyBeaten = GetCharacterCanBeaten();
 
             if (_keyBeaten is null)
             {
-                _statsAttack.IsAttack = false;
+                _statsAttack.IsAttackCharacter = false;
                 if (!_cancelAttackCharacter.IsCancellationRequested)
                 {
                     _cancelAttackCharacter.Cancel();
                 }
 
-                // MoveToCharacterAttack();
                 this.SendCommand(new MoveToCharacterAttackCommand(_statsAttack.Name));
                 return;
             }

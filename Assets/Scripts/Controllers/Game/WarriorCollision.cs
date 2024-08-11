@@ -1,4 +1,7 @@
 ﻿using System.Collections;
+using Commands.Game;
+using Cysharp.Threading.Tasks;
+using QFramework;
 using UnityEngine;
 using Utilities;
 
@@ -21,10 +24,10 @@ namespace Controllers.Game
                 ? CONSTANS.Tag.WarriorColliderPlayer
                 : CONSTANS.Tag.WarriorColliderEnemy;
 
-            gameObject.layer = isPlayer 
-                ? (int)ENUMS.Layer.WarriorPlayer 
+            gameObject.layer = isPlayer
+                ? (int)ENUMS.Layer.WarriorPlayer
                 : (int)ENUMS.Layer.WarriorEnemy;
-            
+
             // gameObject.layer = isPlayer
             // ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
             // : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
@@ -34,9 +37,10 @@ namespace Controllers.Game
         {
             if (IsTargetCompetitor(other.collider))
             {
-                StartCoroutine(AttackTarget());
+                this.SendCommand(new AttackTargetCommand(_character.name));
                 return;
             }
+
             if (!IsCharacterCompetitor(other.collider))
             {
                 return;
@@ -49,20 +53,6 @@ namespace Controllers.Game
             }
 
             _character.AttackCharacter(_characterBeaten.name);
-        }
-
-        private IEnumerator AttackTarget()
-        {
-            yield return new WaitForSeconds(CharacterConfig.attackTime);
-            if (_character.Stats.IsPlayer)
-            {
-                GamePlayModel.HealthTargetPlayer.Value -= _character.Stats.Damage;
-            }
-            else
-            {
-                GamePlayModel.HealthTargetEnemy.Value -= _character.Stats.Damage;
-            }
-            StartCoroutine(AttackTarget());
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -94,6 +84,7 @@ namespace Controllers.Game
                 : CONSTANS.Tag.WarriorColliderPlayer;
             return other.CompareTag(competitorTag);
         }
+
         private bool IsTargetCompetitor(Collider2D other)
         {
             var competitorTag = _character.Stats.Type == ENUMS.CharacterType.Player

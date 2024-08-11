@@ -34,7 +34,8 @@ namespace Interfaces
         public string Tag;
         public string Name;
         public bool IsPlayer;
-        public bool IsAttack;
+        public bool IsAttackCharacter;
+        public bool IsAttackTarget;
         public Dictionary<string, CharacterStats> CharactersCanBeaten = new();
         public bool IsDeath => Health.Value < 0;
         public ENUMS.CharacterType Type;
