@@ -13,7 +13,7 @@ namespace Interfaces
         public BindableProperty<int> IdPlayer { get; }
         public BindableProperty<int> IdEnemy { get; }
         public Dictionary<string, CharacterStats> Characters { get; }
-        public Dictionary<string, Character> CharactersAttacking { get; }
+        public Dictionary<string, CharacterStats> CharactersAttacking { get; }
         public BindableProperty<string> InitCharacterKey { get; }
         public BindableProperty<float> ProductFoodProgress { get; }
         public BindableProperty<float> HealthTargetPlayer { get; }
@@ -24,7 +24,7 @@ namespace Interfaces
     // [Serializable]
     public class CharacterStats
     {
-        public GameObject GameObject;
+        public Transform Transform;
         public BindableProperty<float> Health;
         public int ID;
         public float Damage;

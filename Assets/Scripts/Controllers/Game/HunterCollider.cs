@@ -31,7 +31,7 @@ namespace Controllers.Game
 
             if (other.CompareTag(opposingTag))
             {
-                _character.Attack(characterBeaten);
+                _character.AttackCharacter(characterBeaten);
             }
         }
 

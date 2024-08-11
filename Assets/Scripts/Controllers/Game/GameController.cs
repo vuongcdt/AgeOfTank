@@ -40,27 +40,11 @@ namespace Controllers.Game
             this.RegisterEvent<InitCharacter>(e => this.SendCommand(new InitCharacterCommand(e.TypeClass)));
 
             GamePlayModel.InitCharacterKey.Register(RenderCharacter);
-            
-            GamePlayModel.HealthTargetPlayer.Register(newValue =>
-            {
-                if (newValue <= 0)
-                {
-                    SetGameWin();
-                }
-                healthTargetPlayerSlider.value = newValue / healthTargetPlayer;
-                healthTargetPlayerText.text = newValue.ToString("0");
-            });
-            
-            GamePlayModel.HealthTargetEnemy.Register(newValue =>
-            {
-                if (newValue <= 0)
-                {
-                    SetGameOver();
-                }
-                healthTargetEnemyText.text = newValue.ToString("0");
-                healthTargetEnemySlider.value = newValue / healthTargetEnemy;
-            });
-            
+
+            GamePlayModel.HealthTargetPlayer.Register(OnHealthTargetPlayer);
+
+            GamePlayModel.HealthTargetEnemy.Register(OnHeaalthTargetEnemy);
+
             GamePlayModel.HealthTargetPlayer.Value = healthTargetPlayer;
             GamePlayModel.HealthTargetEnemy.Value = healthTargetEnemy;
 
@@ -72,16 +56,28 @@ namespace Controllers.Game
             GraphicsSettings.transparencySortAxis = Vector3.up;
         }
 
-        private void SetGameOver()
+        private void OnHeaalthTargetEnemy(float newValue)
         {
-            Debug.Log("Game Over");
-            Time.timeScale = 0;
+            if (newValue <= 0)
+            {
+                Debug.Log("Game Over");
+                Time.timeScale = 0;
+            }
+
+            healthTargetEnemyText.text = newValue.ToString("0");
+            healthTargetEnemySlider.value = newValue / healthTargetEnemy;
         }
 
-        private void SetGameWin()
+        private void OnHealthTargetPlayer(float newValue)
         {
-            Debug.Log("GAME WIN");
-            Time.timeScale = 0;
+            if (newValue <= 0)
+            {
+                Debug.Log("GAME WIN");
+                Time.timeScale = 0;
+            }
+
+            healthTargetPlayerSlider.value = newValue / healthTargetPlayer;
+            healthTargetPlayerText.text = newValue.ToString("0");
         }
 
         private void OnPlay()
@@ -131,7 +127,7 @@ namespace Controllers.Game
             {
                 foreach (var i in new int[value])
                 {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
+                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.HunterEnemy));
                     await UniTask.WaitForSeconds(0.1f);
                 }
 
@@ -141,9 +137,9 @@ namespace Controllers.Game
 
         private void OnReset()
         {
-            foreach (var pair in GamePlayModel.Characters)
+            foreach (var (_, characterStats) in GamePlayModel.Characters)
             {
-                SharedGameObjectPool.Return(pair.Value.GameObject);
+                SharedGameObjectPool.Return(characterStats.Transform.gameObject);
             }
 
             SpawnEnemies();

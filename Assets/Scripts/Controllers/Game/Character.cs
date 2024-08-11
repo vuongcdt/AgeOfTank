@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Commands.Game;
 using Interfaces;
 using QFramework;
 using UnityEngine;
@@ -67,9 +68,11 @@ namespace Controllers.Game
 
             healthBar.SetActive(false);
             var random = (1 - Random.value) * 0.2f;
-            transform.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
+            var transform1 = transform;
+            
+            transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
             avatar.flipX = !_stats.IsPlayer;
-            _stats.GameObject = gameObject;
+            _stats.Transform = transform1;
             Init();
         }
 
@@ -83,29 +86,31 @@ namespace Controllers.Game
             MoveHead();
         }
 
-        public void Attack(Character characterBeaten)
+        public void AttackCharacter(Character characterBeaten)
         {
             _rg.mass = mass;
             _rg.velocity = Vector3.zero;
-        
+
+            // this.SendCommand(new AttackCharacterCommand(keyBeaten,name));
+
             if (!characterBeaten)
             {
                 _stats.IsAttack = false;
                 return;
             }
-        
+            
             _keyBeaten = characterBeaten.name;
-        
-            GamePlayModel.CharactersAttacking.TryAdd(name, this);
+            
+            GamePlayModel.CharactersAttacking.TryAdd(name, _stats);
             _stats.CharactersCanBeaten.TryAdd(_keyBeaten, characterBeaten);
-    
+            
             if (_stats.IsAttack)
             {
                 return;
             }
-        
+            
             _stats.IsAttack = true;
-        
+            
             _attackCharacterIE = AttackCharacterIE();
             StartCoroutine(_attackCharacterIE);
         }
@@ -184,18 +189,18 @@ namespace Controllers.Game
         {
             Character characterNearest = null;
             float minDistance = 10;
-            foreach (var (_, character) in GamePlayModel.CharactersAttacking)
+            foreach (var (_, characterStats) in GamePlayModel.CharactersAttacking)
             {
-                if (_stats.Type == character.Stats.Type || _stats.IsDeath || character.Stats.IsDeath)
+                if (_stats.Type == characterStats.Type || _stats.IsDeath || characterStats.IsDeath)
                 {
                     continue;
                 }
         
-                var distance = Vector3.Distance(transform.position, character.transform.position);
+                var distance = Vector3.Distance(transform.position, characterStats.Transform.position);
                 if (distance < minDistance)
                 {
                     minDistance = distance;
-                    characterNearest = character;
+                    characterNearest = characterStats.Transform.GetComponent<Character>();
                 }
             }
         
@@ -231,9 +236,9 @@ namespace Controllers.Game
 
             bool isHasCharacter = false;
 
-            foreach (var (_, character) in GamePlayModel.CharactersAttacking)
+            foreach (var (_, characterStats) in GamePlayModel.CharactersAttacking)
             {
-                if (character._stats.Type == _stats.Type)
+                if (characterStats.Type == _stats.Type)
                 {
                     isHasCharacter = true;
                 }

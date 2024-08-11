@@ -12,7 +12,7 @@ namespace Models
         public BindableProperty<int> IdEnemy { get; } = new(0);
         public BindableProperty<int> FoodNum { get; } = new(500);
         public Dictionary<string, CharacterStats> Characters { get; } = new();
-        public Dictionary<string, Character> CharactersAttacking { get; } = new();
+        public Dictionary<string, CharacterStats> CharactersAttacking { get; } = new();
         public BindableProperty<string> InitCharacterKey { get; } = new();
         public BindableProperty<float> ProductFoodProgress { get; } = new();
         public BindableProperty<float> HealthTargetPlayer { get; } = new();
