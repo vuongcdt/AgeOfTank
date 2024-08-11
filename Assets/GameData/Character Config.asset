@@ -17,6 +17,7 @@ MonoBehaviour:
   durationMove: 20
   speed: 0.5
   attackTime: 1
+  mass: 200
   unitConfigs:
   - health: 21
     damage: 2

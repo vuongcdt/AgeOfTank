@@ -10,6 +10,7 @@ namespace Systems
         public int durationMove = 10;
         public float speed = 0.5f;
         public float attackTime = 1f;
+        public float mass = 200;
         public UnitConfig[] unitConfigs;
     }
 

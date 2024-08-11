@@ -103,7 +103,8 @@ namespace Controllers.Game
         {
             if (newValue <= 0)
             {
-                SetCharacterDeath();
+                // SetCharacterDeath();
+                this.SendCommand(new SetCharacterDeathCommand(name));
                 return;
             }
 
@@ -113,32 +114,7 @@ namespace Controllers.Game
             healthSlider.value = newValue / CharacterConfig.unitConfigs[(int)_stats.TypeClass].health;
         }
 
-        private void SetCharacterDeath()
-        {
-            _rg.mass = 1;
-            _stats.IsAttackCharacter = false;
-            _stats.CharactersCanBeaten.Clear();
-            GamePlayModel.CharactersAttacking.Remove(name);
-            GamePlayModel.Characters.Remove(name);
-
-            bool isHasCharacter = false;
-
-            foreach (var (_, characterStats) in GamePlayModel.CharactersAttacking)
-            {
-                if (characterStats.Type == _stats.Type)
-                {
-                    isHasCharacter = true;
-                }
-            }
-
-            if (!isHasCharacter)
-            {
-                this.SendEvent<MoveHeadEvent>();
-                // this.SendEvent(new InitCharacter(_stats.TypeClass));
-            }
-
-            SharedGameObjectPool.Return(gameObject);
-        }
+       
 
         private void SetSortingOrderHeathBar()
         {

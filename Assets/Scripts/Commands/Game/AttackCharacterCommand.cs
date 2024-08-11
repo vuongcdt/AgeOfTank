@@ -2,16 +2,18 @@
 using Cysharp.Threading.Tasks;
 using Interfaces;
 using QFramework;
+using UnityEngine;
 
 namespace Commands.Game
 {
     public class AttackCharacterCommand : BaseCommand
     {
-        private CharacterStats _statsBeaten;
-        private CharacterStats _statsAttack;
-
         private string _keyBeaten;
         private string _keyAttack;
+
+        private Rigidbody2D _rg;
+        private CharacterStats _statsBeaten;
+        private CharacterStats _statsAttack;
 
         private CancellationTokenSource _cancelAttackCharacter = new();
 
@@ -35,8 +37,8 @@ namespace Commands.Game
                 return;
             }
 
-            _statsBeaten = GamePlayModel.Characters[_keyBeaten];
             _statsAttack = GamePlayModel.Characters[_keyAttack];
+            _statsBeaten = GamePlayModel.Characters[_keyBeaten];
 
             _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, _statsBeaten);
 
@@ -44,6 +46,10 @@ namespace Commands.Game
             {
                 return;
             }
+
+            _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
+            _rg.mass = CharacterConfig.mass;
+            _rg.velocity = Vector3.zero;
 
             _statsAttack.IsAttackCharacter = true;
             GamePlayModel.CharactersAttacking.TryAdd(_keyAttack, _statsAttack);
@@ -53,8 +59,7 @@ namespace Commands.Game
 
         private async void AttackCharacterAsync()
         {
-            await UniTask.WaitForSeconds(CharacterConfig.attackTime,
-                cancellationToken: _cancelAttackCharacter.Token);
+            await UniTask.WaitForSeconds(CharacterConfig.attackTime, cancellationToken: _cancelAttackCharacter.Token);
 
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
             var isCharacterAttack = GamePlayModel.CharactersAttacking.ContainsKey(_keyAttack);
