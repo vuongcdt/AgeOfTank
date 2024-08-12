@@ -93,6 +93,13 @@ namespace Controllers.Game
 
             this.SendCommand(new AttackCharacterCommand(keyBeaten, name));
         }
+        public void AttackTarget()
+        {
+            _rg.mass = mass;
+            _rg.velocity = Vector3.zero;
+
+            this.SendCommand(new AttackTargetCommand(name));
+        }
 
         public void MoveHead()
         {

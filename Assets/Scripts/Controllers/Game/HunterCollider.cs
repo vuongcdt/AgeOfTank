@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Commands.Game;
+using QFramework;
+using UnityEngine;
 using Utilities;
 
 namespace Controllers.Game
@@ -32,6 +34,16 @@ namespace Controllers.Game
             if (other.CompareTag(opposingTag))
             {
                 _character.AttackCharacter(characterBeaten.name);
+            }
+            
+            var targetTag = _character.Stats.Type == ENUMS.CharacterType.Player
+                ? CONSTANS.Tag.TargetPlayer
+                : CONSTANS.Tag.TargetEnemy;
+            if (other.CompareTag(targetTag))
+            {
+                Debug.Log($"other.tag {other.tag}");
+                // _character.AttackCharacter(characterBeaten.name);
+                this.SendCommand(new AttackTargetCommand(_character.name));
             }
         }
 

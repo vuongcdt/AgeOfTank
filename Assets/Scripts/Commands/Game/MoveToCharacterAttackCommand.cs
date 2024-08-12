@@ -32,7 +32,6 @@ namespace Commands.Game
 
         private void MoveToCharacterAttack()
         {
-            Debug.Log($"MoveToCharacterAttack {_characterName}");
             if (_characterStats.IsAttackCharacter || _characterStats.IsAttackTarget)
             {
                 return;

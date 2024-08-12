@@ -80,19 +80,20 @@ namespace Commands.Game
             _statsAttack.CharactersCanBeaten.Remove(_keyBeaten);
             _keyBeaten = GetCharacterCanBeaten();
 
-            if (_keyBeaten is null)
+            if (_keyBeaten != null)
             {
-                _statsAttack.IsAttackCharacter = false;
-                if (!_cancelAttackCharacter.IsCancellationRequested)
-                {
-                    _cancelAttackCharacter.Cancel();
-                }
-
-                this.SendCommand(new MoveToCharacterAttackCommand(_statsAttack.Name));
+                AttackCharacterAsync();
                 return;
             }
 
-            AttackCharacterAsync();
+            _statsAttack.IsAttackCharacter = false;
+            
+            if (!_cancelAttackCharacter.IsCancellationRequested)
+            {
+                _cancelAttackCharacter.Cancel();
+            }
+
+            this.SendCommand(new MoveToCharacterAttackCommand(_statsAttack.Name));
         }
 
         private string GetCharacterCanBeaten()

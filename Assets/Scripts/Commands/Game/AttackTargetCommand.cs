@@ -10,6 +10,7 @@ namespace Commands.Game
         private string _keyAttack;
         private CharacterStats _statsAttack;
         private CancellationTokenSource _cancelAttackCharacter = new();
+        private Rigidbody2D _rg;
 
         public AttackTargetCommand(string keyAttack)
         {
@@ -19,29 +20,31 @@ namespace Commands.Game
         protected override void OnExecute()
         {
             base.OnExecute();
+            
+            _statsAttack = GamePlayModel.Characters[_keyAttack];
+            _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
+            _rg.mass = CharacterConfig.mass;
+            _rg.velocity = Vector3.zero;
+            
             AttackTarget();
         }
 
         private async void AttackTarget()
         {
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
-
             var isCharacterAttack = GamePlayModel.Characters.ContainsKey(_keyAttack);
 
             if (!isCharacterAttack)
             {
                 return;
             }
-
-            _statsAttack = GamePlayModel.Characters[_keyAttack];
-
+            
             if (_statsAttack.IsAttackCharacter)
             {
                 _statsAttack.IsAttackTarget = false;
                 return;
             }
 
-            Debug.Log($"AttackTarget {_statsAttack.Name}");
             _statsAttack.IsAttackTarget = true;
 
             if (_statsAttack.IsPlayer)
