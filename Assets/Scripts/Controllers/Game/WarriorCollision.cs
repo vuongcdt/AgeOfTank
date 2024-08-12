@@ -68,7 +68,7 @@ namespace Controllers.Game
                 return;
             }
 
-            _character.MoveHead();
+            _character.MoveHead(CharacterConfig.speed * 0.5f);
         }
 
         private bool IsCharacterCompetitor(Collider2D other)

@@ -1,4 +1,5 @@
 ﻿using Commands.Game;
+using Cysharp.Threading.Tasks;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -34,10 +35,13 @@ namespace Controllers.Game
             this.SendCommand(new MoveToCharacterAttackCommand(_character.name));
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private async void OnTriggerExit2D(Collider2D other)
         {
             if (IsCompareStartBarTag(other))
             {
+                // var random = Random.value * 2;
+                // await UniTask.WaitForSeconds(random);
+                
                 _rg.mass = 1;
                 _capsuleCollider.isTrigger = false;
             }

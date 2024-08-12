@@ -32,20 +32,21 @@ namespace Commands.Game
 
         private void MoveToCharacterAttack()
         {
-            if (_characterStats.IsAttackCharacter || _characterStats.IsAttackTarget)
-            {
-                return;
-            }
-
             var characterAttackNearest = GetCharacterAttackNearest();
             if (characterAttackNearest)
             {
+                if (_characterStats.IsAttackCharacter || _characterStats.IsAttackTarget)
+                {
+                    return;
+                }
                 var characterNearestPos = characterAttackNearest.transform.position;
                 var newPointX = _characterStats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
                 var newPoint = new Vector3(newPointX, characterNearestPos.y);
 
                 var velocity = (newPoint - _characterStats.Transform.position).normalized * CharacterConfig.speed;
+                _rg.mass = 1;
                 _rg.velocity = velocity;
+                // _rg.AddForce( velocity * 0.5f);
             }
             else
             {

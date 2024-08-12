@@ -83,20 +83,12 @@ namespace Controllers.Game
             this.RegisterEvent<MoveHeadEvent>(e => this.SendCommand(new MoveToCharacterAttackCommand(name)));
 
             _rg = GetComponent<Rigidbody2D>();
-            MoveHead();
+            MoveHead(CharacterConfig.speed);
         }
 
-        public void AttackCharacter(string keyBeaten)
+        public void MoveHead(float speed)
         {
-            // _rg.mass = mass;
-            // _rg.velocity = Vector3.zero;
-        
-            this.SendCommand(new AttackCharacterCommand(keyBeaten, name));
-        }
-
-        public void MoveHead()
-        {
-            _rg.velocity = _stats.Target.normalized * CharacterConfig.speed;
+            _rg.velocity = _stats.Target.normalized * speed;
         }
 
         private void SetHealthBar(float newValue)
