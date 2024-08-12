@@ -15,8 +15,6 @@ namespace Commands.Game
         private CharacterStats _statsBeaten;
         private CharacterStats _statsAttack;
 
-        private CancellationTokenSource _cancelAttackCharacter = new();
-
         public AttackCharacterCommand(string keyBeaten, string keyAttack)
         {
             _keyBeaten = keyBeaten;
@@ -41,15 +39,15 @@ namespace Commands.Game
             _statsBeaten = GamePlayModel.Characters[_keyBeaten];
 
             _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, _statsBeaten);
-
+                
+            _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
+            _rg.mass = CharacterConfig.mass;
+            _rg.velocity = Vector3.zero;
+            
             if (_statsAttack.IsAttackCharacter)
             {
                 return;
             }
-
-            _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
-            _rg.mass = CharacterConfig.mass;
-            _rg.velocity = Vector3.zero;
 
             _statsAttack.IsAttackCharacter = true;
             GamePlayModel.CharactersAttacking.TryAdd(_keyAttack, _statsAttack);
@@ -59,7 +57,7 @@ namespace Commands.Game
 
         private async void AttackCharacterAsync()
         {
-            await UniTask.WaitForSeconds(CharacterConfig.attackTime, cancellationToken: _cancelAttackCharacter.Token);
+            await UniTask.WaitForSeconds(CharacterConfig.attackTime);
 
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
             var isCharacterAttack = GamePlayModel.CharactersAttacking.ContainsKey(_keyAttack);
@@ -87,11 +85,6 @@ namespace Commands.Game
             }
 
             _statsAttack.IsAttackCharacter = false;
-            
-            if (!_cancelAttackCharacter.IsCancellationRequested)
-            {
-                _cancelAttackCharacter.Cancel();
-            }
 
             this.SendCommand(new MoveToCharacterAttackCommand(_statsAttack.Name));
         }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using Commands.Game;
-using Cysharp.Threading.Tasks;
+﻿using Commands.Game;
 using QFramework;
 using UnityEngine;
 using Utilities;
@@ -27,10 +25,6 @@ namespace Controllers.Game
             gameObject.layer = isPlayer
                 ? (int)ENUMS.Layer.WarriorPlayer
                 : (int)ENUMS.Layer.WarriorEnemy;
-
-            // gameObject.layer = isPlayer
-            // ? LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorPlayer)
-            // : LayerMask.NameToLayer(CONSTANS.LayerMask.WarriorEnemy);
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -52,7 +46,7 @@ namespace Controllers.Game
                 return;
             }
 
-            _character.AttackCharacter(_characterBeaten.name);
+            this.SendCommand(new AttackCharacterCommand(_characterBeaten.name, _character.name));
         }
 
         private void OnTriggerExit2D(Collider2D other)

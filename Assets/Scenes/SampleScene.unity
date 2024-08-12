@@ -1316,7 +1316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 222.6
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2350,8 +2350,8 @@ MonoBehaviour:
   resetBtn: {fileID: 1317503558}
   playBtn: {fileID: 2076539532}
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
-  playersList: 00000000
-  enemiesList: 00000000
+  playersList: 03000000
+  enemiesList: 03000000
   playersHunterList: 01000000
   enemiesHunterList: 00000000
   healthTargetPlayer: 100
@@ -3082,7 +3082,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 222.6
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 685086621193454757, guid: 3a7ab5ade1a964cff846a629a90ea19e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3481,7 +3481,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 350}
+  m_AnchoredPosition: {x: 0, y: 450}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1599727786
@@ -4215,7 +4215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 350}
+  m_AnchoredPosition: {x: 0, y: 450}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1660057539 &9223372036854775807
