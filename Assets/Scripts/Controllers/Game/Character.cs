@@ -23,8 +23,9 @@ namespace Controllers.Game
         private CharacterStats _stats;
         private string _keyBeaten;
         private Animator _animator;
-        
+
         private static readonly int WalkAnimator = Animator.StringToHash("walk");
+        private static readonly int SpeedAnimator = Animator.StringToHash("speed");
 
         public bool IsNearStartPoint()
         {
@@ -46,7 +47,13 @@ namespace Controllers.Game
 
             // avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
             // avatar.flipX = !_stats.IsPlayer;
+
+            var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
+            Instantiate(avatarPrefab, transform);
+
             _animator = GetComponentInChildren<Animator>();
+            // var currentSpeed = 35 / 60;
+            // _animator.SetFloat(SpeedAnimator, currentSpeed * CharacterConfig.attackTime);
             _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
 
             tag = _stats.Tag;
@@ -85,7 +92,6 @@ namespace Controllers.Game
         {
             if (newValue <= 0)
             {
-                // SetCharacterDeath();
                 this.SendCommand(new SetCharacterDeathCommand(name));
                 return;
             }

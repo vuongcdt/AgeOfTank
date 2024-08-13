@@ -21,5 +21,6 @@ namespace Systems
         public float damage;
         public Sprite imgAvatar;
         public int foodNum;
+        public GameObject prefabAvatar;
     }
 }

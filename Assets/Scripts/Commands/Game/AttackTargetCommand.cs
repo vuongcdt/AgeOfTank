@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Interfaces;
 using UnityEngine;
 
@@ -10,7 +9,9 @@ namespace Commands.Game
         private string _keyAttack;
         private CharacterStats _statsAttack;
         private Rigidbody2D _rg;
-
+        private Animator _animator;
+        private static readonly int AttackAnimator = Animator.StringToHash("attack");
+        
         public AttackTargetCommand(string keyAttack)
         {
             _keyAttack = keyAttack;
@@ -24,13 +25,20 @@ namespace Commands.Game
             _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
             _rg.mass = CharacterConfig.mass;
             _rg.velocity = Vector3.zero;
+            _animator = _statsAttack.Transform.GetComponentInChildren<Animator>();
             
             AttackTarget();
         }
 
         private async void AttackTarget()
         {
+            if (!_statsAttack.IsAttackCharacter)
+            {
+                _animator.SetTrigger(AttackAnimator);
+            }
+            
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
+            
             var isCharacterAttack = GamePlayModel.Characters.ContainsKey(_keyAttack);
 
             if (!isCharacterAttack)

@@ -1,4 +1,5 @@
-﻿using Commands.Game;
+﻿using System;
+using Commands.Game;
 using Cysharp.Threading.Tasks;
 using QFramework;
 using TMPro;
@@ -10,15 +11,19 @@ using Utilities;
 
 namespace Controllers.Game
 {
+    [Serializable]
+    public class SpawnCharacter
+    {
+        public int num;
+        public ENUMS.CharacterTypeClass type;
+    }
     public class GameController : BaseGameController
     {
         [SerializeField] private Button resetBtn;
         [SerializeField] private Button playBtn;
         [SerializeField] private GameObject characterPrefab;
-        [SerializeField] private int[] playersList;
-        [SerializeField] private int[] enemiesList;
-        [SerializeField] private int[] playersHunterList;
-        [SerializeField] private int[] enemiesHunterList;
+        [SerializeField] private SpawnCharacter[] playersList;
+        [SerializeField] private SpawnCharacter[] enemiesList;
         [SerializeField] private int healthTargetPlayer = 100;
         [SerializeField] private int healthTargetEnemy = 10;
         [SerializeField] private Slider healthTargetPlayerSlider;
@@ -87,20 +92,9 @@ namespace Controllers.Game
         {
             foreach (var value in playersList)
             {
-                foreach (var i in new int[value])
+                foreach (var i in new int[value.num])
                 {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.Fighter));
-                    await UniTask.WaitForSeconds(0.1f);
-                }
-
-                await UniTask.WaitForSeconds(2);
-            }
-
-            foreach (var value in playersHunterList)
-            {
-                foreach (var i in new int[value])
-                {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.Hunter));
+                    this.SendCommand(new InitCharacterCommand(value.type));
                     await UniTask.WaitForSeconds(0.1f);
                 }
 
@@ -112,20 +106,9 @@ namespace Controllers.Game
         {
             foreach (var value in enemiesList)
             {
-                foreach (var i in new int[value])
+                foreach (var i in new int[value.num])
                 {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.FighterEnemy));
-                    await UniTask.WaitForSeconds(0.1f);
-                }
-
-                await UniTask.WaitForSeconds(2);
-            }
-
-            foreach (var value in enemiesHunterList)
-            {
-                foreach (var i in new int[value])
-                {
-                    this.SendCommand(new InitCharacterCommand(ENUMS.CharacterTypeClass.HunterEnemy));
+                    this.SendCommand(new InitCharacterCommand(value.type));
                     await UniTask.WaitForSeconds(0.1f);
                 }
 

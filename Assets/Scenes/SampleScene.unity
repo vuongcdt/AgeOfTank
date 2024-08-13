@@ -2350,10 +2350,20 @@ MonoBehaviour:
   resetBtn: {fileID: 1317503558}
   playBtn: {fileID: 2076539532}
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
-  playersList: 01000000
-  enemiesList: 01000000
-  playersHunterList: 00000000
-  enemiesHunterList: 00000000
+  playersList:
+  - num: 2
+    type: 1
+  - num: 0
+    type: 1
+  - num: 0
+    type: 0
+  enemiesList:
+  - num: 2
+    type: 4
+  - num: 0
+    type: 4
+  - num: 0
+    type: 3
   healthTargetPlayer: 100
   healthTargetEnemy: 10
   healthTargetPlayerSlider: {fileID: 1345202291}

@@ -10,7 +10,10 @@ namespace Commands.Game
         private Rigidbody2D _rg;
 
         private CharacterStats _characterStats;
+        private Animator _animator;
 
+        private static readonly int WalkAnimator = Animator.StringToHash("walk");
+        
         public MoveToCharacterAttackCommand(string characterName)
         {
             _characterName = characterName;
@@ -26,7 +29,7 @@ namespace Commands.Game
 
             _characterStats = GamePlayModel.Characters[_characterName];
             _rg = _characterStats.Transform.GetComponent<Rigidbody2D>();
-
+            _animator = _characterStats.Transform.GetComponentInChildren<Animator>();
             MoveToCharacterAttack();
         }
 
@@ -52,6 +55,8 @@ namespace Commands.Game
             {
                 _rg.velocity = _characterStats.Target.normalized * CharacterConfig.speed;
             }
+            
+            _animator.SetTrigger(WalkAnimator);
         }
 
         private Character GetCharacterAttackNearest()

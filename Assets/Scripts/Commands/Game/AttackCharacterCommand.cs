@@ -40,11 +40,11 @@ namespace Commands.Game
             _statsBeaten = GamePlayModel.Characters[_keyBeaten];
 
             _statsAttack.CharactersCanBeaten.TryAdd(_keyBeaten, _statsBeaten);
-                
+
             _rg = _statsAttack.Transform.GetComponent<Rigidbody2D>();
             _rg.mass = CharacterConfig.mass;
             _rg.velocity = Vector3.zero;
-            
+
             if (_statsAttack.IsAttackCharacter)
             {
                 return;
@@ -53,16 +53,21 @@ namespace Commands.Game
             _statsAttack.IsAttackCharacter = true;
             GamePlayModel.CharactersAttacking.TryAdd(_keyAttack, _statsAttack);
             _animator = _statsAttack.Transform.GetComponentInChildren<Animator>();
-            
+
             AttackCharacterAsync();
         }
 
         private async void AttackCharacterAsync()
         {
-            _animator.SetTrigger(AttackAnimator);
+            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
+            if (isCharacterBeaten)
+            {
+                _animator.SetTrigger(AttackAnimator);
+            }
+
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
 
-            var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
+            isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
             var isCharacterAttack = GamePlayModel.CharactersAttacking.ContainsKey(_keyAttack);
 
             if (!isCharacterAttack)
