@@ -9,7 +9,6 @@ namespace Commands.Game
     {
         private string _keyAttack;
         private CharacterStats _statsAttack;
-        private CancellationTokenSource _cancelAttackCharacter = new();
         private Rigidbody2D _rg;
 
         public AttackTargetCommand(string keyAttack)

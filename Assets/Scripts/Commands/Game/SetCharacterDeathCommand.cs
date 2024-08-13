@@ -11,6 +11,8 @@ namespace Commands.Game
         private Rigidbody2D _rg;
 
         private CharacterStats _characterStats;
+        private Animator _animator;
+        private static readonly int DieAnimator = Animator.StringToHash("die");
 
         public SetCharacterDeathCommand(string characterName)
         {
@@ -27,12 +29,13 @@ namespace Commands.Game
 
             _characterStats = GamePlayModel.Characters[_characterName];
             _rg = _characterStats.Transform.GetComponent<Rigidbody2D>();
-
+            _animator = _characterStats.Transform.GetComponentInChildren<Animator>();
             SetCharacterDeath();
         }
 
         private void SetCharacterDeath()
         {
+            _animator.SetTrigger(DieAnimator);
             _rg.mass = 1;
             _characterStats.IsAttackCharacter = false;
             _characterStats.CharactersCanBeaten.Clear();

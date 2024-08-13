@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Commands.Game;
+﻿using Commands.Game;
 using Cysharp.Threading.Tasks;
 using QFramework;
 using TMPro;
@@ -26,7 +25,6 @@ namespace Controllers.Game
         [SerializeField] private Slider healthTargetEnemySlider;
         [SerializeField] private TMP_Text healthTargetPlayerText;
         [SerializeField] private TMP_Text healthTargetEnemyText;
-
 
         private void Start()
         {

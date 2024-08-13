@@ -13,6 +13,8 @@ namespace Commands.Game
         private Rigidbody2D _rg;
         private CharacterStats _statsBeaten;
         private CharacterStats _statsAttack;
+        private Animator _animator;
+        private static readonly int AttackAnimator = Animator.StringToHash("attack");
 
         public AttackCharacterCommand(string keyBeaten, string keyAttack)
         {
@@ -50,12 +52,14 @@ namespace Commands.Game
 
             _statsAttack.IsAttackCharacter = true;
             GamePlayModel.CharactersAttacking.TryAdd(_keyAttack, _statsAttack);
-
+            _animator = _statsAttack.Transform.GetComponentInChildren<Animator>();
+            
             AttackCharacterAsync();
         }
 
         private async void AttackCharacterAsync()
         {
+            _animator.SetTrigger(AttackAnimator);
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
 
             var isCharacterBeaten = GamePlayModel.Characters.ContainsKey(_keyBeaten);
