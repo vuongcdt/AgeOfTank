@@ -22,5 +22,6 @@ namespace Systems
         public Sprite imgAvatar;
         public int foodNum;
         public GameObject prefabAvatar;
+        public GameObject prefabArrow;
     }
 }

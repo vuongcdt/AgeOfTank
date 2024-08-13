@@ -37,7 +37,7 @@ namespace Controllers.Game
             resetBtn.onClick.AddListener(OnReset);
             playBtn.onClick.RemoveAllListeners();
             playBtn.onClick.AddListener(OnPlay);
-
+            
             SharedGameObjectPool.Prewarm(characterPrefab, 30);
 
             this.RegisterEvent<InitCharacter>(e => this.SendCommand(new InitCharacterCommand(e.TypeClass)));
@@ -100,6 +100,8 @@ namespace Controllers.Game
 
                 await UniTask.WaitForSeconds(2);
             }
+            var arrowPrefab = CharacterConfig.unitConfigs[2].prefabArrow;
+            SharedGameObjectPool.Prewarm(arrowPrefab, 30);
         }
 
         private async void SpawnEnemies()

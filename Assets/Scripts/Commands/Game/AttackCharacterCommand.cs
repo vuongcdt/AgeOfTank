@@ -63,6 +63,10 @@ namespace Commands.Game
             if (isCharacterBeaten)
             {
                 _animator.SetTrigger(AttackAnimator);
+                if ((int)_statsAttack.TypeClass % 3 == 1)
+                {
+                    this.SendCommand(new ShootingCommand(_statsAttack.Name,_statsBeaten.Transform.position));
+                }
             }
 
             await UniTask.WaitForSeconds(CharacterConfig.attackTime);
@@ -77,8 +81,7 @@ namespace Commands.Game
 
             if (isCharacterBeaten)
             {
-                var statsBeaten = GamePlayModel.Characters[_keyBeaten];
-                statsBeaten.Health.Value -= _statsAttack.Damage;
+                _statsBeaten.Health.Value -= _statsAttack.Damage;
                 AttackCharacterAsync();
                 return;
             }
@@ -88,6 +91,7 @@ namespace Commands.Game
 
             if (_keyBeaten != null)
             {
+                _statsBeaten = _statsAttack.CharactersCanBeaten[_keyBeaten];
                 AttackCharacterAsync();
                 return;
             }

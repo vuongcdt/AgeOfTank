@@ -2306,6 +2306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 993833378}
   - component: {fileID: 993833379}
+  - component: {fileID: 993833380}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2351,15 +2352,15 @@ MonoBehaviour:
   playBtn: {fileID: 2076539532}
   characterPrefab: {fileID: 4939331758896391020, guid: 9f7ec5be8e16665488ebc9756067e651, type: 3}
   playersList:
-  - num: 2
+  - num: 1
     type: 1
   - num: 0
     type: 1
   - num: 0
     type: 0
   enemiesList:
-  - num: 2
-    type: 4
+  - num: 1
+    type: 3
   - num: 0
     type: 4
   - num: 0
@@ -2370,6 +2371,18 @@ MonoBehaviour:
   healthTargetEnemySlider: {fileID: 390599923}
   healthTargetPlayerText: {fileID: 1516541585}
   healthTargetEnemyText: {fileID: 2107326518}
+--- !u!114 &993833380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993833376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d9b97dd76f46589621ae8d2b77b7b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1030549326
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -45,15 +45,10 @@ namespace Controllers.Game
             hunterCollider.SetActive(isHunterClass);
             gameObject.layer = isHunterClass ? (int)ENUMS.Layer.SameTypeHunter : (int)ENUMS.Layer.SameType;
 
-            // avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
-            // avatar.flipX = !_stats.IsPlayer;
-
             var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
             Instantiate(avatarPrefab, transform);
 
             _animator = GetComponentInChildren<Animator>();
-            // var currentSpeed = 35 / 60;
-            // _animator.SetFloat(SpeedAnimator, currentSpeed * CharacterConfig.attackTime);
             _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
 
             tag = _stats.Tag;
