@@ -5,7 +5,6 @@ using Interfaces;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
-using uPools;
 using Utilities;
 using Random = UnityEngine.Random;
 
@@ -100,8 +99,7 @@ namespace Controllers.Game
 
         private void SetSortingOrderHeathBar()
         {
-            healthBar.GetComponent<Canvas>().sortingOrder =
-                Mathf.CeilToInt(10 - transform.position.y * 10);
+            healthBar.GetComponent<Canvas>().sortingOrder = Mathf.CeilToInt(10 - transform.position.y * 10);
         }
     }
 }
