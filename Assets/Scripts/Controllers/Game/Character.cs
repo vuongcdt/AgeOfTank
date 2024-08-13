@@ -5,7 +5,6 @@ using Interfaces;
 using QFramework;
 using UnityEngine;
 using UnityEngine.UI;
-using uPools;
 using Utilities;
 using Random = UnityEngine.Random;
 
@@ -15,7 +14,6 @@ namespace Controllers.Game
     {
         public CharacterStats Stats => _stats;
 
-        [SerializeField] private int mass = 20;
         [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
@@ -23,23 +21,8 @@ namespace Controllers.Game
 
         private Rigidbody2D _rg;
         private CharacterStats _stats;
-        [SerializeField] private string _keyBeaten;
-        private IEnumerator _moveToPointIE;
-        private IEnumerator _attackCharacterIE;
-        private Move _move;
-
-        private void OnDisable()
-        {
-            if (_moveToPointIE != null)
-            {
-                StopCoroutine(_moveToPointIE);
-            }
-
-            if (_attackCharacterIE != null)
-            {
-                StopCoroutine(_attackCharacterIE);
-            }
-        }
+        private string _keyBeaten;
+        private Animator _animator;
 
         public bool IsNearStartPoint()
         {
@@ -59,10 +42,15 @@ namespace Controllers.Game
             hunterCollider.SetActive(isHunterClass);
             gameObject.layer = isHunterClass ? (int)ENUMS.Layer.SameTypeHunter : (int)ENUMS.Layer.SameType;
 
-            var idText = GetComponentInChildren<TextMesh>();
             avatar.sprite = CharacterConfig.unitConfigs[(int)_stats.TypeClass].imgAvatar;
+            avatar.flipX = !_stats.IsPlayer;
+            _animator = GetComponentInChildren<Animator>();
+            _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
+
             tag = _stats.Tag;
             name = _stats.Name;
+
+            var idText = GetComponentInChildren<TextMesh>();
             idText.text = _stats.ID.ToString();
             idText.transform.localPosition = _stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
@@ -71,7 +59,6 @@ namespace Controllers.Game
             var transform1 = transform;
 
             transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
-            avatar.flipX = !_stats.IsPlayer;
             _stats.Transform = transform1;
             Init();
         }
@@ -95,7 +82,6 @@ namespace Controllers.Game
         {
             if (newValue <= 0)
             {
-                // SetCharacterDeath();
                 this.SendCommand(new SetCharacterDeathCommand(name));
                 return;
             }
@@ -106,12 +92,9 @@ namespace Controllers.Game
             healthSlider.value = newValue / CharacterConfig.unitConfigs[(int)_stats.TypeClass].health;
         }
 
-       
-
         private void SetSortingOrderHeathBar()
         {
-            healthBar.GetComponent<Canvas>().sortingOrder =
-                Mathf.CeilToInt(10 - transform.position.y * 10);
+            healthBar.GetComponent<Canvas>().sortingOrder = Mathf.CeilToInt(10 - transform.position.y * 10);
         }
     }
 }

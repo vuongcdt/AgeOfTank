@@ -26,20 +26,20 @@ namespace Interfaces
     public class CharacterStats
     {
         public Transform Transform;
-        public BindableProperty<float> Health;
-        public int ID;
-        public float Damage;
+        public readonly BindableProperty<float> Health;
+        public readonly int ID;
+        public readonly float Damage;
         public Vector3 Target;
         public Vector3 Source;
-        public string Tag;
-        public string Name;
-        public bool IsPlayer;
+        public readonly string Tag;
+        public readonly string Name;
+        public readonly bool IsPlayer;
         public bool IsAttackCharacter;
         public bool IsAttackTarget;
-        public Dictionary<string, CharacterStats> CharactersCanBeaten = new();
+        public readonly Dictionary<string, CharacterStats> CharactersCanBeaten = new();
         public bool IsDeath => Health.Value < 0;
-        public ENUMS.CharacterType Type;
-        public ENUMS.CharacterTypeClass TypeClass;
+        public readonly ENUMS.CharacterType Type;
+        public readonly ENUMS.CharacterTypeClass TypeClass;
 
         public CharacterStats(float health, int id, float damage, Vector3 target, Vector3 source,
             string tag, string name, ENUMS.CharacterTypeClass typeClass, ENUMS.CharacterType type)

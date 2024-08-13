@@ -39,8 +39,8 @@ namespace Controllers.Game
         {
             if (IsCompareStartBarTag(other))
             {
-                // var random = Random.value * 2;
-                // await UniTask.WaitForSeconds(random);
+                var random = Random.value * 2;
+                await UniTask.WaitForSeconds(random);
                 
                 _rg.mass = 1;
                 _capsuleCollider.isTrigger = false;
