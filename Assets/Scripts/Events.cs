@@ -14,7 +14,7 @@ public struct InitCharacter
 public struct InitConfigSystemEvent
 {
 }
-public struct MoveHeadEvent
+public struct MoveToCharacterAttack
 {
 }
 

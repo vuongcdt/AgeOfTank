@@ -13,7 +13,7 @@ namespace Commands.Game
         private Animator _animator;
 
         private static readonly int WalkAnimator = Animator.StringToHash("walk");
-        
+
         public MoveToCharacterAttackCommand(string characterName)
         {
             _characterName = characterName;
@@ -28,6 +28,12 @@ namespace Commands.Game
             }
 
             _characterStats = GamePlayModel.Characters[_characterName];
+            
+            if (_characterStats.IsAttackCharacter || _characterStats.IsAttackTarget)
+            {
+                return;
+            }
+
             _rg = _characterStats.Transform.GetComponent<Rigidbody2D>();
             _animator = _characterStats.Transform.GetComponentInChildren<Animator>();
             MoveToCharacterAttack();
@@ -38,10 +44,6 @@ namespace Commands.Game
             var characterAttackNearest = GetCharacterAttackNearest();
             if (characterAttackNearest)
             {
-                if (_characterStats.IsAttackCharacter || _characterStats.IsAttackTarget)
-                {
-                    return;
-                }
                 var characterNearestPos = characterAttackNearest.transform.position;
                 var newPointX = _characterStats.IsPlayer ? characterNearestPos.x - 0.5f : characterNearestPos.x + 0.5f;
                 var newPoint = new Vector3(newPointX, characterNearestPos.y);
@@ -49,13 +51,12 @@ namespace Commands.Game
                 var velocity = (newPoint - _characterStats.Transform.position).normalized * CharacterConfig.speed;
                 _rg.mass = 1;
                 _rg.velocity = velocity;
-                // _rg.AddForce( velocity * 0.5f);
             }
             else
             {
                 _rg.velocity = _characterStats.Target.normalized * CharacterConfig.speed;
             }
-            
+
             _animator.SetTrigger(WalkAnimator);
         }
 

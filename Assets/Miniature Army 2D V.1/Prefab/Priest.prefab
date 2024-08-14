@@ -351,6 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013296727282}
   - component: {fileID: 95000010463452298}
+  - component: {fileID: -2480901449213671162}
   m_Layer: 0
   m_Name: Priest
   m_TagString: Untagged
@@ -395,6 +396,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!210 &-2480901449213671162
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013034572668}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &1000013226060160
 GameObject:
   m_ObjectHideFlags: 0

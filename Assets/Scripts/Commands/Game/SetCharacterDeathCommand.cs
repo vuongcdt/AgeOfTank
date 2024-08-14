@@ -54,7 +54,7 @@ namespace Commands.Game
 
             if (!isHasCharacter)
             {
-                this.SendEvent<MoveHeadEvent>();
+                this.SendEvent<MoveToCharacterAttack>();
                 // this.SendEvent(new InitCharacter(_stats.TypeClass));
             }
 

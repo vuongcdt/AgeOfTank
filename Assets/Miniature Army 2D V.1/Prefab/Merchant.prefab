@@ -436,6 +436,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010300450076}
   - component: {fileID: 95000012115735308}
+  - component: {fileID: 361172153584711730}
   m_Layer: 0
   m_Name: Merchant
   m_TagString: Untagged
@@ -480,6 +481,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!210 &361172153584711730
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013261649242}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1 &1000013350955496
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using Commands.Game;
 using Interfaces;
 using QFramework;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 using Utilities;
 using Random = UnityEngine.Random;
@@ -37,41 +37,60 @@ namespace Controllers.Game
         public void RenderCharacter(string key)
         {
             _stats = GamePlayModel.Characters[key];
+            name = _stats.Name;
 
+            SetTagAndLayer();
+            SetAvatar();
+            SetHealthBar();
+            SetPosition();
+            Init();
+        }
+
+        private void SetPosition()
+        {
+            var random = (1 - Random.value) * 0.2f;
+            var transform1 = transform;
+
+            transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
+            _stats.Transform = transform1;
+        }
+
+        private void SetTagAndLayer()
+        {
+            tag = _stats.Tag;
             var warriorCollision = GetComponentInChildren<WarriorCollision>();
             warriorCollision.SetTagAndLayer(_stats.Type);
 
             var isHunterClass = (int)_stats.TypeClass % 3 == 1;
             hunterCollider.SetActive(isHunterClass);
             gameObject.layer = isHunterClass ? (int)ENUMS.Layer.SameTypeHunter : (int)ENUMS.Layer.SameType;
+        }
 
-            var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
-            Instantiate(avatarPrefab, transform);
-
-            _animator = GetComponentInChildren<Animator>();
-            _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
-
-            tag = _stats.Tag;
-            name = _stats.Name;
-
+        private void SetHealthBar()
+        {
             var idText = GetComponentInChildren<TextMesh>();
             idText.text = _stats.ID.ToString();
             idText.transform.localPosition = _stats.IsPlayer ? new Vector3(-0.5f, 0.5f) : new Vector3(0.5f, 0.5f);
 
             healthBar.SetActive(false);
-            var random = (1 - Random.value) * 0.2f;
-            var transform1 = transform;
+        }
 
-            transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
-            _stats.Transform = transform1;
-            Init();
+        private void SetAvatar()
+        {
+            GetComponent<SortingGroup>().sortingOrder = GetSortingOrder();
+            
+            var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
+            Instantiate(avatarPrefab, transform);
+
+            _animator = GetComponentInChildren<Animator>();
+            _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
         }
 
         private void Init()
         {
             _stats.Health.Register(SetHealthBar);
 
-            this.RegisterEvent<MoveHeadEvent>(e => this.SendCommand(new MoveToCharacterAttackCommand(name)));
+            this.RegisterEvent<MoveToCharacterAttack>(e => this.SendCommand(new MoveToCharacterAttackCommand(name)));
 
             _rg = GetComponent<Rigidbody2D>();
             MoveHead(CharacterConfig.speed);
@@ -92,15 +111,15 @@ namespace Controllers.Game
             }
 
             healthBar.SetActive(true);
-            SetSortingOrderHeathBar();
+            healthBar.GetComponent<Canvas>().sortingOrder = GetSortingOrder();
 
             healthSlider.value = newValue / CharacterConfig.unitConfigs[(int)_stats.TypeClass].health;
         }
 
 
-        private void SetSortingOrderHeathBar()
+        private int GetSortingOrder()
         {
-            healthBar.GetComponent<Canvas>().sortingOrder = Mathf.CeilToInt(10 - transform.position.y * 10);
+            return Mathf.CeilToInt(10 - transform.position.y * 10);
         }
     }
 }

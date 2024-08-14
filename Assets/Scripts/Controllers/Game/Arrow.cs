@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 using uPools;
 using Utilities;
@@ -7,40 +7,39 @@ namespace Controllers.Game
 {
     public class Arrow : BaseGameController
     {
-        [SerializeField] private Vector3 startPoint, endPoint;
         [SerializeField] private int angle = 60, trajectoryNum = 20;
-        [SerializeField] private float velocity = 4, config = 0.1f;
-        // [SerializeField] private GameObject bullet;
+        [SerializeField] private float velocity = 4, configStepDraw = 0.1f;
 
+        private Vector3 _startPoint, _endPoint;
         private bool _isPlayer;
         private Rigidbody2D _rg;
         private float _angleRad;
+
         private const float GRAFITY = 9.8f;
 
         public void Shooting(bool isPlayer, Vector3 targetPos)
         {
             _isPlayer = isPlayer;
             _rg = GetComponent<Rigidbody2D>();
-            startPoint = transform.position;
-            endPoint = targetPos;
-
-            _rg.velocity = isPlayer ? Vector3.one : new Vector3(-1, 1);
-
-            transform.rotation = isPlayer
-                ? Quaternion.AngleAxis(-45, Vector3.forward)
-                : Quaternion.AngleAxis(45, Vector3.forward);
+            _startPoint = transform.position;
+            _endPoint = targetPos;
 
             Shooting();
         }
 
         private void FixedUpdate()
         {
-            transform.Rotate(_rg.velocity);
+            var directionVector = _rg.velocity.normalized;
+
+            Quaternion lookRotation = Quaternion.LookRotation(Vector3.forward, directionVector);
+
+            transform.rotation = Quaternion.Euler(0, 0, lookRotation.eulerAngles.z);
+            // transform.rotation = Quaternion.Euler(0,0, lookRotation.eulerAngles.z + 90);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (IsTargetCompetitor(other))
+            if (IsTargetCompetitor(other) && gameObject.activeSelf)
             {
                 SharedGameObjectPool.Return(gameObject);
             }
@@ -56,13 +55,13 @@ namespace Controllers.Game
 
         private void Shooting()
         {
-            CalcVeclocity();
+            CalcVelocity();
 
             var rgVelocity = Vector3.one;
             rgVelocity.x = velocity * Mathf.Cos(_angleRad);
             rgVelocity.y = velocity * Mathf.Sin(_angleRad);
 
-            if (config < 0)
+            if (configStepDraw < 0)
             {
                 rgVelocity *= -1;
             }
@@ -70,20 +69,20 @@ namespace Controllers.Game
             _rg.velocity = rgVelocity;
         }
 
-        void CalcVeclocity()
+        void CalcVelocity()
         {
-            var x = endPoint.x - startPoint.x;
-            var y = endPoint.y - startPoint.y;
+            var x = _endPoint.x - _startPoint.x;
+            var y = _endPoint.y - _startPoint.y;
 
             if (x > 0)
             {
                 _angleRad = Mathf.Abs(angle * Mathf.Deg2Rad);
-                config = Mathf.Abs(config);
+                configStepDraw = Mathf.Abs(configStepDraw);
             }
             else
             {
                 _angleRad = -Mathf.Abs(angle * Mathf.Deg2Rad);
-                config = -Mathf.Abs(config);
+                configStepDraw = -Mathf.Abs(configStepDraw);
             }
 
             var v2 = GRAFITY * x * x /
@@ -92,29 +91,29 @@ namespace Controllers.Game
             velocity = Mathf.Sqrt(v2);
         }
 
-        private void OnDrawGizmos()
-        {
-            CalcVeclocity();
-            Gizmos.color = Color.red;
-            var position = startPoint;
-
-
-            for (var i = 0; i < trajectoryNum; i++)
-            {
-                var time = i * config;
-                var x = velocity * Mathf.Cos(_angleRad) * time;
-                var y = velocity * Mathf.Sin(_angleRad) * time - 0.5f * (GRAFITY * time * time);
-
-                var point1 = position + new Vector3(x, y, 0);
-
-                time = (i + 1) * config;
-                x = velocity * Mathf.Cos(_angleRad) * time;
-                y = velocity * Mathf.Sin(_angleRad) * time - 0.5f * (GRAFITY * time * time);
-
-                var point2 = position + new Vector3(x, y, 0);
-
-                Gizmos.DrawLine(point1, point2);
-            }
-        }
+        // private void OnDrawGizmos()
+        // {
+        //     CalcVelocity();
+        //     Gizmos.color = Color.red;
+        //     var position = _startPoint;
+        //
+        //
+        //     for (var i = 0; i < trajectoryNum; i++)
+        //     {
+        //         var time = i * configStepDraw;
+        //         var x = velocity * Mathf.Cos(_angleRad) * time;
+        //         var y = velocity * Mathf.Sin(_angleRad) * time - 0.5f * (GRAFITY * time * time);
+        //
+        //         var point1 = position + new Vector3(x, y, 0);
+        //
+        //         time = (i + 1) * configStepDraw;
+        //         x = velocity * Mathf.Cos(_angleRad) * time;
+        //         y = velocity * Mathf.Sin(_angleRad) * time - 0.5f * (GRAFITY * time * time);
+        //
+        //         var point2 = position + new Vector3(x, y, 0);
+        //
+        //         Gizmos.DrawLine(point1, point2);
+        //     }
+        // }
     }
 }

@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 170983737407360725}
   - component: {fileID: 535566417023569}
   - component: {fileID: 1176884819508978011}
+  - component: {fileID: 1834960480939770130}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -131,12 +132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4276e8d31b6343358e703f7667da2b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPoint: {x: 0, y: 0, z: 0}
-  endPoint: {x: 0, y: 0, z: 0}
   angle: 60
   trajectoryNum: 20
   velocity: 4
-  config: 0.1
+  configStepDraw: 0.1
 --- !u!50 &535566417023569
 Rigidbody2D:
   serializedVersion: 4
@@ -199,3 +198,15 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0.045}
   m_Size: {x: 0.07, y: 0.45}
   m_Direction: 0
+--- !u!210 &1834960480939770130
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9164160569407965763}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 100
+  m_SortAtRoot: 0
