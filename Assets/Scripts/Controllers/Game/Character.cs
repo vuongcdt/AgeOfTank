@@ -49,10 +49,10 @@ namespace Controllers.Game
         private void SetPosition()
         {
             var random = (1 - Random.value) * 0.2f;
-            var transform1 = transform;
+            var transformCache = transform;
 
-            transform1.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
-            _stats.Transform = transform1;
+            transformCache.position = new Vector3(_stats.Source.x, _stats.Source.y + random);
+            _stats.Transform = transformCache;
         }
 
         private void SetTagAndLayer()

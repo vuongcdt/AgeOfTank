@@ -178,7 +178,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013857073264}
   - component: {fileID: 95000011251442710}
-  - component: {fileID: -7229675403455829161}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Untagged
@@ -195,7 +194,7 @@ Transform:
   m_GameObject: {fileID: 1000011742669328}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.4, z: 0}
+  m_LocalPosition: {x: 0, y: -0.45, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -223,18 +222,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!210 &-7229675403455829161
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1000011742669328}
-  m_Enabled: 1
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortAtRoot: 0
 --- !u!1 &1000011811995576
 GameObject:
   m_ObjectHideFlags: 0

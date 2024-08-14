@@ -1,4 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
 using UnityEngine;
 using uPools;
 using Utilities;
@@ -14,11 +14,13 @@ namespace Controllers.Game
         private bool _isPlayer;
         private Rigidbody2D _rg;
         private float _angleRad;
+        private Transform _transformCache;
 
         private const float GRAFITY = 9.8f;
 
         public void Shooting(bool isPlayer, Vector3 targetPos)
         {
+            _transformCache = transform;
             _isPlayer = isPlayer;
             _rg = GetComponent<Rigidbody2D>();
             _startPoint = transform.position;
@@ -33,8 +35,14 @@ namespace Controllers.Game
 
             Quaternion lookRotation = Quaternion.LookRotation(Vector3.forward, directionVector);
 
-            transform.rotation = Quaternion.Euler(0, 0, lookRotation.eulerAngles.z);
-            // transform.rotation = Quaternion.Euler(0,0, lookRotation.eulerAngles.z + 90);
+            _transformCache.rotation = Quaternion.Euler(0, 0, lookRotation.eulerAngles.z);
+
+            var pos = _transformCache.position;
+            var isEnd = pos.x> _endPoint.x && pos.y< _endPoint.y;
+            if (isEnd)
+            {
+                SharedGameObjectPool.Return(gameObject);
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -68,6 +76,7 @@ namespace Controllers.Game
 
             _rg.velocity = rgVelocity;
         }
+
 
         void CalcVelocity()
         {
