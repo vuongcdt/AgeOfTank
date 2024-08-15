@@ -79,18 +79,14 @@ namespace Controllers.Game
         {
             for (var index = 0; index < avatars.Length; index++)
             {
-                var avatar = avatars[index];
                 var isActive = (int)_stats.TypeClass == index;
-                avatar.SetActive(isActive);
+                avatars[index].SetActive(isActive);
             }
 
             GetComponent<SortingGroup>().sortingOrder = GetSortingOrder();
 
-            // var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
-            // Instantiate(avatarPrefab, transform);
-
             _animator = GetComponentInChildren<Animator>();
-            _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
+            _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 1 : 0, 0, 0);
         }
 
         private void Init()
