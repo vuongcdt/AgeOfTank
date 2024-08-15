@@ -14,10 +14,10 @@ namespace Controllers.Game
     {
         public CharacterStats Stats => _stats;
 
-        [SerializeField] private SpriteRenderer avatar;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private GameObject healthBar;
         [SerializeField] private GameObject hunterCollider;
+        [SerializeField] private GameObject[] avatars;
 
         private Rigidbody2D _rg;
         private CharacterStats _stats;
@@ -77,10 +77,17 @@ namespace Controllers.Game
 
         private void SetAvatar()
         {
+            for (var index = 0; index < avatars.Length; index++)
+            {
+                var avatar = avatars[index];
+                var isActive = (int)_stats.TypeClass == index;
+                avatar.SetActive(isActive);
+            }
+
             GetComponent<SortingGroup>().sortingOrder = GetSortingOrder();
-            
-            var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
-            Instantiate(avatarPrefab, transform);
+
+            // var avatarPrefab = CharacterConfig.unitConfigs[(int)_stats.TypeClass].prefabAvatar;
+            // Instantiate(avatarPrefab, transform);
 
             _animator = GetComponentInChildren<Animator>();
             _animator.transform.rotation = new Quaternion(0, _stats.IsPlayer ? 180 : 0, 0, 0);
